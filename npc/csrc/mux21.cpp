@@ -3,6 +3,7 @@
 #include "Vmux21.h"
 
 #include <iostream>
+using namespace std;
 
 VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
@@ -32,7 +33,7 @@ void sim_exit(){
 
 int main(int argc, char** argv) {
   sim_init();
-
+cout<<"6666666666666666666666666666"<<endl;
   top->s=0; top->a=0; top->b=0;  step_and_dump_wave();   // 将s，a和b均初始化为“0”
                       top->b=1;  step_and_dump_wave();   // 将b改为“1”，s和a的值不变，继续保持“0”，
             top->a=1; top->b=0;  step_and_dump_wave();   // 将a，b分别改为“1”和“0”，s的值不变，
