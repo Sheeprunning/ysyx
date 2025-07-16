@@ -10,8 +10,12 @@ VerilatedVcdC* tfp = NULL;
 
 static Vmux21* top;
 
+void print(){
+    cout<<"!!!!s:"<<top->s<<"a:"<<top->a<<"b:"<<top->b<<endl;
+}
 void step_and_dump_wave(){
   top->eval();
+  print();
   contextp->timeInc(10);
   tfp->dump(contextp->time());
 }
@@ -30,9 +34,7 @@ void sim_exit(){
   delete top;
   delete tfp;
 }
-void print(){
-    cout<<"!!!!s:"<<top->s<<"a:"<<top->a<<"b:"<<top->b<<endl;
-}
+
 
 int main(int argc, char** argv) {
   sim_init();
