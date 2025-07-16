@@ -12,7 +12,7 @@ static Vmux21* top;
 
 void step_and_dump_wave(){
   top->eval();
-  contextp->timeInc(1);
+  contextp->timeInc(10);
   tfp->dump(contextp->time());
 }
 void sim_init(){
@@ -29,6 +29,9 @@ void sim_exit(){
   tfp->close();
   delete top;
   delete tfp;
+}
+void print(){
+    cout<<"!!!!s:"<<top->s<<"a:"<<top->a<<"b:"<<top->b<<endl;
 }
 
 int main(int argc, char** argv) {
