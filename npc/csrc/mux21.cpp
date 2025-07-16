@@ -21,7 +21,7 @@ void sim_init(){
   top = new Vmux21{contextp};
   contextp->traceEverOn(true);
   top->trace(tfp, 99);
-  tfp->open("/build/dump.vcd");
+  tfp->open("wave.vcd");
 }
 
 void sim_exit(){
