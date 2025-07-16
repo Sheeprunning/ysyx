@@ -66,6 +66,7 @@ run: $(BIN)
 
 clean:
 	rm -rf $(BUILD_DIR)
+	rm -rf *vcd
 
 .PHONY: default all clean run
 include ../Makefile
