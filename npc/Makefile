@@ -23,7 +23,7 @@ CSRCS += $(SRC_AUTO_BIND)
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 #I add the choice to choose if run nvboard
-RUN_NVBOARD ?= 1
+RUN_NVBOARD ?= 0
 
 ifeq ($(RUN_NVBOARD), 1)
 # rules for NVBoard
