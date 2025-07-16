@@ -15,27 +15,40 @@ default: $(BIN)
 $(BUILD_DIR):
 		mkdir -p $@
 
-# constraint file
-SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
-$(SRC_AUTO_BIND): $(NXDC_FILES) | $(BUILD_DIR)
-	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
-
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+CSRCS = $(abspath ./csrc/$(TOPNAME).cpp)
 CSRCS += $(SRC_AUTO_BIND)
 
+# constraint file
+SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
+#I add the choice to choose if run nvboard
+RUN_NVBOARD ?= 0
+
+ifeq ($(RUN_NVBOARD), 1)
 # rules for NVBoard
+$(SRC_AUTO_BIND): $(NXDC_FILES) | $(BUILD_DIR)
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
 include $(NVBOARD_HOME)/scripts/nvboard.mk
+sim: $(BIN)
+	@echo "=== doing git_commit ...==="
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@echo "=== finish git_commit! ==="
+	@echo "Running simulation with NVBoard..."
+	@$(BIN)
+else
+$(SRC_AUTO_BIND): | $(BUILD_DIR)
+	@echo "Skipping pin binding (BIND_PINS=0)"
+	touch $@  
+sim: $(BIN)
+	@echo "=== doing git_commit ...==="
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@echo "=== finish git_commit! ==="
+	@echo "Running simulation (without NVBoard)..."
+	@$(BIN)
+endif
 
 # rules for verilator
-sim: $(BIN)
-	@echo "=== Debug: Before git_commit ==="
-	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "=== Debug: After git_commit ==="
-	@echo "Running simulation..."
-	@$(BIN)
-
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
