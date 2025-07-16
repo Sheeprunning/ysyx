@@ -11,7 +11,7 @@ VerilatedVcdC* tfp = NULL;
 static Vmux21* top;
 
 void print(){
-    cout<<"!!!!s:"<<top->s<<"a:"<<top->a<<"b:"<<top->b<<endl;
+    cout<<"!!!!s:"<<(int)top->s<<"a:"<<top->a<<"b:"<<top->b<<endl;
 }
 void step_and_dump_wave(){
   top->eval();
