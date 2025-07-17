@@ -1,6 +1,6 @@
 TOPNAME = top
 NXDC_FILES = constr/top.nxdc
-INC_PATH ?=
+INC_PATH ?=/vsrc
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --build -cc  --trace --Wall\
@@ -22,9 +22,11 @@ CSRCS += $(SRC_AUTO_BIND)
 
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
-#I add the choice to choose if run nvboard
-RUN_NVBOARD ?= 0
 
+#I add the choice to choose if run nvboard
+RUN_NVBOARD ?= 1
+
+#run nvboard
 ifeq ($(RUN_NVBOARD), 1)
 # rules for NVBoard
 $(SRC_AUTO_BIND): $(NXDC_FILES) | $(BUILD_DIR)
@@ -36,6 +38,7 @@ sim: $(BIN)
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation with NVBoard..."
 	@$(BIN)
+#don't run nvboard
 else
 $(SRC_AUTO_BIND): | $(BUILD_DIR)
 	@echo "Skipping pin binding (BIND_PINS=0)"
