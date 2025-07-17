@@ -37,6 +37,9 @@ int main() {
     sim_init();
     nvboard_bind_all_pins(top);
     nvboard_init();
-    while (!contextp->gotFinish()){}
+    while (!contextp->gotFinish()){
+        top->eval();
+        nvboard_update();
+    }
     sim_exit();
 }
