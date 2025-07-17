@@ -1,4 +1,4 @@
-TOPNAME = top
+TOPNAME ?= top
 NXDC_FILES = constr/top.nxdc
 INC_PATH ?=/vsrc
 
@@ -24,7 +24,11 @@ CSRCS += $(SRC_AUTO_BIND)
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 
 #I add the choice to choose if run nvboard
-RUN_NVBOARD ?= 1
+ifeq ($(findstring r,$(filter-out --%,$(MAKEFLAGS))),r)
+  RUN_NVBOARD = 1
+else
+  RUN_NVBOARD ?= 0
+endif
 
 #run nvboard
 ifeq ($(RUN_NVBOARD), 1)
