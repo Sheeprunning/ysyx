@@ -4,15 +4,20 @@ module pri_encode83(
   output f,
   output reg [2:0]y
   );
-  integer i;
-  assign f=(x==8'b0)?1:0;//输入指示位
+  assign f=(x != 8'b0) && en;//输入指示位
   always @(*) begin
-    if (en) begin
-      y = 0;
-      for( i = 0; i <= 7; i = i+1)
-          if(x[i] == 1)  y = i[2:0];
-    end
-    else  y = 0;
+    casez(x)
+        8'b1???????: y = 7;
+        8'b01??????: y = 6;
+        8'b001?????: y = 5;
+        8'b0001????: y = 4;
+        8'b00001???: y = 3;
+        8'b000001??: y = 2;
+        8'b0000001?: y = 1;
+        8'b00000001: y = 0;
+        default:  y = 0;
+    endcase
+    
   end
 
 endmodule

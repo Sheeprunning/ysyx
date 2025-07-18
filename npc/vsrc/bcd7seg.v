@@ -16,7 +16,7 @@ localparam [6:0] SEG_TABLE [0:9]={
 };//数字对应的数码管
 
 always @(*)begin
-  h=~SEG_TABLE[b];
+  h=~SEG_TABLE[b];//?nvboard的seg是低电平驱动？
 end
     
 
