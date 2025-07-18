@@ -1,8 +1,7 @@
 #include "verilated.h"
 #include "verilated_vcd_c.h"
+#include "Vpri_encode83.h"
 #include <nvboard.h>
-
-#include "Vtop.h"
 
 #include <iostream>
 using namespace std;

@@ -30,6 +30,7 @@ void sim_init(){
 void sim_exit(){
   step_and_dump_wave();
   tfp->close();
+  nvboard_quit();
   delete top;
   delete tfp;
 }
