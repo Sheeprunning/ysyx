@@ -11,7 +11,7 @@ reg t;
 always @(posedge clk)begin
     if(set)begin
       dout<=din;
-      t<=dout[4]^dout[3]^dout[2]^dout[0];
+      t<=din[4]^din[3]^din[2]^din[0];
     end
     else begin
         t<=dout[4]^dout[3]^dout[2]^dout[0];
