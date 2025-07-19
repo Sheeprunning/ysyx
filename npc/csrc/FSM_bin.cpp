@@ -2,6 +2,7 @@
 #include "verilated_vcd_c.h"
 #include "VFSM_bin.h"
 
+#include <nvboard.h>
 #include <iostream>
 using namespace std;
 
@@ -9,6 +10,7 @@ VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
 static TOP_NAME* top;
+void nvboard_bind_all_pins(TOP_NAME* dut);
 
 void step_and_dump_wave(){
   top->eval();
@@ -55,5 +57,11 @@ int main() {
     top->in=0;  single_cycle();
     top->in=0;  single_cycle();
     top->in=0;  single_cycle();
+    nvboard_bind_all_pins(top);
+    nvboard_init();
+    while (!contextp->gotFinish()){
+        top->eval();
+        nvboard_update();
+    }
   sim_exit();
 }

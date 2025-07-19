@@ -1,7 +1,8 @@
 module FSM_bin
 (
   input   clk, in, rst,
-  output reg out
+  output reg out,
+  output  [3:0]state
 );
 
 parameter[3:0] S0 = 0, S1 = 1, S2 = 2, S3 = 3,
@@ -10,7 +11,7 @@ parameter[3:0] S0 = 0, S1 = 1, S2 = 2, S3 = 3,
 wire [3:0] state_din, state_dout;
 wire state_wen;
 
-SimReg#(4,0) state(clk, rst, state_din, state_dout, state_wen);
+SimReg#(4,0) my_state(clk, rst, state_din, state_dout, state_wen);
 
 assign state_wen = 1;
 
@@ -37,5 +38,5 @@ MuxKeyWithDefault#(9, 4, 4) stateMux(.out(state_din), .key(state_dout), .default
   S7, in ? S8 : S1,
   S8, in ? S8 : S1
 }));
-
+assign state=state_dout;
 endmodule
