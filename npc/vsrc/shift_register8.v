@@ -13,7 +13,6 @@ always @(posedge clk)begin
     end
     else begin
         dout<=direction?{t,dout[7:1]}:{dout[6:0],t};
-        
     end
 end
 
