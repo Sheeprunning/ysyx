@@ -25,7 +25,11 @@ void sim_init(){
 }
 static void single_cycle() {
   top->clk = 0; top->eval();
+  contextp->timeInc(10);
+  tfp->dump(contextp->time());
   top->clk = 1; top->eval();
+  contextp->timeInc(10);
+  tfp->dump(contextp->time());
 }
 
 static void reset(int n) {
