@@ -2,7 +2,7 @@ module top(
     input clk,
     input rstn,
     input ps2_clk,ps2_data,
-    output [6:0] seg5,seg4,seg3,seg2,seg1,seg0,//seg7,seg6,
+    output [6:0] seg7,seg6,seg5,seg4,seg3,seg2,seg1,seg0,//
     output [7:0]data,
     output ready,overflow
 );
@@ -73,7 +73,7 @@ always@(*)begin
         default: key_char = 8'h00; // 未知键码
     endcase
 end
-
+reg [7:0]count;
 always @(posedge clk)begin
     if(rstn==0)begin
         fifo[0] <= 8'h00;
@@ -81,7 +81,7 @@ always @(posedge clk)begin
         fifo[2] <= 8'h00;
         fifo[3] <= 8'h00;
         pre <= 1'b0;
-
+        count<=0;
     end
     else begin
         pre<=ready;
@@ -91,6 +91,7 @@ always @(posedge clk)begin
             fifo[1] <= fifo[0];
             fifo[0] <= data;
         end
+        if (data==8'hF0)count<=1;
     end
 end
 wire [6:0]h[0:7];
@@ -108,13 +109,21 @@ generate
     
     end
 endgenerate
-bcd7seg bcd7seg3(
+bcd7seg bcd7seg4(
     .b(key_char[3:0]),
     .h(seg4)
 );
-bcd7seg bcd7seg2(
+bcd7seg bcd7seg5(
     .b(key_char[7:4]),
     .h(seg5)
+);
+bcd7seg bcd7seg6(
+    .b(count[3:0]),
+    .h(seg6)
+);
+bcd7seg bcd7seg7(
+    .b(count[7:4]),
+    .h(seg7)
 );
 assign seg0=h[0];
 assign seg1=h[1];
