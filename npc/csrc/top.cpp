@@ -60,6 +60,7 @@ int main() {
     reset();
     while (!contextp->gotFinish()){
         top->eval();
+        single_cycle();
         nvboard_update();
     }
     sim_exit();

@@ -45,11 +45,11 @@ generate
     for(i=0;i<2;i++)begin:SEG
         bcd7seg bcd7seg1(
             .b(fifo[i][3:0]),
-            .h(h[i])
+            .h(h[2*i])
         );
         bcd7seg bcd7seg2(
             .b(fifo[i][7:4]),
-            .h(h[i])
+            .h(h[2*i+1])
         );
     
     end
