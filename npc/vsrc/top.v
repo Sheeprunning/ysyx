@@ -4,7 +4,7 @@ module top(
     input ps2_clk,ps2_data,
     output [6:0] seg7,seg6,seg5,seg4,seg3,seg2,seg1,seg0,//
     output [7:0]data,
-    output ready,overflow
+    output ready,overflow//这两灯一直不亮，可能是clk太快，ready只有一个周期会是1，肉眼很难察觉
 );
 wire nextdata_n = ~ready;
 ps2_keyboard ps2(
