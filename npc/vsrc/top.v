@@ -22,7 +22,7 @@ reg [7:0]fifo[0:3];//存扫描码
 reg pre;
 reg [7:0]key_char;
 always@(*)begin
-  case (data)
+  case (fifo[0])
         8'h1C: key_char = "A";  // 8'h41 (ASCII 'A')
         8'h32: key_char = "B";  // 8'h42
         8'h21: key_char = "C";  // 8'h43
