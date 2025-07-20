@@ -91,7 +91,7 @@ always @(posedge clk)begin
             fifo[1] <= fifo[0];
             fifo[0] <= data;
         end
-        if (data==8'hF0)count<=count+1;
+        if (data==8'hF0&&ready==1)count<=count+1;
     end
 end
 wire [6:0]h[0:7];
