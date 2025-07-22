@@ -134,7 +134,7 @@ static bool make_token(char *e) {
 }
 
 bool check_parentheses(int p, int q) {
-  return (strcmp(tokens[p].str , "(") && strcmp( tokens[q].str , ")" )); 
+  return (strcmp(tokens[p].str , "(") == 0 && strcmp( tokens[q].str , ")") == 0); 
 }
 
 int find_main_operator(int p, int q) {//AI辅助生成
@@ -180,7 +180,7 @@ char* eval(int p, int q) {
     char op = *(tokens[find_main_operator(p,q)].str);
     int val1,val2;
     sscanf(eval(p, op - 1),"%d",&val1);
-    sscanf(eval(op + 1, q),"%d",&val1);
+    sscanf(eval(op + 1, q),"%d",&val2);
     int reslut;
     char *r=malloc(32*sizeof(char));
 
