@@ -54,6 +54,13 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+static int cmd_p(char *args) {
+  bool flag = true;
+  bool *success = &flag;
+  expr(args,success);
+  return flag;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -66,7 +73,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  {"p", "Caculate a expression", cmd_p}
 };
 
 #define NR_CMD ARRLEN(cmd_table)

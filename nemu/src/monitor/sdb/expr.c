@@ -24,7 +24,7 @@ enum {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-
+  TK_PLUS, TK_SUB, TK_MUL, TK_DIV, TK_L_PRS, TK_R_PRS, TK_NUMS
 };
 
 static struct rule {
@@ -37,11 +37,17 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
+  {"\\(", TK_L_PRS},
+  {"\\)", TK_R_PRS},
+  {"\\*", TK_MUL},
+  {"/", TK_DIV},
+  {"\\+", TK_PLUS},         // plus
+  {"-", TK_SUB}, 
   {"==", TK_EQ},        // equal
+  {"\\d", TK_NUMS}
 };
 
-#define NR_REGEX ARRLEN(rules)
+#define NR_REGEX ARRLEN(rules)//rules数组长度
 
 static regex_t re[NR_REGEX] = {};
 
@@ -54,7 +60,7 @@ void init_regex() {
   int ret;
 
   for (i = 0; i < NR_REGEX; i ++) {
-    ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
+    ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);//编译正则表达式,将rule[i].regex转为相应格式存在re
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
       panic("regex compilation failed: %s\n%s", error_msg, rules[i].regex);
@@ -81,8 +87,10 @@ static bool make_token(char *e) {
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
+      /*匹配正则表达式
+      int regexec (regex_t *compiled, char *string, size_t nmatch, regmatch_t match_ptr [], int eflags)*/
         char *substr_start = e + position;
-        int substr_len = pmatch.rm_eo;
+        int substr_len = pmatch.rm_eo;//rm_so 存放匹配文本串在目标串中的开始位置，rm_eo 存放结束位置
 
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
@@ -93,9 +101,21 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
         switch (rules[i].token_type) {
-          default: TODO();
+          case TK_PLUS:case TK_SUB: case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS:
+            tokens[nr_token].type=rules[i].token_type;   
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            tokens[nr_token].str[substr_len]='\0';
+            nr_token++;
+            break;
+          case TK_NUMS:
+            tokens[nr_token].type=rules[i].token_type;   
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            tokens[nr_token].str[substr_len]='\0';
+            nr_token++;
+            break;
+          case TK_NOTYPE:break;
+          default: printf("Unknown token type at position %d\n", position);TODO();break;
         }
 
         break;
@@ -120,6 +140,8 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   TODO();
-
+  for(int i=0;i<nr_token;i++){
+    printf("%s ",tokens[i].str);
+  }
   return 0;
 }
