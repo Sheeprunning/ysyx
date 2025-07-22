@@ -159,6 +159,9 @@ int find_main_operator(int p, int q) {//AI辅助生成
 }
 
 char* eval(int p, int q) {
+  for(int i=p;i<q;i++){
+    printf("%s",tokens[i].str);
+  }
   if (p > q) {
     printf("The expression is false!");
     return NULL;
