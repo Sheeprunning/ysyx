@@ -44,7 +44,7 @@ static struct rule {
   {"\\+", TK_PLUS},         // plus
   {"-", TK_SUB}, 
   {"==", TK_EQ},        // equal
-  {"\\d", TK_NUMS}
+  {"[0-9]+", TK_NUMS}
 };
 
 #define NR_REGEX ARRLEN(rules)//rules数组长度
