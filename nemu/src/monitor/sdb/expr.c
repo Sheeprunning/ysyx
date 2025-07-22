@@ -139,7 +139,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  //TODO();
   for(int i=0;i<nr_token;i++){
     printf("%s ",tokens[i].str);
   }
