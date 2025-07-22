@@ -14,7 +14,9 @@
 ***************************************************************************************/
 
 #include <isa.h>
-
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
@@ -131,7 +133,68 @@ static bool make_token(char *e) {
   return true;
 }
 
+bool check_parentheses(int p, int q) {
+  return (strcmp(tokens[p].str , "(") && strcmp( tokens[q].str , ")" )); 
+}
 
+int find_main_operator(int p, int q) {//AI辅助生成
+    int paren_level = 0;
+    int main_op = p; // 默认第一个运算符（实际需遍历找优先级最低的）
+    for (int i = p; i <= q; i++) {
+        if (strcmp(tokens[i].str, "(") == 0) paren_level++;
+        else if (strcmp(tokens[i].str, ")") == 0) paren_level--;
+        else if (paren_level == 0) {
+            // 根据运算符优先级更新 main_op
+            if (strcmp(tokens[i].str, "+") == 0 || strcmp(tokens[i].str, "-") == 0) {
+                main_op = i; // 加减优先级最低
+            } else if ((strcmp(tokens[i].str, "*") == 0 || strcmp(tokens[i].str, "/") == 0) && 
+                      (main_op == p || 
+                       strcmp(tokens[main_op].str, "+") == 0 || 
+                       strcmp(tokens[main_op].str, "-") == 0)) {
+                main_op = i; // 乘除优先级高于加减
+            }
+        }
+    }
+    return main_op;
+}
+
+char* eval(int p, int q) {
+  if (p > q) {
+    printf("The expression is false!");
+    return NULL;
+  }
+  else if (p == q) {
+    /* Single token.
+     * For now this token should be a number.
+     * Return the value of the number.
+     */
+    return tokens[p].str;
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  else {
+    char op = *(tokens[find_main_operator(p,q)].str);
+    int val1,val2;
+    sscanf(eval(p, op - 1),"%d",&val1);
+    sscanf(eval(op + 1, q),"%d",&val1);
+    int reslut;
+    char *r=malloc(32*sizeof(char));
+
+    switch (op) {
+      case '+': reslut = val1 + val2;
+      case '-': reslut = val1 - val2;
+      case '*': reslut = val1 * val2;
+      case '/': reslut = val1 / val2;
+      default: assert(0);
+    }
+    sprintf(r,"%d",reslut);
+    return r;
+  }
+}
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
@@ -139,9 +202,10 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  //TODO();
+  char * r = eval(0,nr_token-1);
   for(int i=0;i<nr_token;i++){
     printf("%s",tokens[i].str);
   }
+  free(r);
   return 0;
 }
