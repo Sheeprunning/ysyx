@@ -38,8 +38,7 @@ int test(){
   
     while (fscanf(file, "%u %s\n", &num, str) == 2) {
       printf("%s = %u 计算结果为", str,num);  // 输出第二个字段（字符串）
-      char *e=str;
-      expr(e,success);
+      expr(str,success);
     }
  
     fclose(file);
@@ -47,14 +46,14 @@ int test(){
 }
 
 
-int main(int argc, char *argv[]) {test();
+int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
 #else
   init_monitor(argc, argv);
 #endif
-
+test();
   /* Start engine. */
   engine_start();
 
