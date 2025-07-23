@@ -139,7 +139,7 @@ bool check_parentheses(int p, int q) {
 
 int find_main_operator(int p, int q) {//AI辅助生成
     int paren_level = 0;
-    int main_op = p; // 默认第一个运算符（实际需遍历找优先级最低的）
+    int main_op = -1; // 默认第一个运算符（实际需遍历找优先级最低的）
     for (int i = p; i <= q; i++) {
         if (strcmp(tokens[i].str, "(") == 0) paren_level++;
         else if (strcmp(tokens[i].str, ")") == 0) paren_level--;
@@ -148,7 +148,7 @@ int find_main_operator(int p, int q) {//AI辅助生成
             if (strcmp(tokens[i].str, "+") == 0 || strcmp(tokens[i].str, "-") == 0) {
                 main_op = i; // 加减优先级最低
             } else if ((strcmp(tokens[i].str, "*") == 0 || strcmp(tokens[i].str, "/") == 0) && 
-                      (main_op == p || 
+                      (main_op == -1 || 
                        strcmp(tokens[main_op].str, "+") == 0 || 
                        strcmp(tokens[main_op].str, "-") == 0)) {
                 main_op = i; // 乘除优先级高于加减
@@ -180,19 +180,24 @@ char* eval(int p, int q) {
     return eval(p + 1, q - 1);
   }
   else {
-    char op = *(tokens[find_main_operator(p,q)].str);
+    int op_pos = find_main_operator(p, q);
+    if (op_pos == -1) {
+      printf("No operator found!");
+      return NULL;
+     }
     int val1,val2;
-    sscanf(eval(p, op - 1),"%d",&val1);
-    sscanf(eval(op + 1, q),"%d",&val2);
+    char op = *(tokens[op_pos].str);
+    sscanf(eval(p, op_pos - 1),"%d",&val1);
+    sscanf(eval(op_pos + 1, q),"%d",&val2);
     int reslut;
     char *r=malloc(32*sizeof(char));
 
     switch (op) {
-      case '+': reslut = val1 + val2;
-      case '-': reslut = val1 - val2;
-      case '*': reslut = val1 * val2;
-      case '/': reslut = val1 / val2;
-      default: assert(0);
+      case '+': reslut = val1 + val2;  break;
+      case '-': reslut = val1 - val2;  break;
+      case '*': reslut = val1 * val2;  break;
+      case '/': reslut = val1 / val2;  break;
+      default: assert(0);  break;
     }
     sprintf(r,"%d",reslut);
     return r;
