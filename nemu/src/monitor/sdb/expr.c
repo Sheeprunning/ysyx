@@ -204,7 +204,9 @@ char* eval(int p, int q) {
      * For now this token should be a number.
      * Return the value of the number.
      */
-    return tokens[p].str;
+    char *r = malloc(32 * sizeof(char));
+        strcpy(r, tokens[p].str);
+        return r;
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
@@ -270,6 +272,6 @@ word_t expr(char *e, bool *success) {
     printf("Wrong caculation!Please try again!\n");
     *success= false;
   } 
-  //if(r)free(r);
+  free(r);
   return 0;
 }
