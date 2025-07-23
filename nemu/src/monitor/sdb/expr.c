@@ -270,6 +270,6 @@ word_t expr(char *e, bool *success) {
     printf("Wrong caculation!Please try again!\n");
     *success= false;
   } 
-  free(r);
+  if(r)free(r);
   return 0;
 }
