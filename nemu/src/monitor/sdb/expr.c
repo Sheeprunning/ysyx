@@ -39,6 +39,8 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
+  {"\\n+", TK_NOTYPE},   // 换行符
+  {"\"+", TK_NOTYPE},
   {"\\(", TK_L_PRS},
   {"\\)", TK_R_PRS},
   {"\\*", TK_MUL},
