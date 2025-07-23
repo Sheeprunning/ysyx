@@ -32,14 +32,13 @@ int test(){
     }
  
     unsigned int num;
-    char c='a';
-    char *str=&c;  
+    char str[256];  
     bool flag = true;
     bool *success = &flag;
   
     while (fscanf(file, "%u %s\n", &num, str) == 2) {
-      printf("%s = %u 计算结果为", str,num);  
-      //expr("1+1",success);
+      printf("%s = %u 计算结果为", str,num);  // 输出第二个字段（字符串）
+      //expr(str,success);
     }
  
     fclose(file);
