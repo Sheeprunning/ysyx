@@ -159,9 +159,6 @@ int find_main_operator(int p, int q) {//AI辅助生成
 }
 
 char* eval(int p, int q) {
-  for(int i=p;i<q;i++){
-    printf("%s",tokens[i].str);
-  }
   if (p > q) {
     printf("The expression is false!");
     return NULL;
@@ -211,10 +208,8 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   char * r = eval(0,nr_token-1);
-  printf("%s\n",r);
-  for(int i=0;i<nr_token;i++){
-    printf("%s",tokens[i].str);
-  }
+  if(r)printf("%s\n",r);
+  else printf("Wrong caculation!Please try again!");
   free(r);
   return 0;
 }
