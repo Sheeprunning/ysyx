@@ -46,7 +46,7 @@ int test(){
 }
 
 
-int main(int argc, char *argv[]) {test();
+int main(int argc, char *argv[]) {//test();
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
