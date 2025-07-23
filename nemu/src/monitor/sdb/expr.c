@@ -91,6 +91,7 @@ static bool make_token(char *e) {
   memset(tokens, 0, sizeof(tokens));
 
   while (e[position] != '\0') {
+    if(nr_token==32)return false;
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
@@ -122,7 +123,7 @@ static bool make_token(char *e) {
             nr_token++;
             break;
           case TK_NOTYPE:break;
-          default: printf("Unknown token type at position %d\n", position);TODO();break;
+          default: printf("Unknown token type at position %d : %c\n", position,*(position+e));TODO();break;
         }
 
         break;
@@ -196,7 +197,7 @@ int find_main_operator(int p, int q) {//AI辅助生成
 
 char* eval(int p, int q) {
   if (p > q) {
-    printf("The expression is false!\n");
+    printf("The expression is false! or too long\n");
     return NULL;
   }
   else if (p == q) {
