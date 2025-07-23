@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <string.h>
 
-#define MAX_INT 10000//设置为10000减少乘法溢出等问题
+#define MAX_INT 10//设置为10减少乘法溢出等问题
 // this should be enough
 static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
@@ -33,14 +33,14 @@ static char *code_format =
 "}";
 static int buff_end=0;
 static int choose_with_max(int max) {
-    return 1+rand() % max;
+    return rand() % max;
 }
 static int choose_without_max() {
     return rand() % MAX_INT; 
 }
 
 static void gen(char s){
-  if (buff_end >= 65536) {
+  if (buff_end > 65536-1) {
         printf("生成的表达式过长！\n");
         exit(1);
     }
@@ -62,7 +62,7 @@ static void gen_num(){
 }
 
 static void gen_rand_op(){
-  switch (choose_with_max(4)){
+  switch (choose_with_max(3)){//先忽略除法。
     case 0: gen('+');break;
     case 1: gen('-');break;
     case 2: gen('*');break;
@@ -71,7 +71,7 @@ static void gen_rand_op(){
 }
 
 static int gen_rand_expr() {
-  if (buff_end >= 65536) {//表达式过长
+  if (buff_end == 65534) {//表达式过长
         return -1;
     }
   switch (choose_with_max(3)) {
