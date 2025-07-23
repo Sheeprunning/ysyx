@@ -38,7 +38,8 @@ int test(){
   
     while (fscanf(file, "%u %s\n", &num, str) == 2) {
       printf("%s = %u 计算结果为", str,num);  // 输出第二个字段（字符串）
-      expr(str,success);
+      char *e=str;
+      expr(e,success);
     }
  
     fclose(file);

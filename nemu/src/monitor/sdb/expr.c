@@ -192,7 +192,7 @@ int find_main_operator(int p, int q) {//AI辅助生成
     return main_op;
 }
 
-char* eval(int p, int q) {printf("666");
+char* eval(int p, int q) {
   if (p > q) {
     printf("The expression is false!\n");
     return NULL;
