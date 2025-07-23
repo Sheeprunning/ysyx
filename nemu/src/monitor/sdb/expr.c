@@ -134,7 +134,38 @@ static bool make_token(char *e) {
 }
 
 bool check_parentheses(int p, int q) {
-  return (strcmp(tokens[p].str , "(") == 0 && strcmp( tokens[q].str , ")") == 0); 
+  // 检查首尾是否是 '(' 和 ')'
+    if (strcmp(tokens[p].str, "(") != 0 || strcmp(tokens[q].str, ")") != 0) {
+        return false;
+    }
+    // 检查中间部分是否括号匹配
+    int balance = 1;  // 因为 tokens[p] 已经是 '('，所以初始 balance=1
+    for (int i = p + 1; i < q; i++) {
+        if (strcmp(tokens[i].str, "(") == 0) {
+            balance++;
+        } else if (strcmp(tokens[i].str, ")") == 0) {
+            balance--;
+            if (balance <= 0) {
+                return false;  // 中间出现不匹配的情况
+            }
+        }
+    }
+    return (balance == 1);  // 最终 balance=1，因为 tokens[q] 是 ')'
+}
+
+bool check_parentheses_match(int p, int q) {
+    int balance = 0;  // 用于跟踪括号的平衡情况
+    for (int i = p; i <= q; i++) {
+        if (strcmp(tokens[i].str, "(") == 0) {
+            balance++;  // 遇到 '('，平衡+1
+        } else if (strcmp(tokens[i].str, ")") == 0) {
+            balance--;  // 遇到 ')'，平衡-1
+            if (balance < 0) {
+                return false;  // 出现 ")" 比 "(" 多的情况，不匹配
+            }
+        }
+    }
+    return (balance == 0);  // 最终平衡=0，说明匹配
 }
 
 int find_main_operator(int p, int q) {//AI辅助生成
@@ -160,7 +191,7 @@ int find_main_operator(int p, int q) {//AI辅助生成
 
 char* eval(int p, int q) {
   if (p > q) {
-    printf("The expression is false!");
+    printf("The expression is false!\n");
     return NULL;
   }
   else if (p == q) {
@@ -174,12 +205,16 @@ char* eval(int p, int q) {
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
+    if (!check_parentheses_match(p + 1, q - 1)) {
+        printf("Mismatched parentheses inside!\n");
+        return NULL;
+    }
     return eval(p + 1, q - 1);
   }
   else {
     int op_pos = find_main_operator(p, q);
     if (op_pos == -1) {
-      printf("No operator found!");
+      printf("No operator found!\n");
       return NULL;
      }
     char* val1_str,* val2_str;
@@ -215,7 +250,10 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   char * r = eval(0,nr_token-1);
   if(r)printf("%s\n",r);
-  else printf("Wrong caculation!Please try again!");
+  else{
+    printf("Wrong caculation!Please try again!\n");
+    *success= false;
+  } 
   free(r);
   return 0;
 }

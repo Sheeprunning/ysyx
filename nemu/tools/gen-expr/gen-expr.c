@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <string.h>
 
+#define MAX_INT 10000//设置为10000减少乘法溢出等问题
 // this should be enough
 static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
@@ -30,9 +31,55 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
+static int buff_end=0;
+static int choose_with_max(int max) {
+    return 1+rand() % max;
+}
+static int choose_without_max() {
+    return rand() % MAX_INT; 
+}
 
-static void gen_rand_expr() {
-  buf[0] = '\0';
+static void gen(char s){
+  if (buff_end >= 65536) {
+        printf("生成的表达式过长！\n");
+        exit(1);
+    }
+  buf[buff_end]=s;
+  buff_end++;
+  buf[buff_end]='\0';
+}
+
+static void gen_num(){
+  int num = choose_without_max();
+  if (num < 0) {
+      num = -num;
+    }
+    char num_str[32];
+    sprintf(num_str, "%d", num);
+    for (int i = 0; num_str[i] != '\0'; i++) {
+        gen(num_str[i]);
+    }
+}
+
+static void gen_rand_op(){
+  switch (choose_with_max(4)){
+    case 0: gen('+');break;
+    case 1: gen('-');break;
+    case 2: gen('*');break;
+    case 3: gen('/');break;
+  }
+}
+
+static int gen_rand_expr() {
+  if (buff_end >= 65536) {//表达式过长
+        return -1;
+    }
+  switch (choose_with_max(3)) {
+    case 0: gen_num(); break;
+    case 1: gen('('); gen_rand_expr(); gen(')'); break;
+    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  }
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -44,7 +91,9 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
-    gen_rand_expr();
+    buff_end=0;
+    buf[0] = '\0';
+    if(gen_rand_expr()!=0)continue;
 
     sprintf(code_buf, code_format, buf);
 
@@ -60,7 +109,11 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
 
     int result;
-    ret = fscanf(fp, "%d", &result);
+    if (fscanf(fp, "%d", &result) != 1) {
+      //printf("Error: Expression '%s' is invalid!\n", buf);
+      pclose(fp);
+      continue;
+    }
     pclose(fp);
 
     printf("%u %s\n", result, buf);

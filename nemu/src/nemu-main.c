@@ -14,13 +14,36 @@
 ***************************************************************************************/
 
 #include <common.h>
+#include "monitor/sdb/sdb.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-int main(int argc, char *argv[]) {
+int test(){
+  FILE *file=fopen("tools/gen-expr/input","r");
+  if (file == NULL) {
+        perror("Failed to open file");
+        return -1;
+    }
+ 
+    unsigned int num;
+    char str[256];  
+ 
+    while (fscanf(file, "%u %s\n", &num, str) == 2) {
+        printf("String: '%s'\n", str);  // 输出第二个字段（字符串）
+    }
+ 
+    fclose(file);
+    return 0;
+}
+
+
+int main(int argc, char *argv[]) {test();
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
