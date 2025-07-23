@@ -32,7 +32,8 @@ int test(){
     }
  
     unsigned int num;
-    char str[256];  
+    char c='a';
+    char *str=&c;  
     bool flag = true;
     bool *success = &flag;
   
@@ -46,7 +47,7 @@ int test(){
 }
 
 
-int main(int argc, char *argv[]) {//test();
+int main(int argc, char *argv[]) {test();
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
