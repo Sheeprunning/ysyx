@@ -58,7 +58,7 @@ static int cmd_q(char *args) {
 
 static int cmd_p(char *args) {
   bool success = true;
-  expr(args,&success);
+  printf("%d",expr(args,&success));
   return success;
 }
 
@@ -84,7 +84,7 @@ static int cmd_info(char *args){
 static int cmd_x(char *args){
   char * len_str = strtok(args, " ");
   int len;
-  if(sscanf(len_str,"%d",&len)!=1){
+  if(sscanf(len_str,"%x",&len)!=1){
     printf("The format of %s is wrong!",len_str);
     return 0;
   }
