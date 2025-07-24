@@ -273,8 +273,12 @@ char* eval(int p, int q) {
     if(!val1_str || !val2_str){
       return NULL;
     }
-    sscanf(val1_str,"%d",&val1);
-    sscanf(val2_str,"%d",&val2);
+    if(val1_str[0]=='0'){
+      sscanf(val1_str,"%x",&val1);
+    }else sscanf(val1_str,"%d",&val1);
+    if(val2_str[0]=='0'){
+      sscanf(val2_str,"%x",&val2);
+    }else sscanf(val2_str,"%d",&val2);
     int reslut;
     char *r=malloc(32*sizeof(char));
 
