@@ -32,6 +32,7 @@ static char *code_format =
 "  return 0; "
 "}";
 static int buff_end=0;
+static int token_len=0;
 static int choose_with_max(int max) {
     return rand() % max;
 }
@@ -40,16 +41,14 @@ static int choose_without_max() {
 }
 
 static void gen(char s){
-  if (buff_end > 65536-1) {
-        printf("生成的表达式过长！\n");
-        exit(1);
-    }
+  token_len++;
   buf[buff_end]=s;
   buff_end++;
   buf[buff_end]='\0';
 }
 
 static void gen_num(){
+  token_len++;
   int num = choose_without_max();
   if (num < 0) {
       num = -num;
@@ -71,13 +70,13 @@ static void gen_rand_op(){
 }
 
 static int gen_rand_expr() {
-  if (buff_end == 65534) {//表达式过长
-        return -1;
-    }
   switch (choose_with_max(3)) {
     case 0: gen_num(); break;
     case 1: gen('('); gen_rand_expr(); gen(')'); break;
     default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  }
+  if (buff_end == 65534 ||token_len>=32) {//表达式过长
+        return -1;
   }
   return 0;
 }
@@ -92,6 +91,7 @@ int main(int argc, char *argv[]) {
   int i;
   for (i = 0; i < loop; i ++) {
     buff_end=0;
+    token_len=0;
     buf[0] = '\0';
     if(gen_rand_expr()!=0)continue;
 
