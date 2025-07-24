@@ -28,7 +28,8 @@ enum {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-  TK_PLUS, TK_SUB, TK_MUL, TK_DIV, TK_L_PRS, TK_R_PRS, TK_NUMS
+  TK_PLUS, TK_SUB, TK_MUL, TK_DIV, TK_L_PRS, TK_R_PRS, TK_NUMS,\
+  TK_SIGN_P,TK_SIGN_N
 };
 
 static struct rule {
@@ -110,16 +111,53 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
         switch (rules[i].token_type) {
-          case TK_PLUS:case TK_SUB: case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS:
+          case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS:
             tokens[nr_token].type=rules[i].token_type;   
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             tokens[nr_token].str[substr_len]='\0';
             nr_token++;
             break;
+          case TK_SUB: 
+            if(nr_token==0){
+              tokens[nr_token].type=TK_SIGN_N;//认定该减号为负号
+            }else if(tokens[nr_token-1].type!=TK_NUMS){//前一个不是数字
+              if(tokens[nr_token].type==TK_SIGN_N ||tokens[nr_token].type==TK_SIGN_P){//之前已经认定为是符号
+                printf("The expression is wrong!");
+                return false;
+              }else tokens[nr_token].type=TK_SIGN_N;//认定该减号为负号
+            }else{//普通减号
+              tokens[nr_token].type=rules[i].token_type;   
+              strncpy(tokens[nr_token].str, substr_start, substr_len);
+              tokens[nr_token].str[substr_len]='\0';
+              nr_token++;
+            }break;
+            
+          case TK_PLUS:
+            if(nr_token==0){
+              tokens[nr_token].type=TK_SIGN_P;//认定该减号为负号
+            }else if(tokens[nr_token-1].type!=TK_NUMS){//前一个不是数字
+              if(tokens[nr_token].type==TK_SIGN_N ||tokens[nr_token].type==TK_SIGN_P){//之前已经认定为是符号
+                printf("The expression is wrong!");
+                return false;
+              }else tokens[nr_token].type=TK_SIGN_P;//认定该减号为正号
+            }else{//普通加号
+              tokens[nr_token].type=rules[i].token_type;   
+              strncpy(tokens[nr_token].str, substr_start, substr_len);
+              tokens[nr_token].str[substr_len]='\0';
+              nr_token++;
+            }break;
+
           case TK_NUMS:
+          if(tokens[nr_token].type==TK_SIGN_N){//判定为负数
+            tokens[nr_token].str[0] = '-';
+            strncpy(tokens[nr_token].str + 1, substr_start, substr_len);
+            tokens[nr_token].str[1 + substr_len] = '\0';
+            
+          }else{//正数或者普通数
             tokens[nr_token].type=rules[i].token_type;   
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             tokens[nr_token].str[substr_len]='\0';
+          }
             nr_token++;
             break;
           case TK_NOTYPE:break;

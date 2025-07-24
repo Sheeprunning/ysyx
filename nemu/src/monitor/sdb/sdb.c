@@ -58,7 +58,7 @@ static int cmd_q(char *args) {
 
 static int cmd_p(char *args) {
   bool success = true;
-  printf("%d",expr(args,&success));
+  printf("%d\n",expr(args,&success));
   return success;
 }
 
@@ -83,18 +83,18 @@ static int cmd_info(char *args){
 
 static int cmd_x(char *args){
   char * len_str = strtok(args, " ");
+  char *exp = len_str +strlen(len_str) + 1;
   int len;
-  if(sscanf(len_str,"%x",&len)!=1){
+  if(sscanf(len_str,"%d",&len)!=1){
     printf("The format of %s is wrong!",len_str);
     return 0;
   }
-  char *exp = len_str +strlen(len_str) + 1;
   if (exp == NULL) {
-      printf("Error: Missing expression argument!\n");//没有提供表达式参数
+      printf("Error: Missing expression argument or the expression is wrong\n");//没有提供表达式参数
       return 0;
   }
   bool success = true;
-  int addr = expr(exp,&success);
+  int addr = expr(exp,&success);//有点复杂。如果输入的是16进制，要如何计算？
   if (!success) {
         printf("Error: Invalid expression '%s'\n", exp);//计算表达式出错
         return 0;
