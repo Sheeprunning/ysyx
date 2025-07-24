@@ -212,9 +212,9 @@ bool check_parentheses_match(int p, int q) {
     return (balance == 0);  // 最终平衡=0，说明匹配
 }
 
-int find_main_operator(int p, int q) {//AI辅助生成
+int find_main_operator(int p, int q) {
     int paren_level = 0;
-    int main_op = -1; // 默认第一个运算符（实际需遍历找优先级最低的）
+    int main_op = -1; 
     for (int i = p; i <= q; i++) {
         if (strcmp(tokens[i].str, "(") == 0) paren_level++;
         else if (strcmp(tokens[i].str, ")") == 0) paren_level--;
@@ -287,6 +287,13 @@ char* eval(int p, int q) {
     return r;
   }
 }
+
+void print_token(){
+  for(int i=0;i<nr_token;i++){
+    printf("%s",tokens[i].str);
+  }
+}
+
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
