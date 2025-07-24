@@ -261,7 +261,9 @@ word_t expr(char *e, bool *success) {
   else{
     printf("Wrong caculation!Please try again!\n");
     *success= false;
-  } 
+  }
+  int result;
+  if(sscanf(r,"%d",&result)!=1){printf("Modify the str to int fail!");assert(0);} 
   free(r);
-  return 0;
+  return result;
 }

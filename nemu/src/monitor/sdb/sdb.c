@@ -20,6 +20,7 @@
 #include <utils.h>
 #include "sdb.h"
 #include "../src/isa/loongarch32r/local-include/reg.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
 
@@ -56,10 +57,9 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_p(char *args) {
-  bool flag = true;
-  bool *success = &flag;
-  expr(args,success);
-  return flag;
+  bool success = true;
+  expr(args,&success);
+  return success;
 }
 
 static int cmd_si(char *args){
@@ -81,6 +81,29 @@ static int cmd_info(char *args){
   return 0;
 }
 
+static int cmd_x(char *args){
+  char * len_str = strtok(args, " ");
+  int len;
+  if(sscanf(len_str,"%d",&len)!=1){
+    printf("The format of %s is wrong!",len_str);
+    return 0;
+  }
+  char *exp = len_str +strlen(len_str) + 1;
+  if (exp == NULL) {
+      printf("Error: Missing expression argument!\n");//没有提供表达式参数
+      return 0;
+  }
+  bool success = true;
+  int addr = expr(exp,&success);
+  if (!success) {
+        printf("Error: Invalid expression '%s'\n", exp);//计算表达式出错
+        return 0;
+    }
+  int data = paddr_read(addr, len);
+  printf("The data is %#x\n",data);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -95,6 +118,7 @@ static struct {
   /* TODO: Add more commands */
   {"si", "Execute the program n steps",cmd_si},
   {"info", "Show the status of register or watchpoint", cmd_info},
+  {"x", "Show the the data of memory ", cmd_x},
   {"p", "Caculate a expression", cmd_p}
 };
 
