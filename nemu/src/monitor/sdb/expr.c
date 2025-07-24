@@ -29,7 +29,7 @@ enum {
 
   /* TODO: Add more token types */
   TK_PLUS, TK_SUB, TK_MUL, TK_DIV, TK_L_PRS, TK_R_PRS, TK_NUMS,\
-  TK_SIGN_P,TK_SIGN_N
+  TK_SIGN_P,TK_SIGN_N,TK_0X
 };
 
 static struct rule {
@@ -46,6 +46,7 @@ static struct rule {
   {"\"+", TK_NOTYPE},
   {"\\(", TK_L_PRS},
   {"\\)", TK_R_PRS},
+  {"0x[0-9]+", TK_0X},
   {"\\*", TK_MUL},
   {"/", TK_DIV},
   {"\\+", TK_PLUS},         // plus
@@ -111,7 +112,7 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
         switch (rules[i].token_type) {
-          case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS:
+          case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS: case TK_0X:
             tokens[nr_token].type=rules[i].token_type;   
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             tokens[nr_token].str[substr_len]='\0';
@@ -300,7 +301,7 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  print_token();
+  //print_token();
   /* TODO: Insert codes to evaluate the expression. */
   char * r = eval(0,nr_token-1);
   if(!r){
