@@ -61,6 +61,16 @@ static int cmd_p(char *args) {
   return flag;
 }
 
+static int cmd_si(char *args){
+  int i=1;
+  if(!args) cpu_exec(1);
+  else{
+    sscanf(args,"%d",&i);
+    cpu_exec(i);
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -73,6 +83,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
+  {"si","Execute the program n steps",cmd_si},
   {"p", "Caculate a expression", cmd_p}
 };
 
