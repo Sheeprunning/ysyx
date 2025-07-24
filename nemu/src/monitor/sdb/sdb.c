@@ -65,8 +65,11 @@ static int cmd_si(char *args){
   int i=1;
   if(!args) cpu_exec(1);
   else{
-    sscanf(args,"%d",&i);
-    cpu_exec(i);
+    if(sscanf(args,"%d",&i)==1) 
+        cpu_exec(i);
+    else{
+        printf("The format of si is wrong!Please read the mannual or try again!\n");
+    }
   }
   return 0;
 }
