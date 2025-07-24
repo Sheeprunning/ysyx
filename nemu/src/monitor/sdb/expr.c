@@ -136,7 +136,6 @@ static bool make_token(char *e) {
             if(nr_token==0){
               tokens[nr_token].type=TK_SIGN_P;//认定该加号为正号
             }else if(tokens[nr_token-1].type!=TK_NUMS){//前一个不是数字
-              printf("正号");
               if(tokens[nr_token].type==TK_SIGN_N ||tokens[nr_token].type==TK_SIGN_P){//之前已经认定为是符号
                 printf("The expression is wrong!");
                 return false;
@@ -150,6 +149,7 @@ static bool make_token(char *e) {
 
           case TK_NUMS:
           if(tokens[nr_token].type==TK_SIGN_N){//判定为负数
+            tokens[nr_token].type=rules[i].token_type; 
             tokens[nr_token].str[0] = '-';
             strncpy(tokens[nr_token].str + 1, substr_start, substr_len);
             tokens[nr_token].str[1 + substr_len] = '\0';
