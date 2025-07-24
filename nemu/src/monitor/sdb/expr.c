@@ -249,18 +249,7 @@ char* eval(int p, int q) {
     return r;
   }
 }
-void clean_input(char *e) {
-    // 去除首尾空格和引号
-    size_t len = strlen(e);
-    while (len > 0 && isspace(e[len-1])) e[--len] = '\0';
-    while (isspace(*e)) memmove(e, e+1, len--);
-    if (len >= 2 && e[0] == '"' && e[len-1] == '"') {
-        memmove(e, e+1, len-2);
-        e[len-2] = '\0';
-    }
-}
 word_t expr(char *e, bool *success) {
-  clean_input(e);
   if (!make_token(e)) {
     *success = false;
     return 0;

@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include <utils.h>
 #include "sdb.h"
+#include "../src/isa/loongarch32r/local-include/reg.h"
 
 static int is_batch_mode = false;
 
@@ -74,6 +75,15 @@ static int cmd_si(char *args){
   return 0;
 }
 
+static int cmd_info(char *args){
+  if(strcmp(args,"r")==0){
+    for(int i = 0 ; i < 32 ; i++){
+      isa_reg_display();
+    }
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -86,7 +96,8 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-  {"si","Execute the program n steps",cmd_si},
+  {"si", "Execute the program n steps",cmd_si},
+  {"info", "Show the status of register or watchpoint", cmd_info},
   {"p", "Caculate a expression", cmd_p}
 };
 
