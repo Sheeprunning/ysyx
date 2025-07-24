@@ -46,7 +46,7 @@ static struct rule {
   {"\"+", TK_NOTYPE},
   {"\\(", TK_L_PRS},
   {"\\)", TK_R_PRS},
-  {"0x[0-9]+", TK_0X},
+  {"0[xX][0-9a-fA-F]+", TK_0X},
   {"\\*", TK_MUL},
   {"/", TK_DIV},
   {"\\+", TK_PLUS},         // plus
