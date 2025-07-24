@@ -76,11 +76,8 @@ static int cmd_si(char *args){
 }
 
 static int cmd_info(char *args){
-  if(strcmp(args,"r")==0){
-    for(int i = 0 ; i < 32 ; i++){
-      isa_reg_display();
-    }
-  }
+  if(strcmp(args,"r")==0)
+    isa_reg_display();
   return 0;
 }
 
