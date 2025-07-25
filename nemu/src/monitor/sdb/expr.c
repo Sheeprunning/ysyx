@@ -307,7 +307,6 @@ int find_main_operator(int p, int q) {
 
 char* eval(int p, int q) {
   if (p > q) {
-    printf("The expression is false! or too long\n");
     return NULL;
   }
   else if (p == q) {
@@ -368,7 +367,7 @@ char* eval(int p, int q) {
       case TK_L_OR: reslut = val1 || val2;  break;
       case TK_XOR: reslut = val1 ^ val2;  break;
       case TK_NOT: reslut =  !val2;  break;
-      case TK_DER: reslut = paddr_read(val2, 1); break;
+      case TK_DER: reslut = paddr_read(val2, 4); break;
       default: assert(0);  break;
     }
     sprintf(r,"%d",reslut);
