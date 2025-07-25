@@ -343,7 +343,7 @@ char* eval(int p, int q) {
     int val1,val2;
     int op = tokens[op_pos].type;
     val1_str=eval(p, op_pos - 1);
-    val2_str=eval(op_pos + 1, q);printf("%s\n",val2_str);
+    val2_str=eval(op_pos + 1, q);
     if(!val2_str){//val1有可能是非的计算
       return NULL;
     }
@@ -352,7 +352,7 @@ char* eval(int p, int q) {
     }else sscanf(val1_str,"%d",&val1);
     if(val2_str[0]=='0'){
       sscanf(val2_str,"%x",&val2);
-    }else sscanf(val2_str,"%d",&val2);
+    }else sscanf(val2_str,"%d",&val2);printf("%#x\n",val2);
     int reslut;
     char *r=malloc(32*sizeof(char));
 
@@ -379,7 +379,7 @@ char* eval(int p, int q) {
 
 void print_token(){
   for(int i=0;i<nr_token;i++){
-    printf("%s",tokens[i].str);
+    printf("第%d个计算单元为%s\n",i,tokens[i].str);
   }
 }
 
@@ -388,7 +388,7 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  //print_token();//输出token
+  print_token();//输出token
   /* TODO: Insert codes to evaluate the expression. */
   char * r = eval(0,nr_token-1);
   //printf("计算结果：%s\n",r);
