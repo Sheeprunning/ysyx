@@ -43,10 +43,10 @@ void new_wp(char *args){
   head = wp;
 
   bool success=true;
-  int data=expr(wp->wp_exp,&success);
+  //int data=expr(wp->wp_exp,&success);
   if(success){
     wp->wp_exp=args;
-    wp->value=data;
+    //wp->value=data;
   }
   return;
 }
