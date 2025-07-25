@@ -165,7 +165,7 @@ static bool make_token(char *e) {
               if(certain_type(tokens[nr_token].type)==2){//之前已经认定为是特殊符号
                 printf("The expression is wrong!");
                 return false;
-              }else tokens[nr_token].type=TK_DER;//认定该*号为der
+              }else tokens[nr_token++].type=TK_DER;//认定该*号为der
             }else{//普通乘号
               tokens[nr_token].type=rules[i].token_type;   
               strncpy(tokens[nr_token].str, substr_start, substr_len);
