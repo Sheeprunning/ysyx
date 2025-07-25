@@ -26,6 +26,10 @@ static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+void new_wp(char *args);
+void free_wp(WP *wp);
+WP* compare_watchpoint(bool *success);
+void show_watchpoint();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -79,6 +83,9 @@ static int cmd_si(char *args){
 static int cmd_info(char *args){
   if(strcmp(args,"r")==0)
     isa_reg_display();
+  else if(strcmp(args,"w")==0){
+    show_watchpoint();
+  }else printf("The argument of info is wrong!");
   return 0;
 }
 
@@ -105,6 +112,11 @@ static int cmd_x(char *args){
   return 0;
 }
 
+static int cmd_w(char *args){
+  new_wp(args);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -120,7 +132,8 @@ static struct {
   {"si", "Execute the program n steps",cmd_si},
   {"info", "Show the status of register or watchpoint", cmd_info},
   {"x", "Show the the data of memory ", cmd_x},
-  {"p", "Caculate a expression", cmd_p}
+  {"p", "Caculate a expression", cmd_p},
+  {"w", "Set a watchpoint", cmd_w}
 };
 
 #define NR_CMD ARRLEN(cmd_table)
