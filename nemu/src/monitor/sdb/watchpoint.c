@@ -64,6 +64,7 @@ void free_wp(WP *wp){
         head = head->next;  // 从head链表中移除
         wp->next = free_;   // 回收至free_链表
         free_ = wp;
+        free(free_->wp_exp);
         return;
     }
   while(temp->next!=wp&&temp->next!=NULL){
@@ -73,6 +74,7 @@ void free_wp(WP *wp){
     temp->next=temp->next->next;
     wp->next = free_;
     free_ = wp;
+    free(free_->wp_exp);
     return;
   }else{
     printf("WP not found in the active list!"); 
@@ -101,9 +103,10 @@ void show_watchpoint(){
     printf("There is not watchpoint!");
     return ;
   }
+  printf("--NO-- --EXP-- --VALUE--");
   WP * wp = head;
   while(wp != NULL){
-    printf("--%d exp:%s value:%#x\n",wp->NO,wp->wp_exp,wp->value);
+    printf("%6d %7s %#8x\n",wp->NO,wp->wp_exp,wp->value);
     wp=wp->next;
   }
 }
