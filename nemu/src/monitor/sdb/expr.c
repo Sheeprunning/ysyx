@@ -321,7 +321,7 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  //print_token();
+  print_token();//输出token
   /* TODO: Insert codes to evaluate the expression. */
   char * r = eval(0,nr_token-1);
   if(!r){
