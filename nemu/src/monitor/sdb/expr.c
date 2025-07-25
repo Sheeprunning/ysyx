@@ -209,10 +209,6 @@ static bool make_token(char *e) {
             tokens[nr_token].str[0] = '-';
             strncpy(tokens[nr_token].str + 1, substr_start, substr_len);
             tokens[nr_token].str[1 + substr_len] = '\0'; 
-          }else if(tokens[nr_token].type==TK_DER){//判定为引用
-            tokens[nr_token].str[0] = '*';
-            strncpy(tokens[nr_token].str + 1, substr_start, substr_len);
-            tokens[nr_token].str[1 + substr_len] = '\0'; 
           }
           else{//正数或者普通数
             tokens[nr_token].type=rules[i].token_type;   
