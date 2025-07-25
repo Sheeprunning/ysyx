@@ -47,11 +47,12 @@ void new_wp(char *args){
   int data=expr(args,&success);
   if(success){
     wp->wp_exp=args;
-    printf("args:%s exp:%s\n",args,wp->wp_exp);
+    printf("args:%s exp:%s\n",args,head->wp_exp);
     wp->value=data;
   }
   return;
 }
+
 void free_wp(WP *wp){
   assert(wp!=NULL);
   WP *temp=head;
@@ -102,7 +103,7 @@ void show_watchpoint(){
   }
   WP * wp = head;
   while(wp != NULL){
-    printf("NO.%d exp:%s value:%#x\n",wp->NO,wp->wp_exp,wp->value);
+    printf("--%d exp:%s value:%#x\n",wp->NO,wp->wp_exp,wp->value);
     wp=wp->next;
   }
 }
