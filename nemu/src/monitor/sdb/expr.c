@@ -160,7 +160,7 @@ static bool make_token(char *e) {
 
           case TK_MUL: 
             if(nr_token==0){
-              tokens[nr_token].type=TK_DER;//认定该*号为解引用
+              tokens[nr_token++].type=TK_DER;//认定该*号为解引用
             }else if(certain_type(tokens[nr_token-1].type)!=1){
               if(certain_type(tokens[nr_token].type)==2){//之前已经认定为是特殊符号
                 printf("The expression is wrong!");
