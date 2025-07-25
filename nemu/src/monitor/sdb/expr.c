@@ -47,7 +47,7 @@ static struct rule {
   {"\\(", TK_L_PRS},
   {"\\)", TK_R_PRS},
   {"0[xX][0-9a-fA-F]+", TK_0X},
-  {"$", TK_REG},
+  {"\\$", TK_REG},
   {"\\*", TK_MUL},
   {"/", TK_DIV},
   {"\\+", TK_PLUS},         // plus
