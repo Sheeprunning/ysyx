@@ -130,7 +130,7 @@ static bool make_token(char *e) {
               printf("Can't find the '%s' register!",reg_name);
               return false;
             }
-            tokens[nr_token].type=rules[i].token_type; 
+            tokens[nr_token].type=TK_NUMS; 
             sprintf(tokens[nr_token].str,"%d",data);
             nr_token++;
             break;
