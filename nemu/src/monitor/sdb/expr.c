@@ -23,6 +23,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <memory/paddr.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ,
@@ -30,7 +31,7 @@ enum {
   /* TODO: Add more token types */
   TK_PLUS, TK_SUB, TK_MUL, TK_DIV, TK_L_PRS, TK_R_PRS, TK_NUMS,\
   TK_SIGN_P ,TK_SIGN_N, TK_0X, TK_REG, TK_NEQ, TK_L_AND, TK_B_AND,\
-  TK_L_OR, TK_B_OR, TK_NOT, TK_XOR
+  TK_L_OR, TK_B_OR, TK_NOT, TK_XOR, TK_DER
 };
 
 static struct rule {
@@ -85,6 +86,18 @@ void init_regex() {
   }
 }
 
+static int certain_type(int token_tpye){
+  switch(token_tpye){
+    case TK_0X: case TK_NUMS:
+      return 1;
+    case TK_SIGN_N: case TK_SIGN_P: case TK_DER:
+      return 2;
+    default:
+      return 0;    
+  }
+
+}
+
 typedef struct token {
   int type;
   char str[32];
@@ -122,7 +135,7 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
         switch (rules[i].token_type) {
-          case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS: case TK_0X:\
+          case TK_DIV: case TK_L_PRS: case TK_R_PRS:\
           case TK_NEQ: case TK_L_AND: case TK_B_AND: case TK_L_OR: case TK_B_OR:\
           case TK_NOT: case TK_XOR: case TK_EQ:
             tokens[nr_token].type=rules[i].token_type;   
@@ -145,11 +158,26 @@ static bool make_token(char *e) {
             nr_token++;
             break;
 
+          case TK_MUL: 
+            if(nr_token==0){
+              tokens[nr_token].type=TK_DER;//认定该*号为解引用
+            }else if(certain_type(tokens[nr_token-1].type)!=1){
+              if(certain_type(tokens[nr_token].type)==2){//之前已经认定为是特殊符号
+                printf("The expression is wrong!");
+                return false;
+              }else tokens[nr_token].type=TK_DER;//认定该*号为der
+            }else{//普通乘号
+              tokens[nr_token].type=rules[i].token_type;   
+              strncpy(tokens[nr_token].str, substr_start, substr_len);
+              tokens[nr_token].str[substr_len]='\0';
+              nr_token++;
+            }break;
+
           case TK_SUB: 
             if(nr_token==0){
               tokens[nr_token].type=TK_SIGN_N;//认定该减号为负号
-            }else if(tokens[nr_token-1].type!=TK_NUMS&&tokens[nr_token-1].type!=TK_0X){//前一个不是数字
-              if(tokens[nr_token].type==TK_SIGN_N ||tokens[nr_token].type==TK_SIGN_P){//之前已经认定为是符号
+            }else if(certain_type(tokens[nr_token-1].type)!=1){//前一个不是数字
+              if(certain_type(tokens[nr_token].type)==2){//之前已经认定为是符号
                 printf("The expression is wrong!");
                 return false;
               }else tokens[nr_token].type=TK_SIGN_N;//认定该减号为负号
@@ -163,8 +191,8 @@ static bool make_token(char *e) {
           case TK_PLUS:
             if(nr_token==0){
               tokens[nr_token].type=TK_SIGN_P;//认定该加号为正号
-            }else if(tokens[nr_token-1].type!=TK_NUMS&&tokens[nr_token-1].type!=TK_0X){//前一个不是数字
-              if(tokens[nr_token].type==TK_SIGN_N ||tokens[nr_token].type==TK_SIGN_P){//之前已经认定为是符号
+            }else if(certain_type(tokens[nr_token-1].type)!=1){//前一个不是数字
+              if(certain_type(tokens[nr_token].type)==2){//之前已经认定为是符号
                 printf("The expression is wrong!");
                 return false;
               }else tokens[nr_token].type=TK_SIGN_P;//认定该减号为正号
@@ -175,13 +203,18 @@ static bool make_token(char *e) {
               nr_token++;
             }break;
 
-          case TK_NUMS:
+          case TK_NUMS: case TK_0X:
           if(tokens[nr_token].type==TK_SIGN_N){//判定为负数
             tokens[nr_token].type=rules[i].token_type; 
             tokens[nr_token].str[0] = '-';
             strncpy(tokens[nr_token].str + 1, substr_start, substr_len);
             tokens[nr_token].str[1 + substr_len] = '\0'; 
-          }else{//正数或者普通数
+          }else if(tokens[nr_token].type==TK_DER){//判定为引用
+            tokens[nr_token].str[0] = '*';
+            strncpy(tokens[nr_token].str + 1, substr_start, substr_len);
+            tokens[nr_token].str[1 + substr_len] = '\0'; 
+          }
+          else{//正数或者普通数
             tokens[nr_token].type=rules[i].token_type;   
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             tokens[nr_token].str[substr_len]='\0';
@@ -217,7 +250,7 @@ int oprator_level(int op_type){
       return 2;
     case TK_MUL: case TK_DIV: 
       return 3; 
-    case TK_NOT:
+    case TK_NOT: case TK_DER:
       return 4;
     case TK_L_PRS: case TK_R_PRS:
       return 5;
@@ -336,6 +369,7 @@ char* eval(int p, int q) {
       case TK_L_OR: reslut = val1 || val2;  break;
       case TK_XOR: reslut = val1 ^ val2;  break;
       case TK_NOT: reslut =  !val2;  break;
+      case TK_DER: reslut = paddr_read(val2, 1); break;
       default: assert(0);  break;
     }
     sprintf(r,"%d",reslut);
