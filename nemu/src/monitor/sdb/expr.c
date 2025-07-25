@@ -205,6 +205,26 @@ static bool make_token(char *e) {
   return true;
 }
 
+
+
+int oprator_level(int op_type){
+  switch(op_type){
+    case TK_L_AND: case TK_B_AND: case TK_L_OR: case TK_B_OR: case TK_XOR:
+      return 0;
+    case TK_NEQ:  case TK_EQ:
+      return 1;
+    case TK_PLUS: case TK_SUB: 
+      return 2;
+    case TK_MUL: case TK_DIV: 
+      return 3; 
+    case TK_NOT:
+      return 4;
+    case TK_L_PRS: case TK_R_PRS:
+      return 5;
+    default:  
+      return -1;//不是运算符，可能是数字
+  }
+}
 bool check_parentheses(int p, int q) {
   // 检查首尾是否是 '(' 和 ')'
     if (strcmp(tokens[p].str, "(") != 0 || strcmp(tokens[q].str, ")") != 0) {
@@ -243,18 +263,13 @@ bool check_parentheses_match(int p, int q) {
 int find_main_operator(int p, int q) {
     int paren_level = 0;
     int main_op = -1; 
+    int op_level=-1;
     for (int i = p; i <= q; i++) {
         if (strcmp(tokens[i].str, "(") == 0) paren_level++;
         else if (strcmp(tokens[i].str, ")") == 0) paren_level--;
         else if (paren_level == 0) {
-            // 根据运算符优先级更新 main_op
-            if (strcmp(tokens[i].str, "+") == 0 || strcmp(tokens[i].str, "-") == 0) {
-                main_op = i; // 加减优先级最低
-            } else if ((strcmp(tokens[i].str, "*") == 0 || strcmp(tokens[i].str, "/") == 0) && 
-                      (main_op == -1 || 
-                       strcmp(tokens[main_op].str, "+") == 0 || 
-                       strcmp(tokens[main_op].str, "-") == 0)) {
-                main_op = i; // 乘除优先级高于加减
+            if(oprator_level(tokens[i].type)>op_level){
+              main_op=i;
             }
         }
     }
@@ -293,10 +308,10 @@ char* eval(int p, int q) {
      }
     char* val1_str,* val2_str;
     int val1,val2;
-    char op = *(tokens[op_pos].str);
+    int op = tokens[op_pos].type;
     val1_str=eval(p, op_pos - 1);
     val2_str=eval(op_pos + 1, q);
-    if(!val1_str || !val2_str){
+    if(!val2_str){//val1没有可能是非的计算
       return NULL;
     }
     if(val1_str[0]=='0'){
@@ -309,10 +324,18 @@ char* eval(int p, int q) {
     char *r=malloc(32*sizeof(char));
 
     switch (op) {
-      case '+': reslut = val1 + val2;  break;
-      case '-': reslut = val1 - val2;  break;
-      case '*': reslut = val1 * val2;  break;
-      case '/': reslut = val1 / val2;  break;
+      case TK_PLUS: reslut = val1 + val2;  break;
+      case TK_SUB: reslut = val1 - val2;  break;
+      case TK_MUL: reslut = val1 * val2;  break;
+      case TK_DIV: reslut = val1 / val2;  break;
+      case TK_NEQ: reslut = val1 != val2;  break;
+      case TK_EQ: reslut = val1 == val2;  break;
+      case TK_B_AND: reslut = val1 & val2;  break;
+      case TK_B_OR: reslut = val1 | val2;  break;
+      case TK_L_AND: reslut = val1 && val2;  break;
+      case TK_L_OR: reslut = val1 || val2;  break;
+      case TK_XOR: reslut = val1 ^ val2;  break;
+      case TK_NOT: reslut =  !val2;  break;
       default: assert(0);  break;
     }
     sprintf(r,"%d",reslut);
