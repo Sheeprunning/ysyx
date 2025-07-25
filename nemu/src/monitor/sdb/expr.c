@@ -29,7 +29,7 @@ enum {
 
   /* TODO: Add more token types */
   TK_PLUS, TK_SUB, TK_MUL, TK_DIV, TK_L_PRS, TK_R_PRS, TK_NUMS,\
-  TK_SIGN_P,TK_SIGN_N,TK_0X
+  TK_SIGN_P,TK_SIGN_N,TK_0X,TK_REG
 };
 
 static struct rule {
@@ -47,6 +47,7 @@ static struct rule {
   {"\\(", TK_L_PRS},
   {"\\)", TK_R_PRS},
   {"0[xX][0-9a-fA-F]+", TK_0X},
+  {"$[A-Fa-f]", TK_REG},
   {"\\*", TK_MUL},
   {"/", TK_DIV},
   {"\\+", TK_PLUS},         // plus
@@ -88,6 +89,7 @@ static bool make_token(char *e) {
   int position = 0;
   int i;
   regmatch_t pmatch;
+  bool success=true;
 
   nr_token = 0;
   memset(tokens, 0, sizeof(tokens));
@@ -118,6 +120,21 @@ static bool make_token(char *e) {
             tokens[nr_token].str[substr_len]='\0';
             nr_token++;
             break;
+
+          case TK_REG:
+            char reg_name[32];
+            strncpy(reg_name, substr_start+1, substr_len-1);
+            reg_name[substr_len-1] = '\0';
+            int data = isa_reg_str2val(reg_name, &success);
+            if(!success){
+              printf("Can't find the '%s' register!",reg_name);
+              return false;
+            }
+            tokens[nr_token].type=rules[i].token_type; 
+            sprintf(tokens[nr_token].str,"%d",data);
+            nr_token++;
+            break;
+
           case TK_SUB: 
             if(nr_token==0){
               tokens[nr_token].type=TK_SIGN_N;//认定该减号为负号
@@ -153,8 +170,7 @@ static bool make_token(char *e) {
             tokens[nr_token].type=rules[i].token_type; 
             tokens[nr_token].str[0] = '-';
             strncpy(tokens[nr_token].str + 1, substr_start, substr_len);
-            tokens[nr_token].str[1 + substr_len] = '\0';
-            
+            tokens[nr_token].str[1 + substr_len] = '\0'; 
           }else{//正数或者普通数
             tokens[nr_token].type=rules[i].token_type;   
             strncpy(tokens[nr_token].str, substr_start, substr_len);
