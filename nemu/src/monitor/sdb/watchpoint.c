@@ -46,7 +46,7 @@ void new_wp(char *args){
   bool success=true;
   int data=expr(args,&success);
   if(success){
-    strcpy(wp->wp_exp,args);
+    wp->wp_exp = strdup(args);
     printf("args:%s exp:%s\n",args,wp->wp_exp);
     wp->value=data;
   }
