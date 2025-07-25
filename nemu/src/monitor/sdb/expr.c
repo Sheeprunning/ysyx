@@ -29,7 +29,8 @@ enum {
 
   /* TODO: Add more token types */
   TK_PLUS, TK_SUB, TK_MUL, TK_DIV, TK_L_PRS, TK_R_PRS, TK_NUMS,\
-  TK_SIGN_P,TK_SIGN_N,TK_0X,TK_REG
+  TK_SIGN_P ,TK_SIGN_N, TK_0X, TK_REG, TK_NEQ, TK_L_AND, TK_B_AND,\
+  TK_L_OR, TK_B_OR, TK_NOT, TK_XOR
 };
 
 static struct rule {
@@ -48,11 +49,19 @@ static struct rule {
   {"\\)", TK_R_PRS},
   {"0[xX][0-9a-fA-F]+", TK_0X},
   {"\\$[0-9a-zA-Z]+", TK_REG},
+  {"==", TK_EQ},        // equal
+  {"!=", TK_NEQ},
+  {"&&", TK_L_AND},
+  {"||", TK_L_OR},
+  {"!", TK_NOT},
+  {"&", TK_B_AND},
+  {"|", TK_B_OR},
+  {"\\^", TK_XOR},
   {"\\*", TK_MUL},
   {"/", TK_DIV},
   {"\\+", TK_PLUS},         // plus
   {"-", TK_SUB}, 
-  {"==", TK_EQ},        // equal
+  
   {"[0-9]+", TK_NUMS}
 };
 
@@ -114,7 +123,9 @@ static bool make_token(char *e) {
          * of tokens, some extra actions should be performed.
          */
         switch (rules[i].token_type) {
-          case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS: case TK_0X:
+          case TK_MUL: case TK_DIV: case TK_L_PRS: case TK_R_PRS: case TK_0X:\
+          case TK_NEQ: case TK_L_AND: case TK_B_AND: case TK_L_OR: case TK_B_OR:\
+          case TK_NOT: case TK_XOR:
             tokens[nr_token].type=rules[i].token_type;   
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             tokens[nr_token].str[substr_len]='\0';
