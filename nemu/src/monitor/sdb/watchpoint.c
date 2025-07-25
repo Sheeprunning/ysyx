@@ -106,7 +106,7 @@ void show_watchpoint(){
   printf("--NO-- --EXP-- --VALUE--\n");
   WP * wp = head;
   while(wp != NULL){
-    printf("%6d %7s %#8x\n",wp->NO,wp->wp_exp,wp->value);
+    printf("%-6d %-7s %-#8x\n",wp->NO,wp->wp_exp,wp->value);
     wp=wp->next;
   }
 }
