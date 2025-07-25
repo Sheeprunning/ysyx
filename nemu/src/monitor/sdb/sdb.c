@@ -59,7 +59,7 @@ static int cmd_q(char *args) {
 static int cmd_p(char *args) {
   bool success = true;
   int data=expr(args,&success);
-  if(success)printf("%d",data);
+  if(success)printf("%d\n",data);
   return success;
 }
 
