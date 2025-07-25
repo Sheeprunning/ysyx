@@ -159,6 +159,8 @@ static bool make_token(char *e) {
             break;
 
           case TK_MUL: 
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            tokens[nr_token].str[substr_len]='\0';
             if(nr_token==0){
               tokens[nr_token++].type=TK_DER;//认定该*号为解引用
             }else if(certain_type(tokens[nr_token-1].type)!=1){
@@ -168,8 +170,6 @@ static bool make_token(char *e) {
               }else tokens[nr_token++].type=TK_DER;//认定该*号为der
             }else{//普通乘号
               tokens[nr_token].type=rules[i].token_type;   
-              strncpy(tokens[nr_token].str, substr_start, substr_len);
-              tokens[nr_token].str[substr_len]='\0';
               nr_token++;
             }break;
 
