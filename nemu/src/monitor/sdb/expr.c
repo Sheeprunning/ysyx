@@ -330,7 +330,7 @@ word_t expr(char *e, bool *success) {
     *success= false;
   }
   int result;
-  if(sscanf(r,"%x",&result)==1){return result;} 
+  if(r[1]=='x'&&sscanf(r,"%x",&result)==1){return result;} 
   if(sscanf(r,"%d",&result)!=1){printf("Modify the str to int fail!");assert(0);} 
   free(r);
   return result;
