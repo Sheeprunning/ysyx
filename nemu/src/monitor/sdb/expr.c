@@ -324,12 +324,13 @@ word_t expr(char *e, bool *success) {
   //print_token();//输出token
   /* TODO: Insert codes to evaluate the expression. */
   char * r = eval(0,nr_token-1);
-  printf("计算结果：%s\n",r);
+  //printf("计算结果：%s\n",r);
   if(!r){
     printf("Wrong caculation!Please try again!\n");
     *success= false;
   }
   int result;
+  if(sscanf(r,"%x",&result)==1){return result;} 
   if(sscanf(r,"%d",&result)!=1){printf("Modify the str to int fail!");assert(0);} 
   free(r);
   return result;
