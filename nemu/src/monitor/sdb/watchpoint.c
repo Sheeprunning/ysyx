@@ -35,7 +35,7 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 void new_wp(char *args){
-  printf("%s\n",args);
+  
   assert(free_ != NULL);
   WP *wp;
   wp = free_;
@@ -44,10 +44,11 @@ void new_wp(char *args){
   head = wp;
 
   bool success=true;
-  //int data=expr(wp->wp_exp,&success);
+  int data=expr(args,&success);
   if(success){
     wp->wp_exp=args;
-    //wp->value=data;
+    printf("args:%s exp:%s\n",args,wp->wp_exp);
+    wp->value=data;
   }
   return;
 }
