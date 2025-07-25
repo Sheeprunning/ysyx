@@ -51,17 +51,16 @@ static struct rule {
   {"\\$[0-9a-zA-Z]+", TK_REG},
   {"==", TK_EQ},        // equal
   {"!=", TK_NEQ},
-  {"&&", TK_L_AND},
-  {"||", TK_L_OR},
+  {"\\&\\&", TK_L_AND},
+  {"\\|\\|", TK_L_OR},
   {"!", TK_NOT},
-  {"&", TK_B_AND},
-  {"|", TK_B_OR},
+  {"\\&", TK_B_AND},
+  {"\\|", TK_B_OR},
   {"\\^", TK_XOR},
   {"\\*", TK_MUL},
   {"/", TK_DIV},
   {"\\+", TK_PLUS},         // plus
   {"-", TK_SUB}, 
-  
   {"[0-9]+", TK_NUMS}
 };
 
