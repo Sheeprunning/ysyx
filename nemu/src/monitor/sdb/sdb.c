@@ -26,10 +26,7 @@ static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
-void new_wp(char *args);
-void free_wp(WP *wp);
-WP* compare_watchpoint(bool *success);
-void show_watchpoint();
+
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -117,6 +114,16 @@ static int cmd_w(char *args){
   return 0;
 }
 
+static int cmd_d(char *args){
+  int No=0;
+  if(sscanf(args,"%d",&No)==1){
+    free_wp(No);
+  }
+  else free_wp(0);//默认取消第一个
+  return 0;
+}
+
+
 static int cmd_help(char *args);
 
 static struct {
@@ -133,7 +140,8 @@ static struct {
   {"info", "Show the status of register or watchpoint", cmd_info},
   {"x", "Show the the data of memory ", cmd_x},
   {"p", "Caculate a expression", cmd_p},
-  {"w", "Set a watchpoint", cmd_w}
+  {"w", "Set a watchpoint", cmd_w},
+  {"d", "Delete the watchpoint", cmd_d}
 };
 
 #define NR_CMD ARRLEN(cmd_table)

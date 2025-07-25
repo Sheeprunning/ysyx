@@ -53,28 +53,40 @@ void new_wp(char *args){
   return;
 }
 
-void free_wp(WP *wp){
-  assert(wp!=NULL);
-  WP *temp=head;
+void sort(){
+  WP *wp=head;
+  int i=0;
+  while (wp!=NULL){
+    wp->NO = i;
+    i++;
+    wp=wp->next;
+  }
+}
+
+void free_wp(int NO){
+  WP *wp=head,*temp;
   if (head == NULL) {
         printf("Error: No active watchpoints to free!\n");
         return;
     }
-  if (head == wp) {
+  if (head->NO == NO) {
         head = head->next;  // 从head链表中移除
         wp->next = free_;   // 回收至free_链表
         free_ = wp;
         free(free_->wp_exp);
+        sort();
         return;
     }
-  while(temp->next!=wp&&temp->next!=NULL){
-    temp=temp->next;
+  while(wp->next!=NULL&&wp->next->NO!=NO){
+    wp=wp->next;
   }
-  if(temp->next){
-    temp->next=temp->next->next;
-    wp->next = free_;
-    free_ = wp;
+  if(wp->next){
+    temp=wp->next;
+    wp->next=wp->next->next;
+    temp->next = free_;
+    free_ = temp;
     free(free_->wp_exp);
+    sort();
     return;
   }else{
     printf("WP not found in the active list!"); 
@@ -106,7 +118,7 @@ void show_watchpoint(){
   printf("--NO-- --EXP-- --VALUE--\n");
   WP * wp = head;
   while(wp != NULL){
-    printf("%-6d %-7s %-#8x\n",wp->NO,wp->wp_exp,wp->value);
+    printf("%-8d %-7s %-#8x\n",wp->NO,wp->wp_exp,wp->value);
     wp=wp->next;
   }
 }
