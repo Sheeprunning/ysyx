@@ -34,24 +34,6 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
-void new_wp(char *args){
-  
-  assert(free_ != NULL);
-  WP *wp;
-  wp = free_;
-  free_ = free_->next;
-  wp -> next = head;
-  head = wp;
-
-  bool success=true;
-  int data=expr(args,&success);
-  if(success){
-    wp->wp_exp = strdup(args);
-    printf("args:%s exp:%s\n",args,wp->wp_exp);
-    wp->value=data;
-  }
-  return;
-}
 
 void sort(){
   WP *wp=head;
@@ -61,6 +43,25 @@ void sort(){
     i++;
     wp=wp->next;
   }
+}
+void new_wp(char *args){
+  
+  assert(free_ != NULL);
+  WP *wp;
+  
+  bool success=true;
+  int data=expr(args,&success);
+  if(success){
+    wp = free_;
+    free_ = free_->next;
+    wp -> next = head;
+    head = wp;
+    wp->wp_exp = strdup(args);
+    printf("args:%s exp:%s\n",args,wp->wp_exp);
+    wp->value=data;
+  }
+  sort();
+  return;
 }
 
 void free_wp(int NO){
@@ -112,7 +113,7 @@ WP* compare_watchpoint(bool *success){
 
 void show_watchpoint(){
   if(head==NULL){
-    printf("There is not watchpoint!");
+    printf("There is not watchpoint!\n");
     return ;
   }
   printf("--NO-- --EXP-- --VALUE--\n");
