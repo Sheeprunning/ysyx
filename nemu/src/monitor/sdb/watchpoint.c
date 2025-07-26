@@ -57,7 +57,6 @@ void new_wp(char *args){
     wp -> next = head;
     head = wp;
     wp->wp_exp = strdup(args);
-    printf("args:%s exp:%s\n",args,wp->wp_exp);
     wp->value=data;
   }
   //sort();
