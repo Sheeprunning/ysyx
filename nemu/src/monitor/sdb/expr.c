@@ -174,7 +174,7 @@ static bool make_token(char *e) {
             }break;
 
           case TK_SUB: 
-            if(nr_token==0){
+            if(nr_token==0&&certain_type(tokens[nr_token].type)!=2){
               tokens[nr_token].type=TK_SIGN_N;//认定该减号为负号
             }else if(certain_type(tokens[nr_token-1].type)!=1){//前一个不是数字
               if(certain_type(tokens[nr_token].type)==2){//之前已经认定为是符号
@@ -189,7 +189,7 @@ static bool make_token(char *e) {
             }break;
             
           case TK_PLUS:
-            if(nr_token==0){
+            if(nr_token==0&&certain_type(tokens[nr_token].type)!=2){
               tokens[nr_token].type=TK_SIGN_P;//认定该加号为正号
             }else if(certain_type(tokens[nr_token-1].type)!=1){//前一个不是数字
               if(certain_type(tokens[nr_token].type)==2){//之前已经认定为是符号
@@ -370,6 +370,8 @@ char* eval(int p, int q) {
       case TK_DER: reslut = paddr_read(val2, 4); break;
       default: assert(0);  break;
     }
+    free(val1_str);
+    free(val2_str);
     sprintf(r,"%d",reslut);
     return r;
   }
