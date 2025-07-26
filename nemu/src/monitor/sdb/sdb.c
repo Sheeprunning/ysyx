@@ -60,7 +60,7 @@ static int cmd_q(char *args) {
 static int cmd_p(char *args) {
   bool success = true;
   int data=expr(args,&success);
-  if(success)printf("%#10x %d\n",data,data);
+  if(success)printf("%#010x %d\n",data,data);
   return success;
 }
 
