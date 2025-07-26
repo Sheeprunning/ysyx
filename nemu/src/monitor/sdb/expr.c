@@ -88,7 +88,7 @@ void init_regex() {
 
 static int certain_type(int token_tpye){
   switch(token_tpye){
-    case TK_0X: case TK_NUMS: case TK_REG:
+    case TK_0X: case TK_NUMS: case TK_REG: case TK_R_PRS:
       return 1;
     case TK_SIGN_N: case TK_SIGN_P: case TK_DER:
       return 2;
