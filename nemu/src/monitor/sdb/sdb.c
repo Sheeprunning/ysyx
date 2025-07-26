@@ -106,7 +106,7 @@ static int cmd_x(char *args){
     }
   for(int i=0;i<n;i++){
     int data = paddr_read(addr+i*4, 4);
-    printf("%#08x  %#08x\n",addr+i*4,data);
+    printf("%#010x  %#010x\n",addr+i*4,data);
   }
   
   return 0;
