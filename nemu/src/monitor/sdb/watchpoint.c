@@ -95,17 +95,16 @@ void free_wp(int NO){
   } 
 }
 
-WP* compare_watchpoint(bool *success){
-  printf("Comparing the watchpoint...!");
+WP* compare_watchpoint(bool *success,int *change){
+  printf("Comparing the watchpoint...!\n");
   WP * wp = head;
-  int data;
   while(wp != NULL){
-    data=expr(wp->wp_exp,success);
-    if(!success){
+    *change=expr(wp->wp_exp,success);
+    if(!success){//计算表达式错误
       return NULL;
     }
-    if(data!=wp->value){
-      return wp;
+    if(*change!=wp->value){
+      return wp;//输出第一个改变的wp
     }
     wp=wp->next;
   }

@@ -39,8 +39,10 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
 #ifdef CONFIG_WATCHPOINT
   bool success=true;
-  compare_watchpoint(&success);
-  if(!success){
+  int change;
+  WP *wp = compare_watchpoint(&success,&change);
+  if(wp){
+    printf("%-8d %-7s %-#8x->%#x\n",wp->NO,wp->wp_exp,wp->value,change);
     set_nemu_state(NEMU_STOP, _this->pc , -1);
   }
 #endif

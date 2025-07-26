@@ -30,7 +30,7 @@ typedef struct watchpoint {
 word_t expr(char *e, bool *success);
 void new_wp(char *args);
 void free_wp(int NO);
-WP* compare_watchpoint(bool *success);
+WP* compare_watchpoint(bool *success,int *change);
 void show_watchpoint();
 
 #endif
