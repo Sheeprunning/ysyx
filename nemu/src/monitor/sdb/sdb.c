@@ -99,7 +99,7 @@ static int cmd_x(char *args){
       return 0;
   }
   bool success = true;
-  int addr = expr(exp,&success);//有点复杂。如果输入的是16进制，要如何计算？
+  int addr = expr(exp,&success);
   if (!success) {
         printf("Error: Invalid expression '%s'\n", exp);//计算表达式出错
         return 0;
