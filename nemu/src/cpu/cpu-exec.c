@@ -44,6 +44,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   if(wp){
     printf("--NO-- --EXP-- --VALUE--\n");
     printf("%-8d %-7s %-#8x->%#x\n",wp->NO,wp->wp_exp,wp->value,change);
+    printf("Watchpoint change!Procedure stop!");
     set_nemu_state(NEMU_STOP, _this->pc , -1);
   }
 #endif
