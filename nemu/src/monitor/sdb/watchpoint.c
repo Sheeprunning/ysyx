@@ -60,7 +60,7 @@ void new_wp(char *args){
     printf("args:%s exp:%s\n",args,wp->wp_exp);
     wp->value=data;
   }
-  sort();
+  //sort();
   return;
 }
 
@@ -75,7 +75,7 @@ void free_wp(int NO){
         wp->next = free_;   // 回收至free_链表
         free_ = wp;
         free(free_->wp_exp);
-        sort();
+        //sort();
         return;
     }
   while(wp->next!=NULL&&wp->next->NO!=NO){
@@ -87,7 +87,7 @@ void free_wp(int NO){
     temp->next = free_;
     free_ = temp;
     free(free_->wp_exp);
-    sort();
+    //sort();
     return;
   }else{
     printf("WP not found in the active list!"); 
