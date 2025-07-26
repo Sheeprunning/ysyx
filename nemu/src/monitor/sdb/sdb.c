@@ -89,8 +89,8 @@ static int cmd_info(char *args){
 static int cmd_x(char *args){
   char * len_str = strtok(args, " ");
   char *exp = len_str +strlen(len_str) + 1;
-  int len;
-  if(sscanf(len_str,"%d",&len)!=1){
+  int n;
+  if(sscanf(len_str,"%d",&n)!=1){
     printf("The format of %s is wrong!",len_str);
     return 0;
   }
@@ -104,8 +104,11 @@ static int cmd_x(char *args){
         printf("Error: Invalid expression '%s'\n", exp);//计算表达式出错
         return 0;
     }
-  int data = paddr_read(addr, len);
-  printf("The data is %#x\n",data);
+  for(int i=0;i<n;i++){
+    int data = paddr_read(addr+i*4, 4);
+    printf("%#08x  %#08x\n",addr+i*4,data);
+  }
+  
   return 0;
 }
 
