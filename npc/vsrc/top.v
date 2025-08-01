@@ -76,10 +76,10 @@ end
 reg [7:0]count;
 always @(posedge clk)begin
     if(rstn==0)begin
-        fifo[0] <= 8'h00;
-        fifo[1] <= 8'h00;
-        fifo[2] <= 8'h00;
-        fifo[3] <= 8'h00;
+        fifo[0] <= 8'h0;
+        fifo[1] <= 8'h0;
+        fifo[2] <= 8'h0;
+        fifo[3] <= 8'h0;
         pre <= 1'b0;
         count<=0;
     end
@@ -136,3 +136,4 @@ assign seg3=h[3];
 
 
 endmodule
+

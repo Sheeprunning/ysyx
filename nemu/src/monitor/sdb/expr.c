@@ -103,7 +103,7 @@ typedef struct token {
   char str[32];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
+static Token tokens[32] __attribute__((used)) = {};//__attribute__是指告诉编译器即使这些变量未被显式使用，也不要优化掉它们
 static int nr_token __attribute__((used))  = 0;
 
 static bool make_token(char *e) {
