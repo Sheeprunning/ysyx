@@ -2,7 +2,8 @@ module pri_encode83(
   input  [7:0] x,
   input  en,
   output f,
-  output reg [2:0]y
+  output reg [2:0]y,
+  output reg [6:0] seg
   );
   assign f=(x != 8'b0) && en;//输入指示位
   always @(*) begin
@@ -19,5 +20,8 @@ module pri_encode83(
     endcase
     
   end
-
+bcd7seg bcd7seg1(
+    .b({1'b0,y}),
+    .h(seg)
+);
 endmodule

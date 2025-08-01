@@ -1,12 +1,9 @@
-top=mux41_2
+top=pri_encode83
 
 # VGA_CLK is set to clk in this example
 
-y (SW1,SW0)
-x0 (SW3,SW2)
-x1 (SW5,SW4)
-x2 (SW7,SW6)
-x3 (SW9,SW8)
-
-
-f (LD1,LD0)
+x (SW7,SW6,SW5,SW4,SW3,SW2,SW1,SW0)
+en (SW8)
+f (LD4)
+y (LD1,LD0)
+seg (SEG0G, SEG0F, SEG0E, SEG0D, SEG0C, SEG0B, SEG0A)
