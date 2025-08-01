@@ -2,7 +2,7 @@ module FSM_bin
 (
   input   clk, in, rst,
   output reg out,
-  output  [3:0]state
+  output  [3:0]state//9中状态机的状态
 );
 
 parameter[3:0] S0 = 0, S1 = 1, S2 = 2, S3 = 3,
