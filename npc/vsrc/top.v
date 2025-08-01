@@ -23,7 +23,7 @@ reg pre;
 reg [7:0]key_char;
 always@(*)begin
   case (fifo[0])
-        8'h1C: key_char = "A";  // 8'h41 (ASCII 'A')
+        8'h1C: key_char = "A";  // 8'h41 (ASCII 'A') 通过通码获得对应的按键
         8'h32: key_char = "B";  // 8'h42
         8'h21: key_char = "C";  // 8'h43
         8'h23: key_char = "D";  // 8'h44
