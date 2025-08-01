@@ -5,7 +5,7 @@ top=top
 clk (BTNC)
 set (SW0)
 dir (SW1)
-din (SW8,SW7,SW6,SW5,SW4,SW3,SW2,SW1)
+din (SW9,SW8,SW7,SW6,SW5,SW4,SW3,SW2)
 f (LD0)
 
 seg7 (SEG7G, SEG7F, SEG7E, SEG7D, SEG7C, SEG7B, SEG7A)
