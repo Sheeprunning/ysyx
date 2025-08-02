@@ -16,6 +16,6 @@ always @(posedge clk)begin
     end
 end
 
-assign f=(dout==0)?1:0;
-
+//assign f=(dout==0)?1:0;
+assign f=t;
 endmodule
