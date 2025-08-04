@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     sscanf(argv[1], "%d", &loop);
   }
   int i;
-  for (i = 0; i < loop; i ++) {
+ while (i<loop){
     buff_end=0;
     token_len=0;
     buf[0] = '\0';
@@ -117,6 +117,7 @@ int main(int argc, char *argv[]) {
     pclose(fp);
 
     printf("%u %s\n", result, buf);
+    i++;
   }
   return 0;
 }

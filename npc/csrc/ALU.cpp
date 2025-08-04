@@ -37,9 +37,9 @@ void print_alu_status() {
          << "A=" << bitset<32>(top->A) << " (" << top->A << ") | "
          << "B=" << bitset<32>(top->B) << " (" << top->B << ") | "
          << "result=" << bitset<32>(top->result) << " (" << top->result << ") | "
-         << "Zero=" << top->Zero << " | "
-         << "Overflow=" << top->Overflow << " | "
-         << "CF=" << top->CF << endl;
+         << "Zero=" << bitset<1>(top->Zero)<< " | "
+         << "Overflow=" << bitset<1>(top->Overflow) << " | "
+         << "CF=" << bitset<1>(top->CF) << endl;
 }
 int main() {
   sim_init();

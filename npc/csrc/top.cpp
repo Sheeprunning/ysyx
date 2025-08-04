@@ -36,31 +36,31 @@ void sim_exit(){
   delete contextp;
 }
 
-static void single_cycle() {
-  top->clk = 0; top->eval();
-  contextp->timeInc(10);
-  tfp->dump(contextp->time());
-  nvboard_update();
-  top->clk = 1; top->eval();
-  contextp->timeInc(10);
-  tfp->dump(contextp->time());
-  nvboard_update();
-}
+// static void single_cycle() {
+//   top->clk = 0; top->eval();
+//   contextp->timeInc(10);
+//   tfp->dump(contextp->time());
+//   nvboard_update();
+//   top->clk = 1; top->eval();
+//   contextp->timeInc(10);
+//   tfp->dump(contextp->time());
+//   nvboard_update();
+// }
 
-static void reset(int n=10) {
-  top->rstn = 0;
-  while (n -- > 0) single_cycle();
-  top->rstn = 1;
-}
+// static void reset(int n=10) {
+//   top->rstn = 0;
+//   while (n -- > 0) single_cycle();
+//   top->rstn = 1;
+// }
 
 int main() {
     sim_init();
     nvboard_bind_all_pins(top);
     nvboard_init();
-    reset();
+    //reset();
     while (!contextp->gotFinish()){
         top->eval();
-        single_cycle();
+        //single_cycle();
         nvboard_update();
     }
     sim_exit();
