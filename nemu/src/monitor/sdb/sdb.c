@@ -65,7 +65,6 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_si(char *args){
-  printf("正在执行程序\n");
   int i=1;
   if(!args) cpu_exec(1);
   else{
