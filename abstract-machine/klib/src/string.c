@@ -5,10 +5,17 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 size_t strlen(const char *s) {
-  panic("Not implemented");
+  size_t len;
+  for(len=0;s[len]!='\0';len++){}
+  return len;
 }
 
 char *strcpy(char *dst, const char *src) {
+  int i=0;
+  for(i=0;i!='\0';i++){
+    dst[i]=src[i];
+  }
+  dst[i]='\0';
   panic("Not implemented");
 }
 
