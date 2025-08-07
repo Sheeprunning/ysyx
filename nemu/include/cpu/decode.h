@@ -87,9 +87,6 @@ finish:
 
 
 // --- pattern matching wrappers for decode ---
-//key把问号换成0 mask把非问号换成0，其他全是1 shift是末尾的连续问号 
-//inst与mask进行逻辑与，获取到非问号的2进制，也就是key
-//shift到底有啥用？感觉可以删去
 #define INSTPAT(pattern, ...) do { \
   uint64_t key, mask, shift; \
   pattern_decode(pattern, STRLEN(pattern), &key, &mask, &shift); \

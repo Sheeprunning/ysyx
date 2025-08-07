@@ -95,9 +95,8 @@ void free_wp(int NO){
 }
 
 WP* compare_watchpoint(bool *success,int *change){
-  WP * wp = head;
-  if(!wp)return NULL;
   printf("Comparing the watchpoint...!\n");
+  WP * wp = head;
   while(wp != NULL){
     *change=expr(wp->wp_exp,success);
     if(!success){//计算表达式错误
