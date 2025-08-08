@@ -11,44 +11,98 @@ size_t strlen(const char *s) {
 }
 
 char *strcpy(char *dst, const char *src) {
-  int i=0;
-  for(i=0;i!='\0';i++){
+  size_t i=0;
+  for(i=0;src[i]!='\0';i++){
     dst[i]=src[i];
   }
   dst[i]='\0';
-  panic("Not implemented");
+  return dst;
 }
 
 char *strncpy(char *dst, const char *src, size_t n) {
-  panic("Not implemented");
+  size_t i;
+  for(i=0; i<n && src[i]!='\0'; i++) {
+    dst[i] = src[i];
+  }
+  for(; i<n; i++) {
+    dst[i] = '\0';
+  }
+  return dst;
 }
 
 char *strcat(char *dst, const char *src) {
-  panic("Not implemented");
+  size_t dst_len = strlen(dst);
+  size_t i;
+  for(i=0; src[i]!='\0'; i++) {
+    dst[dst_len+i] = src[i];
+  }
+  dst[dst_len+i] = '\0';
+  return dst;
 }
 
 int strcmp(const char *s1, const char *s2) {
-  panic("Not implemented");
+  size_t i=0;
+  while(s1[i]!='\0'&&s2[i]!='\0'&&s1[i]==s2[i]){
+    i++;
+  }
+  return s1[i]-s2[i];
 }
 
 int strncmp(const char *s1, const char *s2, size_t n) {
-  panic("Not implemented");
+  size_t i=0;
+  while(n>0&&s1[i]!='\0'&&s2[i]!='\0'&&s1[i]==s2[i]){
+    i++;
+    n--;
+  }
+  return s1[i]-s2[i];
 }
 
 void *memset(void *s, int c, size_t n) {
-  panic("Not implemented");
+  char *p=s;
+  for(int i=0;i<n;i++){
+    *p=c;
+    p++;
+  }
+  return s;
 }
 
 void *memmove(void *dst, const void *src, size_t n) {
-  panic("Not implemented");
+  unsigned char *d = dst;
+  const unsigned char *s = src;
+  
+  if(d < s) {
+    while(n--) {
+      *d++ = *s++;
+    }
+  } else {
+    d += n;
+    s += n;
+    while(n--) {
+      *--d = *--s;
+    }
+  }
+  return dst;
 }
 
 void *memcpy(void *out, const void *in, size_t n) {
-  panic("Not implemented");
+  unsigned char *d = out;
+  const unsigned char *s = in;
+  while(n--) {
+    *d++ = *s++;
+  }
+  return out;
 }
 
 int memcmp(const void *s1, const void *s2, size_t n) {
-  panic("Not implemented");
+  const unsigned char *p1 = s1, *p2 = s2;
+  while(n--) {
+    if(*p1 != *p2) {
+      return *p1 - *p2;
+    }
+    p1++;
+    p2++;
+  }
+  return 0;
 }
 
 #endif
