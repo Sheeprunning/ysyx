@@ -47,7 +47,7 @@ static char* rl_gets() {
   return line_read;
 }
 
-static int cmd_c(char *args) {
+static int cmd_c(char *args) {printf("666\n");
   cpu_exec(-1);
   return 0;
 }
