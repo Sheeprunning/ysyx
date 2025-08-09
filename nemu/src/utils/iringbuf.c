@@ -21,8 +21,13 @@ void iringbuf_add(char *buf){
 
 void iringbuf_show(){
     int p=head;
-    while(p!=head-1){
-        printf("%s\n",iringbuf[p].buf);
-        p=(p+1)%BUF_SIZE;
+    if(p!=0){
+        printf("iringbuf:....\n");
+        while(p!=head-1){
+            printf("%s\n",iringbuf[p].buf);
+            p=(p+1)%BUF_SIZE;
+            if(!iringbuf[p].buf)break;
+        }        
     }
+
 }
