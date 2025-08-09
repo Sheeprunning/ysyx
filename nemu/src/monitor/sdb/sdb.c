@@ -20,6 +20,7 @@
 #include <utils.h>
 #include "sdb.h"
 #include "../src/isa/loongarch32r/local-include/reg.h"
+#include "../../../utils/iringbuf.h"
 #include <memory/paddr.h>
 
 static int is_batch_mode = false;
@@ -217,7 +218,7 @@ void sdb_mainloop() {
 void init_sdb() {
   /* Compile the regular expressions. */
   init_regex();
-
+  init_iringbuf();
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }

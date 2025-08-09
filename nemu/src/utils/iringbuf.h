@@ -8,9 +8,11 @@ typedef struct
 }ringbuf;
 
 
-void iringbuf_init();
+void init_iringbuf();
 
 void iringbuf_add(char *buf);
+
+void iringbuf_show();
 
 
 #endif
