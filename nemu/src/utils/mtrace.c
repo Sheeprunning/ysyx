@@ -4,10 +4,10 @@
 FILE *mtrace_fp = NULL;
 
 void init_mtrace(const char *filename){
-    FILE *mtrace_fp =fopen(filename,"w");
+    mtrace_fp =fopen(filename,"w");
     if(!mtrace_fp){
         printf("无法打开mtrace文件\n");
-        return;
+        return ;
     }
 }
 
