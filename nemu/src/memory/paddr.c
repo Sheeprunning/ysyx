@@ -55,12 +55,12 @@ word_t paddr_read(paddr_t addr, int len) {
   if (likely(in_pmem(addr))) {
     word_t data;
     data=pmem_read(addr, len);
-    #ifdef MTRACE 
+    #ifdef COFIG_MTRACE 
       MTRACE_LOG('R', addr, len, data);
     #endif
     return data;
   }else{
-    #ifdef MTRACE 
+    #ifdef COFIG_MTRACE 
        MTRACE_LOG('R', addr, len, 0xdeaddead);
     #endif
   } 
@@ -71,12 +71,12 @@ word_t paddr_read(paddr_t addr, int len) {
 
 void paddr_write(paddr_t addr, int len, word_t data) {
   if (likely(in_pmem(addr))) { 
-    #ifdef MTRACE 
+    #ifdef COFIG_MTRACE 
       MTRACE_LOG('W', addr, len, data);
     #endif
     pmem_write(addr, len, data); return; 
   }else{
-    #ifdef MTRACE 
+    #ifdef COFIG_MTRACE 
       MTRACE_LOG('W', addr, len, 0xdeaddead);
     #endif
   }
