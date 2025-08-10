@@ -221,7 +221,7 @@ void init_sdb() {
   init_regex();
   /* Append for 环形缓冲 & 访存记录*/
   init_iringbuf();
-  init_mtrace("../../build/mtrace_log.txt");
+  init_mtrace("../../../../../build/mtrace_log.txt");
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
