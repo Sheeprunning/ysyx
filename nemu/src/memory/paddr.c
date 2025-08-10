@@ -55,10 +55,14 @@ word_t paddr_read(paddr_t addr, int len) {
   if (likely(in_pmem(addr))) {
     word_t data;
     data=pmem_read(addr, len);
-    IFDEF(MTRACE, MTRACE_LOG('R', addr, len, data));
+    #ifdef MTRACE 
+      MTRACE_LOG('R', addr, len, data);
+    #endif
     return data;
   }else{
-    IFDEF(MTRACE,  MTRACE_LOG('R', addr, len, 0xdeaddead));
+    #ifdef MTRACE 
+       MTRACE_LOG('R', addr, len, 0xdeaddead);
+    #endif
   } 
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
@@ -67,10 +71,14 @@ word_t paddr_read(paddr_t addr, int len) {
 
 void paddr_write(paddr_t addr, int len, word_t data) {
   if (likely(in_pmem(addr))) { 
-    IFDEF(MTRACE,MTRACE_LOG('W', addr, len, data));
+    #ifdef MTRACE 
+      MTRACE_LOG('W', addr, len, data);
+    #endif
     pmem_write(addr, len, data); return; 
   }else{
-    IFDEF(MTRACE,MTRACE_LOG('W', addr, len, 0xdeaddead));
+    #ifdef MTRACE 
+      MTRACE_LOG('W', addr, len, 0xdeaddead);
+    #endif
   }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
