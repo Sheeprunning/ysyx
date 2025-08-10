@@ -21,6 +21,7 @@
 #include "sdb.h"
 #include "../src/isa/loongarch32r/local-include/reg.h"
 #include "../../../utils/iringbuf.h"
+#include "../../../utils/mtrace.h"
 #include <memory/paddr.h>
 
 static int is_batch_mode = false;
@@ -47,7 +48,7 @@ static char* rl_gets() {
   return line_read;
 }
 
-static int cmd_c(char *args) {printf("666\n");
+static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
 }
@@ -218,7 +219,9 @@ void sdb_mainloop() {
 void init_sdb() {
   /* Compile the regular expressions. */
   init_regex();
+  /* Append for 环形缓冲 & 访存记录*/
   init_iringbuf();
+  init_mtrace("../../../build/mtrace_log.txt");
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
