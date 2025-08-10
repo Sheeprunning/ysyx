@@ -9,7 +9,7 @@ void init_mtrace(const char *filename){
         printf("无法打开mtrace文件\n");
         return ;
     }
-    fprintf(mtrace_fp, "%3s %10s %s %10s \n","W/R","addr","size","data");
+    fprintf(mtrace_fp, "%-3s %-10s %-4s %-10s \n","W/R","addr","size","data");
 }
 
 void close_matrace(){
