@@ -5,6 +5,7 @@ void print_symbol(Elf32_Sym *sym, const char *strtab) {
     printf("  %-40s 0x%016lx\n", name, (unsigned long)sym->st_value);
 }
 int process_elf_file(const char* filename) {
+    printf("reading %s...\n",filename);
     FILE *file = fopen(filename, "rb");
     if (!file) {
         perror("fopen failed");

@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include "/home/sheeprunning/ysyx-workbench/nemu/src/utils/ftrace.h"
 
 void init_rand();
 void init_log(const char *log_file);
@@ -132,7 +133,7 @@ void init_monitor(int argc, char *argv[]) {
   init_sdb();
 
   IFDEF(CONFIG_ITRACE, init_disasm());
-
+  if(ftrace_file)process_elf_file(ftrace_file);
   /* Display welcome message. */
   welcome();
 }
