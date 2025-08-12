@@ -108,7 +108,7 @@ int process_elf_file(const char* filename) {
         return 1;
     }
 
-    // 5. 读取字符串表
+    // 读取字符串表
     char *strtab = malloc(strtab_hdr->sh_size);
     if (!strtab) {
         perror("malloc failed");
@@ -128,7 +128,7 @@ int process_elf_file(const char* filename) {
         return 1;
     }
 
-    // 6. 读取符号表
+    // 读取符号表
     int num_symbols = symtab_hdr->sh_size / sizeof(Elf32_Sym);
     Elf32_Sym *symtab = malloc(symtab_hdr->sh_size);
     if (!symtab) {
@@ -154,15 +154,17 @@ int process_elf_file(const char* filename) {
     //     Elf32_Word    st_name;    // 符号名称索引
     //     Elf32_Addr    st_value;   // 符号的值
     //     Elf32_Word    st_size;    // 符号的大小
-    //     unsigned char st_info;    // 类型和绑定属性
+    //     unsigned char st_info;    // 低 4 位表示绑定属性（Binding），高 4 位表示符号类型（Type）
     //     unsigned char st_other;   // 保留字段
     //     Elf32_Section st_shndx;   // 所属节索引
     // } Elf32_Sym;
 
     //  打印符号表
+    unsigned char type;
     printf("Symbol table:\n");
     for (int i = 0; i < num_symbols; i++) {
-        if (symtab[i].st_name != 0) {  // 跳过无名符号
+        type = ELF32_ST_TYPE(symtab[i].st_info);
+        if (type == STT_FUNC) {  // 跳过无名符号
             print_symbol(&symtab[i], strtab);
         }
     }
