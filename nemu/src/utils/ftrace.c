@@ -1,11 +1,41 @@
 #include "ftrace.h"
 
-void print_symbol(Elf32_Sym *sym, const char *strtab) {
-    const char *name = strtab + sym->st_name;
-    unsigned long start = (unsigned long)sym->st_value ;
-    unsigned long end=start +sym->st_size-4;
-    printf("  %-40s 0x%08lx - 0x%08lx\n", name, start , end);
+Func func[100];
+int func_size=0;
+
+void jal_ftrace(int rd,uint32_t pc,uint32_t target){
+    int index;
+    index=func_judge(target);
+    if(index!=-1&&rd==1){//在riscv中，函数调用会把返回地址保存在目标寄存器 ra（x1）
+        printf("0x%x: call %s@0x%x\n", pc, func[index].name, target);
+    }
 }
+
+void jalr_ftrace(int32_t inst,int rd,int imm,uint32_t pc,uint32_t target){
+    if (inst==0x00008067) {
+            printf("0x%x: ret\n", pc);
+            return ;
+        }
+    int index=func_judge(target);
+    if(index!=-1)printf("0x%x: call %s@0x%x\n", pc, func[index].name, target);
+}
+
+int func_judge(unsigned long address){
+    for(int i=0;i<func_size;i++){
+        if(address>=func[i].start && address<=func[i].end)
+            return i;
+    }
+    return -1;
+}
+
+void print_symbol(Elf32_Sym *sym, const char *strtab) {
+    func[func_size].name = strtab + sym->st_name;
+    func[func_size].start = (unsigned long)sym->st_value ;
+    func[func_size].end=func[func_size].start +sym->st_size-4;
+    func_size++;
+    printf("  %-40s 0x%08lx - 0x%08lx\n", func[func_size].name, func[func_size].start , func[func_size].end);
+}
+
 int process_elf_file(const char* filename) {
     printf("reading elf_file %s...\n",filename);
     FILE *file = fopen(filename, "rb");
