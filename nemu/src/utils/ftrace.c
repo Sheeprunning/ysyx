@@ -2,7 +2,9 @@
 
 void print_symbol(Elf32_Sym *sym, const char *strtab) {
     const char *name = strtab + sym->st_name;
-    printf("  %-40s 0x%08lx - 0x%08lx\n", name, (unsigned long)sym->st_value , (unsigned long)sym->st_value+sym->st_size-4);
+    unsigned long start = (unsigned long)sym->st_value ;
+    unsigned long end=start +sym->st_size-4;
+    printf("  %-40s 0x%08lx - 0x%08lx\n", name, start , end);
 }
 int process_elf_file(const char* filename) {
     printf("reading elf_file %s...\n",filename);
