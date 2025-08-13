@@ -51,7 +51,7 @@ DST_DIR   = $(WORK_DIR)/build/$(ARCH)
 $(shell mkdir -p $(DST_DIR))
 
 ### Compilation targets (a binary image or archive)
-IMAGE_REL = build/$(NAME)-$(ARCH)
+IMAGE_REL = build/$(NAME)-$(ARCH) #NAME是在cpu-tests的xx.Makefile定义的，比如 max
 IMAGE     = $(abspath $(IMAGE_REL))
 ARCHIVE   = $(WORK_DIR)/build/$(NAME)-$(ARCH).a
 
@@ -91,7 +91,7 @@ LDFLAGS  += -z noexecstack $(addprefix -T, $(LDSCRIPTS))
 ## 4. Arch-Specific Configurations
 
 ### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`)
--include $(AM_HOME)/scripts/$(ARCH).mk
+-include $(AM_HOME)/scripts/$(ARCH).mk #包含相关架构的mk
 
 ## 5. Compilation Rules
 
@@ -124,12 +124,12 @@ else
 # $(1): library name
 define LIB_TEMPLATE =
 $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a: force
-	@$$(MAKE) -s -C $$(AM_HOME)/$(1) archive
+	@$$(MAKE) -s -C $$(AM_HOME)/$(1) archive #跳转到$(1)目录下,在该目录下进行make
 LINKAGE += $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a
 endef
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)
-$(foreach lib, $(LIBS), $(eval $(call LIB_TEMPLATE,$(lib))))
+$(foreach lib, $(LIBS), $(eval $(call LIB_TEMPLATE,$(lib)))) #这里的lib其实就是am，klib，也就是上面函数的$1
 endif
 
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)
