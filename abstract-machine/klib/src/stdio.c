@@ -7,7 +7,7 @@
 
 /*
 va_list ap	定义一个指针，用于遍历可变参数列表	类似迭代器 iterator
-va_start	初始化 ap，使其指向固定参数（fmt）之后的第一个可变参数	相当于 iter = begin()
+va_start	初始化 ap，使其指向固定参数（fmt）之后的第一个可变参数,即...的第一个参数。相当于 iter = begin()
 va_arg(ap, type)：读取 type 类型的参数，并移动 ap 到下一个参数
 va_end	清理 ap 的状态（某些平台需要释放资源）	相当于 iter = end()
 */
@@ -27,17 +27,26 @@ static char* itoa(int val, char *buf, int base) {
     } while (abs_val > 0);
     
     // 反转数字顺序
+    char *end=p;
     *p-- = '\0';
     while (start < p) {
         char tmp = *start;
         *start++ = *p;
         *p-- = tmp;
     }
-    return p + 1;
+    return end;
 }
 
 int printf(const char *fmt, ...) {
-  panic("Not implemented");
+  va_list ap;
+  va_start(ap, fmt);
+  char out[256];
+  int len = vsprintf(out, fmt, ap);
+  for (char *p = out; *p; p++) {
+        putch(*p);  // 逐字符输出
+    }
+  va_end(ap);
+  return len;
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
@@ -49,7 +58,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         }
         
         fmt++; // 跳过'%'
-        switch (*fmt++) {
+        switch (*fmt) {
             case 'd': {      // 处理十进制整数
                 int num = va_arg(ap, int);
                 out = itoa(num, out, 10);
@@ -75,10 +84,11 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
             }
             default: {       // 无效格式符
                 *out++ = '%';
-                *out++ = *(fmt-1);
+                *out++ = *fmt;
                 break;
             }
         }
+        fmt++;
     }
     *out = '\0';             // 添加字符串终结符
     return out - start;      // 返回写入的字符数（不含'\0'）

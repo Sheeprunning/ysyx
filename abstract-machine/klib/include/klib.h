@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#define __NATIVE_USE_KLIB__
+#define __NATIVE_USE_KLIB__ //在src中我们可以看见只有定义了这个宏才会定义其中的函数
 
 // string.h
 void  *memset    (void *s, int c, size_t n);
