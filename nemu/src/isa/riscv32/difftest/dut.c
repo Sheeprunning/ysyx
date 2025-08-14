@@ -30,7 +30,7 @@ void print_dut_and_ref(CPU_state *ref_r,int p){
 }
 
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  if(ref_r->pc!=pc){
+  if(ref_r->pc!=cpu.pc){
     print_dut_and_ref(ref_r,-1);
     return false;
   }
