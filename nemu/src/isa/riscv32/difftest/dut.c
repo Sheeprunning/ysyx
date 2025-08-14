@@ -17,8 +17,32 @@
 #include <cpu/difftest.h>
 #include "../local-include/reg.h"
 
+void print_dut_and_ref(CPU_state *ref_r,int p){
+  printf("---------------------------------------------\n");
+  printf("| index |  name | NEMU-value | Spike-value|\n");
+  for (int i = 0; i < 32; i++) {
+    if(i==p)printf("->");
+    printf("|x[%2d]  |%7s|%12x|%12x|\n", i, reg_name(i), gpr(i), ref_r->gpr[i]);
+  }
+
+    printf("|   dnpc|   dnpc|%12x|%12x|\n",cpu.pc, ref_r->pc);
+  printf("---------------------------------------------\n");
+}
+
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
-  return false;
+  if(ref_r->pc!=pc){
+    print_dut_and_ref(ref_r,-1);
+    return false;
+  }
+    
+  for(int i=0;i<32;i++){
+    if(ref_r->gpr[i] != gpr(i)){
+      print_dut_and_ref(ref_r,i);
+      return false;
+    }
+      
+  }
+  return true;
 }
 
 void isa_difftest_attach() {
