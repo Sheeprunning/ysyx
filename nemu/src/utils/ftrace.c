@@ -3,6 +3,8 @@
 Func func[100];
 int func_size=0;
 
+#ifdef CONFIG_FTRACE
+
 void jal_ftrace(int rd,uint32_t pc,uint32_t target){
     int index;
     index=func_judge(target);
@@ -211,3 +213,4 @@ int process_elf_file(const char* filename) {
     fclose(file);
     return 0;
 }
+#endif
