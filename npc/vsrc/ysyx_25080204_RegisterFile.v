@@ -23,10 +23,16 @@ module ysyx_25080204_RegisterFile #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
   assign src2=rf[rs2];
 always @(posedge clk or posedge rst) begin
     if(rst)begin
-      
     end
     else if (wen && waddr != 0) begin
         $display("[CLK %0t] Write: rf[%0d] = 0x%08x (dec: %0d)", $time, waddr, wdata, wdata);
     end
 end
+export "DPI-C" function show_reg;
+  
+function void show_reg();
+  for (i=0;i<32;i=i+1)begin
+      $display("x[%d]: 0x%08x\n",i,rf[i]);
+  end
+endfunction
 endmodule

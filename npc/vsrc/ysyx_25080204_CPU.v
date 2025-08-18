@@ -6,6 +6,7 @@ module ysyx_25080204_CPU(
     output Zero,
     output Overflow,
     output CF,
+    output [31:0]a0,
     output [31:0]pc
 );
 
@@ -83,6 +84,7 @@ ysyx_25080204_ControlUnit CU(
 
 assign A=ALU_A_sel?src1:pc;
 assign B=ALU_B_sel?src2:imm_num;
+assign a0=RF.rf[10];
 
 ysyx_25080204_ALU ALU(
     .opcode(alu_op),

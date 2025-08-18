@@ -6,6 +6,7 @@ module top(
     output Zero,
     output Overflow,
     output CF,
+    output [31:0]a0,
     output [31:0]pc
 );
 
@@ -19,6 +20,7 @@ ysyx_25080204_CPU CPU(
     .Zero(Zero),
     .Overflow(Overflow),
     .CF(CF),
+    .a0(a0),
     .pc(pc)
 );
 
