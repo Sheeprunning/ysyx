@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
     reset();
     while (!contextp->gotFinish()){
         top->eval();
-        
+        single_cycle();
         // nvboard_update();
         
     }
