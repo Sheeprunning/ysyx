@@ -17,8 +17,7 @@ $(BUILD_DIR):
 
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-#CSRCS = $(abspath ./csrc/$(TOPNAME).cpp)
-CSRCS = $(shell find $(abspath ./vsrc) -name "*.cpp")
+CSRCS = $(abspath ./csrc/$(TOPNAME).cpp)
 CSRCS += $(SRC_AUTO_BIND)
 IMG ?=  ./default.bin
 
