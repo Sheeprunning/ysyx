@@ -43,7 +43,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation with NVBoard..."
-	@$(BIN)
+	@$(BIN) -i $(IMG)
 #don't run nvboard
 else
 $(SRC_AUTO_BIND): | $(BUILD_DIR)
@@ -54,7 +54,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation (without NVBoard)..."
-	@$(BIN)
+	@$(BIN) -i $(IMG)
 endif
 
 # rules for verilator
