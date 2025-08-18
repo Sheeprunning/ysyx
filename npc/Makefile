@@ -19,6 +19,7 @@ $(BUILD_DIR):
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(abspath ./csrc/$(TOPNAME).cpp)
 CSRCS += $(SRC_AUTO_BIND)
+IMG ?=  ./default.bin
 
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
@@ -59,21 +60,22 @@ endif
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 
-$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE) 
 	rm -rf $(OBJ_DIR)
 	$(VERILATOR) $(VERILATOR_CFLAGS) \
 	--top-module $(TOPNAME) $^ \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
   --Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
-
+	
 all: default
 
 run: $(BIN)
-	@$^
+	@$^ -i $(IMG)
 
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf *vcd
+	rm -rf image.bin
 
 .PHONY: default all clean run
 include ../Makefile

@@ -4,7 +4,7 @@ module ysyx_25080204_Decoder (
     output [4:0]rs1,
     output [4:0]rs2,
     output [6:0]opcode,
-    output [31:0]imm_num,
+    output reg [31:0]imm_num,
     output [6:0]func7,
     output [2:0]func3    
 );
@@ -22,7 +22,7 @@ module ysyx_25080204_Decoder (
     wire [31:0] j_imm = {{12{inst[31]}},inst[19:12],inst[20],inst[30:21],1'b0};
     wire [31:0] s_imm = {{20{inst[31]}},inst[31:25],inst[11:7]};
     
-    wire is_r_type = (opcode == 7'b0110011);  // R-type
+    //wire is_r_type = (opcode == 7'b0110011);  // R-type
     wire is_i_type = (opcode == 7'b0000011 ||  // LOAD
                  opcode == 7'b0010011 ||  // 立即数运算 (ADDI, ANDI, etc.)
                  opcode == 7'b1100111);     //I-type 
@@ -33,8 +33,6 @@ module ysyx_25080204_Decoder (
     wire is_j_type = (opcode == 7'b1101111);//J-type
 
     
-
-    reg [31:0] imm_num;
     always @(*) begin
         if      (is_i_type) imm_num = i_imm;
         else if (is_b_type) imm_num = b_imm;

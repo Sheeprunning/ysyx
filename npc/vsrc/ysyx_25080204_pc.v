@@ -2,7 +2,7 @@ module ysyx_25080204_pc (
     input [31:0] next_pc,
     input clk,
     input rst,
-    output reg [31:0]pc,
+    output reg [31:0]pc
 );
     
     

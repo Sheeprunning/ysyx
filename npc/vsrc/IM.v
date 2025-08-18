@@ -1,4 +1,4 @@
-module IM_module (
+module IM (
     input [31:0] addr,
     output [31:0] inst
 );
