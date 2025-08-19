@@ -72,8 +72,16 @@ extern "C" {
         }
         exit(0);
     }
-    void show_reg();
+    void show_reg(); 
+     
 }
+
+void call_show_reg() {
+    svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
+    svSetScope(scope);
+    show_reg();  
+}
+
 
 void cpu_exec(uint32_t n){
   for(int i=0;i<n;i++){

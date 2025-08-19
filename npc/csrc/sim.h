@@ -8,6 +8,7 @@
 #include <string>
 #include <iomanip>
 #include <getopt.h>
+#include "svdpi.h"
 #include "init_mem.h"
 #include "sdb.h"
 
@@ -35,9 +36,10 @@ void cpu_exec(uint32_t n);
 // DPI-C 函数声明
 extern "C" {
     void npc_ebreak_finish();
-    void show_reg();
+    void show_reg(); 
 }
 
+void call_show_reg();
 // 内存访问函数
 uint32_t pmem_read(uint64_t addr, int len);
 

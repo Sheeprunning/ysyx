@@ -52,7 +52,7 @@ static int cmd_si(char *args){
 
 static int cmd_info(char *args){
   if(strcmp(args,"r")==0)
-    show_reg();
+    call_show_reg();
 //   else if(strcmp(args,"w")==0){
 //     show_watchpoint();
 //   }else printf("The argument of info is wrong!");

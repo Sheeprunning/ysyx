@@ -10,7 +10,7 @@ module top(
     output [31:0]pc
 );
 
-import "DPI-C" function void npc_ebreak_finish();
+
 
 ysyx_25080204_CPU CPU(
     .clk(clk),
@@ -23,9 +23,12 @@ ysyx_25080204_CPU CPU(
     .a0(a0),
     .pc(pc)
 );
-
+import "DPI-C" function void npc_ebreak_finish();
 always @(*)begin
     if(inst==32'h100073)npc_ebreak_finish();
 end
+
+
+
 endmodule
 
