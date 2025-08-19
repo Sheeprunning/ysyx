@@ -2,8 +2,6 @@
 
 using namespace std;
 
-#define CONFIG_MSIZE 0x8000000
-#define CONFIG_MBASE 0x80000000
 
 uint8_t *pmem = NULL;
 u_int32_t pc=0;

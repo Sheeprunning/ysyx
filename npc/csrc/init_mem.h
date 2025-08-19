@@ -4,13 +4,17 @@
 #include <iostream>
 #include <assert.h>
 
-#ifndef INIT_MEM
-#define IMIT_MEM
+#ifndef INIT_MEM_H
+#define IMIT_MEM_H
+
+#define CONFIG_MSIZE 0x8000000
+#define CONFIG_MBASE 0x80000000
+
 
 extern uint8_t *pmem;
 extern u_int32_t pc;
 extern char* img_file;
-
+extern int enable_nvboard;
 
 int parse_args(int argc, char *argv[]);
 uint8_t* guest_to_host(u_int32_t paddr);
