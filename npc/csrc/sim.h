@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <getopt.h>
 #include "init_mem.h"
+#include "sdb.h"
 
 // #include <nvboard.h>
 

@@ -88,7 +88,7 @@ int sim(int argc, char *argv[]) {
     // nvboard_bind_all_pins(top);
     // nvboard_init();
     reset();
-    cpu_exec(-1);
+    sdb_mainloop();
     sim_exit();
     return 0;
 }

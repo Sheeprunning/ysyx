@@ -59,6 +59,7 @@ endif
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
+LDFLAGS += -lreadline -lhistory -lncurses
 
 $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE) 
 	rm -rf $(OBJ_DIR)
