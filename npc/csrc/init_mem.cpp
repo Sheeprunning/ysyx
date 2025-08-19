@@ -1,11 +1,13 @@
 #include "./init_mem.h"
 
+using namespace std;
+
 #define CONFIG_MSIZE 0x8000000
 #define CONFIG_MBASE 0x80000000
 
-static uint8_t *pmem = NULL;
-static u_int32_t pc=0;
-static char* img_file =NULL;
+uint8_t *pmem = NULL;
+u_int32_t pc=0;
+char* img_file =NULL;
 
 static const u_int32_t img[]={
     0x00408093, // addi x1, x1, 4 
