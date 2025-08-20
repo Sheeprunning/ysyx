@@ -41,13 +41,14 @@ void sim_exit(){
   tfp->dump(contextp->time());
   // nvboard_update();
   top->clk = 1; top->eval();
+  top->inst=pmem_read(top->pc,4);
   if(pc!=top->pc){
     pc=top->pc;
-    cout<<"pc:"<<hex<<pc<<endl;
+    cout<<"pc:"<<hex<<pc<<" inst:"<<top->inst<<endl;
   }
   contextp->timeInc(10);
   tfp->dump(contextp->time());
-  top->inst=pmem_read(top->pc,4);
+  
   // nvboard_update();
 }
 
@@ -57,7 +58,18 @@ void sim_exit(){
   top->rst = 0;
 }
 
-
+const char *regs[] = {
+  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+const char *regs2[] = {
+  "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7",
+  "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15",
+  "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23",
+  "x24", "x25", "x26", "x27", "x28", "x29", "x30", "x31"
+};
 
 extern "C" {
     void npc_ebreak_finish() {
@@ -73,7 +85,7 @@ extern "C" {
         exit(0);
     }
     void show_reg(); 
-     
+    int get_reg();
 }
 
 void call_show_reg() {
@@ -82,7 +94,26 @@ void call_show_reg() {
     show_reg();  
 }
 
+int isa_reg_str2val(const char *s, bool *success){
 
+  for(int i=0;i<32;i++){
+     if(strcmp(regs[i],s)==0){
+      *success=true;
+      svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
+      return top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
+    }
+  }
+  for(int i=0;i<32;i++){
+     if(strcmp(regs2[i],s)==0){
+      *success=true;
+      svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
+      return top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
+    }
+  }
+  printf("输入的寄存器名称错误！\n");
+  *success=false;
+  return 0;
+}
 void cpu_exec(uint32_t n){
   for(int i=0;i<n;i++){
     single_cycle();
@@ -96,6 +127,7 @@ int sim(int argc, char *argv[]) {
     // nvboard_bind_all_pins(top);
     // nvboard_init();
     reset();
+    init_sdb() ;
     sdb_mainloop();
     sim_exit();
     return 0;

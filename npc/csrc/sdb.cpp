@@ -30,12 +30,12 @@ static int cmd_q(char *args) {
   return -1;
 }
 
-// static int cmd_p(char *args) {
-//   bool success = true;
-//   int data=expr(args,&success);
-//   if(success)printf("%#010x %d\n",data,data);
-//   return success;
-// }
+static int cmd_p(char *args) {
+  bool success = true;
+  int data=expr(args,&success);
+  if(success)printf("%#010x %d\n",data,data);
+  return success;
+}
 
 static int cmd_si(char *args){
   int i=1;
@@ -59,31 +59,31 @@ static int cmd_info(char *args){
   return 0;
 }
 
-// static int cmd_x(char *args){
-//   char * len_str = strtok(args, " ");
-//   char *exp = len_str +strlen(len_str) + 1;
-//   int n;
-//   if(sscanf(len_str,"%d",&n)!=1){
-//     printf("The format of %s is wrong!",len_str);
-//     return 0;
-//   }
-//   if (exp == NULL) {
-//       printf("Error: Missing expression argument or the expression is wrong\n");//没有提供表达式参数
-//       return 0;
-//   }
-//   bool success = true;
-//   int addr = expr(exp,&success);
-//   if (!success) {
-//         printf("Error: Invalid expression '%s'\n", exp);//计算表达式出错
-//         return 0;
-//     }
-//   for(int i=0;i<n;i++){
-//     int data = paddr_read(addr+i*4, 4);
-//     printf("%#010x  %#010x\n",addr+i*4,data);
-//   }
+static int cmd_x(char *args){
+  char * len_str = strtok(args, " ");
+  char *exp = len_str +strlen(len_str) + 1;
+  int n;
+  if(sscanf(len_str,"%d",&n)!=1){
+    printf("The format of %s is wrong!",len_str);
+    return 0;
+  }
+  if (exp == NULL) {
+      printf("Error: Missing expression argument or the expression is wrong\n");//没有提供表达式参数
+      return 0;
+  }
+  bool success = true;
+  u_int32_t addr = expr(exp,&success);
+  if (!success) {
+        printf("Error: Invalid expression '%s'\n", exp);//计算表达式出错
+        return 0;
+    }
+  for(int i=0;i<n;i++){
+    int data = pmem_read(addr+i*4, 4);
+    printf("%#010x  %#010x\n",addr+i*4,data);
+  }
   
-//   return 0;
-// }
+  return 0;
+}
 
 // static int cmd_w(char *args){
 //   new_wp(args);
@@ -113,9 +113,9 @@ static struct {
 
   /* TODO: Add more commands */
   {"si", "Execute the program n steps",cmd_si},
-  {"info", "Show the status of register or watchpoint", cmd_info}
-//   {"x", "Show the the data of memory ", cmd_x},
-//   {"p", "Caculate a expression", cmd_p},
+  {"info", "Show the status of register or watchpoint", cmd_info},
+  {"x", "Show the the data of memory ", cmd_x},
+  {"p", "Caculate a expression", cmd_p}
 //   {"w", "Set a watchpoint", cmd_w},
 //   {"d", "Delete the watchpoint", cmd_d}
 };
@@ -180,4 +180,13 @@ void sdb_mainloop() {
 
     if (i == NR_CMD) { printf("Unknown command '%s'\n", cmd); }
   }
+}
+void init_sdb() {
+  /* Compile the regular expressions. */
+  init_regex();
+//   /* Append for 环形缓冲 & 访存记录*/
+//   init_iringbuf();
+//   init_mtrace("/home/sheeprunning/ysyx-workbench/nemu/build/mtrace-log.txt");
+//   /* Initialize the watchpoint pool. */
+//   init_wp_pool();
 }

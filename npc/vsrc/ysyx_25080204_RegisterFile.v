@@ -29,10 +29,13 @@ always @(posedge clk or posedge rst) begin
     end
 end
 export "DPI-C" task show_reg;
-  
+ 
+
 task show_reg();
   for (i=0;i<32;i=i+1)begin
       $display("x[%d]: 0x%08x\n",i,rf[i]);
   end
 endtask
+  
+
 endmodule
