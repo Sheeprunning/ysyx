@@ -44,7 +44,7 @@ void sim_exit(){
   top->inst=pmem_read(top->pc,4);
   if(pc!=top->pc){
     pc=top->pc;
-    cout<<"pc:"<<hex<<pc<<" inst:"<<top->inst<<endl;
+    cout<<"pc:"<<hex<<pc<<" inst:"<<hex<<top->inst<<endl;
   }
   contextp->timeInc(10);
   tfp->dump(contextp->time());
