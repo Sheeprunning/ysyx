@@ -1,11 +1,12 @@
-#include "./init_mem.h"
+#include "init.h"
 
 using namespace std;
 
 
 uint8_t *pmem = NULL;
-u_int32_t pc=0;
 char* img_file =NULL;
+static char *diff_so_file = NULL;
+static int difftest_port = 1234;
 
 static const u_int32_t img[]={
     0x00408093, // addi x1, x1, 4 
@@ -17,15 +18,18 @@ static const u_int32_t img[]={
 int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"image"      , required_argument, NULL, 'i'},
+    {"diff"     , required_argument, NULL, 'd'},
     {0            , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-i:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "i:d:", table, NULL)) != -1) {
     switch (o) {
-      case 'i': img_file = optarg; return 0;
+      case 'i': img_file = optarg; break;
+      case 'd': diff_so_file = optarg; break;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-i,--image=IMAGE_BIN    initial  with file.bin\n");
+        printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\n");
         exit(0);
     }
@@ -62,12 +66,13 @@ void pmem_write(u_int32_t addr, int len, u_int32_t data) {
   host_write(guest_to_host(addr), len, data);
 }
 
-void init_mem() {
+int init_mem() {
   pmem = new u_int8_t[CONFIG_MSIZE];
   assert(pmem);
+  printf("正在将%s文件放入存储器！\n",img_file);
   FILE *fp=fopen(img_file,"rb");
   if(!fp){
-    cout<<"无法打开img文件"<<endl;
+    printf("无法打开img文件!!\n");
   }
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
@@ -86,4 +91,12 @@ void init_mem() {
         setw(8) << setfill('0') << inst << dec << endl;
     }
     cout << "----------" << endl;
+    return size;
+}
+
+void init_main(int argc, char *argv[]){
+    parse_args(argc, argv);
+    long img_size = init_mem();
+    init_sdb() ;
+    init_difftest(diff_so_file, img_size, difftest_port);
 }

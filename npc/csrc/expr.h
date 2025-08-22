@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <regex.h>
-#include "init_mem.h"
+#include "init.h"
 #include "sim.h"
 #include <stdbool.h>
 #include <stdint.h>

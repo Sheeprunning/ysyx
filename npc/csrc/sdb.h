@@ -7,10 +7,10 @@
 #include <readline/history.h>
 #include <string.h>
 #include "sim.h"
-#include "init_mem.h"
+#include "init.h"
 #include "expr.h"
 #include "sim.h"
-
+#include "npc.h"
 
 
 /* 核心函数 */

@@ -9,8 +9,9 @@ VerilatedContext* contextp = NULL;
 VerilatedVcdC* tfp = NULL;
 
 TOP_NAME* top;
-
-
+CPU_state cpu;
+NPCState npc_state;
+u_int32_t pc;
 
 void step_and_dump_wave(){
   top->eval();
@@ -35,6 +36,13 @@ void sim_exit(){
   delete contextp;
 }
 
+void update_cpu(){
+  for(int i=0;i<32;i++){
+    cpu.gpr[i]=top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
+  }
+  cpu.pc=pc;
+}
+
  void single_cycle() {
   top->clk = 0; top->eval();
   contextp->timeInc(10);
@@ -48,7 +56,7 @@ void sim_exit(){
   }
   contextp->timeInc(10);
   tfp->dump(contextp->time());
-  
+  update_cpu();
   // nvboard_update();
 }
 
@@ -76,13 +84,14 @@ extern "C" {
         VL_PRINTF("[DPI-C] EBREAK triggered, stopping simulation.\n");
         Verilated::gotFinish(true);
         cout << "-----Result Check:-----" << endl;
+        set_npc_state(NPC_END,pc,top->a0);
         if(top->a0==0){
           cout<< COLOR_GREEN "HIT_GOOD" COLOR_RESET<<endl;
         }
         else{
           cout<< COLOR_RED "BAD_TRAP" COLOR_RESET<<endl;
         }
-        exit(0);
+        
     }
     void show_reg(); 
     int get_reg();
@@ -114,20 +123,49 @@ int isa_reg_str2val(const char *s, bool *success){
   *success=false;
   return 0;
 }
-void cpu_exec(uint32_t n){
+
+void trace_and_difftest(u_int32_t pc){
+  difftest_step(cpu.pc, pc);
+}
+
+void execute(uint32_t n){
   for(int i=0;i<n;i++){
     single_cycle();
+    trace_and_difftest(cpu.pc);//删除了decoder的部分
+    if (npc_state.state != NPC_RUNNING) break;
+  }
+}
+
+
+void cpu_exec(uint32_t n){
+  switch (npc_state.state) {
+    case NPC_END: case NPC_ABORT: case NPC_QUIT:
+      printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+      return;
+    default: npc_state.state = NPC_RUNNING;
+  }
+
+  execute(n);
+  switch (npc_state.state) {
+    case NPC_RUNNING: npc_state.state = NPC_STOP; break;
+
+    case NPC_END: case NPC_ABORT:
+      cout << "npc: " 
+     << (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", COLOR_RED) :
+        (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", COLOR_GREEN) :
+         ANSI_FMT("HIT BAD TRAP", COLOR_RED)))
+     << " at pc = 0x" << hex << npc_state.halt_pc << dec;
+      // fall through
+    //case NPC_QUIT: statistic();
   }
 }
 
 int sim(int argc, char *argv[]) {
+    init_main(argc,argv);
     sim_init();
-    parse_args(argc, argv);
-    init_mem();
     // nvboard_bind_all_pins(top);
     // nvboard_init();
     reset();
-    init_sdb() ;
     sdb_mainloop();
     sim_exit();
     return 0;

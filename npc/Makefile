@@ -18,8 +18,10 @@ $(BUILD_DIR):
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.cpp")
+CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)
 IMG ?=  ./default.bin
+DIFF ?= $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
@@ -53,7 +55,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation (without NVBoard)..."
-	@$(BIN) -i $(IMG)
+	@$(BIN) -i $(IMG) -d $(DIFF)
 endif
 
 # rules for verilator

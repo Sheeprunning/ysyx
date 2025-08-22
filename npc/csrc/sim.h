@@ -10,20 +10,23 @@
 #include <iomanip>
 #include <getopt.h>
 #include "svdpi.h"
-#include "init_mem.h"
+#include "init.h"
 #include "sdb.h"
+#include "npc.h"
 
 // #include <nvboard.h>
 
 #define COLOR_RED    "\033[1;31m"
 #define COLOR_GREEN  "\033[1;32m"
 #define COLOR_RESET  "\033[0m"
-
+#define ANSI_FMT(str, color) color str COLOR_RESET
 
 // 全局变量声明
 extern VerilatedContext* contextp;
 extern VerilatedVcdC* tfp;
 extern TOP_NAME* top;
+extern const char *regs[]; 
+extern const char *regs2[]; 
 
 // 仿真控制函数
 void sim_init();
