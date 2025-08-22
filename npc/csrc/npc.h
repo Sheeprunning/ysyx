@@ -10,8 +10,9 @@
 
 typedef struct 
 {
-    u_int32_t pc;
-    u_int32_t gpr[32];
+  u_int32_t gpr[32];
+  u_int32_t pc;
+    
 }CPU_state;
 
 extern CPU_state cpu;
