@@ -97,11 +97,11 @@ int init_mem() {
 void init_main(int argc, char *argv[]){
     parse_args(argc, argv);
     long img_size = init_mem();
-    printf("\n存储器初始化完成！\n\n");
+    printf("存储器初始化完成！\n");
     init_sdb() ;
-    printf("\n调试器初始化完成！\n\n");
+    printf("调试器初始化完成！\n");
     sim_init();
-    printf("\n仿真初始化完成！\n\n");
+    printf("仿真初始化完成！\n");
     init_difftest(diff_so_file, img_size, difftest_port);
-    printf("\n差分测试初始化完成！\n\n");
+    printf("差分测试初始化完成！\n");
 }

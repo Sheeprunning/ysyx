@@ -37,6 +37,7 @@ void single_cycle() {
     pc=top->pc;
     cout<<"pc:"<<hex<<pc<<" inst:"<<hex<<top->inst<<endl;
   }
+  update_cpu();
   contextp->timeInc(10);
   tfp->dump(contextp->time());
   // nvboard_update();
@@ -46,7 +47,6 @@ void single_cycle() {
   top->rst = 1;
   while (n -- > 0) single_cycle();
   top->rst = 0;
-  update_cpu();
 }
 
 void sim_init(){
