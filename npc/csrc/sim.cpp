@@ -17,24 +17,7 @@ void step_and_dump_wave(){
   top->eval();
   contextp->timeInc(10);
   tfp->dump(contextp->time());
-}
-void sim_init(){
-  contextp = new VerilatedContext;
-  tfp = new VerilatedVcdC;
-  top = new TOP_NAME{contextp};
-  contextp->traceEverOn(true);
-  top->trace(tfp, 99);
-  tfp->open("wave.vcd");
-
-}
-
-void sim_exit(){
-  step_and_dump_wave();
-  tfp->close();
-  delete top;
-  delete tfp;
-  delete contextp;
-}
+} 
 
 void update_cpu(){
   for(int i=0;i<32;i++){
@@ -43,7 +26,7 @@ void update_cpu(){
   cpu.pc=top->pc;
 }
 
- void single_cycle() {
+void single_cycle() {
   top->clk = 0; top->eval();
   contextp->timeInc(10);
   tfp->dump(contextp->time());
@@ -65,6 +48,28 @@ void update_cpu(){
   top->rst = 0;
   update_cpu();
 }
+
+void sim_init(){
+  contextp = new VerilatedContext;
+  tfp = new VerilatedVcdC;
+  top = new TOP_NAME{contextp};
+  contextp->traceEverOn(true);
+  top->trace(tfp, 99);
+  tfp->open("wave.vcd");
+  reset();
+}
+
+void sim_exit(){
+  step_and_dump_wave();
+  tfp->close();
+  delete top;
+  delete tfp;
+  delete contextp;
+}
+
+
+
+
 
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -162,10 +167,9 @@ void cpu_exec(uint32_t n){
 
 int sim(int argc, char *argv[]) {
     init_main(argc,argv);
-    sim_init();
     // nvboard_bind_all_pins(top);
     // nvboard_init();
-    reset();
+    
     sdb_mainloop();
     sim_exit();
     return 0;
