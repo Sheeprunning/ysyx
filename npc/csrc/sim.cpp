@@ -56,7 +56,6 @@ void update_cpu(){
   }
   contextp->timeInc(10);
   tfp->dump(contextp->time());
-  update_cpu();
   // nvboard_update();
 }
 
