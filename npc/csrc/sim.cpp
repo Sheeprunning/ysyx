@@ -40,7 +40,7 @@ void update_cpu(){
   for(int i=0;i<32;i++){
     cpu.gpr[i]=top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
   }
-  cpu.pc=pc;
+  cpu.pc=top->pc;
 }
 
  void single_cycle() {
@@ -64,6 +64,7 @@ void update_cpu(){
   top->rst = 1;
   while (n -- > 0) single_cycle();
   top->rst = 0;
+  update_cpu();
 }
 
 const char *regs[] = {
