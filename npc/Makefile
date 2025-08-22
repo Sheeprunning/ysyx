@@ -62,6 +62,8 @@ endif
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lreadline -lhistory -lncurses
+CXXFLAGS += -fsanitize=address
+LDFLAGS += -fsanitize=address
 
 $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE) 
 	rm -rf $(OBJ_DIR)
