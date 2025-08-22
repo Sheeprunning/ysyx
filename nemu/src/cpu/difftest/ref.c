@@ -19,12 +19,14 @@
 #include <memory/paddr.h>
 
 __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
-  if(direction==DIFFTEST_TO_REF){
+  if (direction == DIFFTEST_TO_REF) {
+    // 逐字节复制，而不是直接访问指针
+    uint8_t *src = (uint8_t *)buf;
     for (size_t i = 0; i < n; i++) {
-      paddr_write(addr + i, 1, *((uint8_t *)buf + i));
+      uint8_t data = src[i];  // 先在本地读取数据
+      paddr_write(addr + i, 1, data);  // 然后写入到 NEMU 的内存
     }
   }
-  
 }
 
 __EXPORT void difftest_regcpy(void *dut, bool direction) {
