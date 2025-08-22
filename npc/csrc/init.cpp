@@ -98,5 +98,6 @@ void init_main(int argc, char *argv[]){
     parse_args(argc, argv);
     long img_size = init_mem();
     init_sdb() ;
+    sim_init();
     init_difftest(diff_so_file, img_size, difftest_port);
 }

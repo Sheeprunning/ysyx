@@ -53,7 +53,7 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
 
   ref_difftest_init(port);
   ref_difftest_memcpy(CONFIG_MBASE, guest_to_host(CONFIG_MBASE), img_size, DIFFTEST_TO_REF);
-  ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);printf("pc:%0#x\n",cpu.pc);
+  ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
 }
 
 void print_dut_and_ref(CPU_state *ref_r,int p){
