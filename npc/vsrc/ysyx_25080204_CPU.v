@@ -181,5 +181,6 @@ always @(posedge clk or posedge rst)begin
     else if (DM_w_en) begin // 有写请求时
             write_ready<=1;
         end 
+    else write_ready<=0;
 end
 endmodule
