@@ -2,7 +2,6 @@ module ysyx_25080204_CPU(
     input clk,
     input rst,
     input [31:0]inst,
-    output [31:0]result,
     output Zero,
     output Overflow,
     output CF,
@@ -15,6 +14,7 @@ wire [31:0]next_pc;
 wire [3:0]alu_op;
 wire [31:0]A;
 wire [31:0]B;
+wire [31:0]result;
 // wire Zero;
 // wire Overflow;
 // wire CF;
@@ -44,6 +44,8 @@ ysyx_25080204_pc PC(
 ysyx_25080204_next_pc dnpc(
     .rst(rst),
     .pc(pc),
+    .bj_en(bj_en),
+    .bj_addr(result),
     .next_pc(next_pc)
 );
 
@@ -85,6 +87,38 @@ ysyx_25080204_ControlUnit CU(
 assign A=ALU_A_sel?src1:pc;
 assign B=ALU_B_sel?src2:imm_num;
 assign a0=RF.rf[10];
+
+wire beq_taken=(src1==src2);
+wire bne_taken=!beq_taken;
+wire blt_taken=($signed(src1)<$signed(src2));
+wire bge_taken=!blt_taken;
+wire bltu_taken=(src1<src2);
+wire bgeu_taken=!bltu_taken;
+reg bj_en;
+//bj_en
+always @(*) begin
+    if(rst)bj_en=0;
+    else begin
+    case(opcode)
+    7'b1100011:begin
+        case(func3)
+            3'b000: bj_en = beq_taken;  // beq
+            3'b001: bj_en = bne_taken;  // bne
+            3'b100: bj_en = blt_taken;  // blt
+            3'b101: bj_en = bge_taken;  // bge
+            3'b110: bj_en = bltu_taken; // bltu
+            3'b111: bj_en = bgeu_taken; // bgeu
+            default: bj_en = 1'b0;      // 默认情况
+    endcase
+    end
+    7'b1100111,7'b1101111: //jalr & jal
+        bj_en=1;
+    default:
+        bj_en=0;
+                        
+    endcase
+    end
+end
 
 ysyx_25080204_ALU ALU(
     .opcode(alu_op),

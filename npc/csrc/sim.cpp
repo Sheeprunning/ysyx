@@ -126,7 +126,7 @@ void execute(uint32_t n){
   for(int i=0;i<n;i++){
     if(pc!=top->pc){
     pc=top->pc;
-    cout<<"pc:"<<hex<<pc<<" inst:"<<hex<<top->inst<<endl;
+    cout<<"pc:"<<hex<<pc<<" inst:" <<setw(8) << setfill('0')<<hex<<top->inst<<endl;
     }
     single_cycle();
     trace_and_difftest(cpu.pc);//删除了decoder的部分
