@@ -105,11 +105,6 @@ always @(*) begin
     endcase
 end
 
-//DM_w_en
-always @(*) begin
-    DM_w_en=(opcode==7'b0100011)?1'b1:1'b0;
-end
-
 //mask
 always @(*) begin
     case(func3[1:0])
@@ -120,9 +115,18 @@ always @(*) begin
     endcase
 end
 
+//DM_w_en
+always @(*) begin
+    DM_w_en=(opcode==7'b0100011)?1'b1:1'b0;
+end
+
 //DM_r_en
 always @(*) begin
     DM_r_en=(opcode==7'b0000011)?1'b1:1'b0;
 end
+
+
+
+
 
 endmodule
