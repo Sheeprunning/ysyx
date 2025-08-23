@@ -90,13 +90,6 @@ extern "C" {
         Verilated::gotFinish(true);
         cout << "-----Result Check:-----" << endl;
         set_npc_state(NPC_END,pc,top->a0);
-        if(top->a0==0){
-          cout<< COLOR_GREEN "HIT_GOOD" COLOR_RESET<<endl;
-        }
-        else{
-          cout<< COLOR_RED "BAD_TRAP" COLOR_RESET<<endl;
-        }
-        
     }
     void show_reg(); 
     int get_reg();
@@ -159,7 +152,7 @@ void cpu_exec(uint32_t n){
      << (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", COLOR_RED) :
         (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", COLOR_GREEN) :
          ANSI_FMT("HIT BAD TRAP", COLOR_RED)))
-     << " at pc = 0x" << hex << npc_state.halt_pc << dec;
+     << " at pc = 0x" << hex << npc_state.halt_pc << dec<<endl;
       // fall through
     //case NPC_QUIT: statistic();
   }
@@ -169,7 +162,6 @@ int sim(int argc, char *argv[]) {
     init_main(argc,argv);
     // nvboard_bind_all_pins(top);
     // nvboard_init();
-    
     sdb_mainloop();
     sim_exit();
     return 0;
