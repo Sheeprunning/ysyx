@@ -45,8 +45,7 @@ extern "C" {
 
 void call_show_reg();
 int isa_reg_str2val(const char *s, bool *success);
-// 内存访问函数
-uint32_t pmem_read(uint64_t addr, int len);
+
 
 int sim(int argc, char *argv[]);
 

@@ -11,7 +11,7 @@ module ysyx_25080204_CPU(
 
 wire [31:0]next_pc;
 
-wire [3:0]alu_op;
+
 wire [31:0]A;
 wire [31:0]B;
 wire [31:0]result;
@@ -26,10 +26,17 @@ wire [6:0]opcode;
 wire [31:0]imm_num;
 wire [6:0]func7;
 wire [2:0]func3;
+
+wire [3:0]alu_op;
 wire ALU_A_sel;
 wire ALU_B_sel;
 wire rf_w;
+wire [1:0]RF_data_sel;
+wire DM_r_en;
+wire DM_w_en;
+wire [1:0]mask;
 
+wire [31:0]RF_w_data;
 wire [31:0]src1;
 wire [31:0]src2;
 
@@ -65,7 +72,7 @@ ysyx_25080204_Decoder Decoder(
 ysyx_25080204_RegisterFile RF (
     .clk(clk),
     .rst(rst),
-    .wdata(result),
+    .wdata(RF_w_data),
     .waddr(rd),
     .rs1(rs1),
     .rs2(rs2),
@@ -81,7 +88,11 @@ ysyx_25080204_ControlUnit CU(
     .alu_op(alu_op),
     .ALU_A_sel(ALU_A_sel),
     .ALU_B_sel(ALU_B_sel),
-    .rf_w(rf_w)
+    .rf_w(rf_w),
+    .RF_data_sel(RF_data_sel),
+    .DM_r_en(DM_r_en),
+    .DM_w_en(DM_w_en),
+    .mask(mask)
 );
 
 assign A=ALU_A_sel?src1:pc;
@@ -129,4 +140,38 @@ ysyx_25080204_ALU ALU(
     .Overflow(Overflow),
     .CF(CF)
 );
+
+assign RF_w_data=(RF_data_sel==2'b00)?result:(RF_data_sel==2'b01)?rdata:(RF_data_sel==2'b10)?pc+4:imm_num;
+
+import "DPI-C" function int pmem_read_v(input int raddr,input int len);
+import "DPI-C" function void pmem_write_v(
+  input int waddr, input int wdata, input int len);
+
+reg [31:0] rdata,wdata;
+reg [31:0] raddr,waddr;
+reg [31:0] len;
+assign wdata = src2;
+assign waddr = result;
+assign raddr = result;
+
+always @(*)begin
+    case(mask)
+        2'b00:len=1;
+        2'b01:len=2;
+        2'b10:len=4;
+        default:len=0;
+    endcase
+end
+
+always @(*) begin
+    if (DM_r_en) begin // 有读写请求时
+        rdata = pmem_read_v(raddr,len);
+    end
+    else begin
+        rdata = 0;
+    end
+    if (DM_w_en) begin // 有写请求时
+        pmem_write_v(waddr, wdata, len);
+    end 
+end
 endmodule

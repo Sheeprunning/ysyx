@@ -5,7 +5,11 @@ module ysyx_25080204_ControlUnit(
     output reg [3:0]alu_op,
     output reg ALU_A_sel,
     output reg ALU_B_sel,
-    output reg rf_w
+    output reg rf_w,
+    output reg [1:0]RF_data_sel,
+    output reg DM_r_en,
+    output reg DM_w_en,
+    output reg [1:0]mask
 );
 
 localparam ALU_ADD = 4'b0000, ALU_SUB = 4'b0001, 
@@ -13,11 +17,11 @@ localparam ALU_ADD = 4'b0000, ALU_SUB = 4'b0001,
         ALU_XOR = 4'b0100, ALU_SLL = 4'b0101,
         ALU_SRL = 4'b0110, ALU_SRA = 4'b1000,
         ALU_SLT = 4'b1001, ALU_SLTU = 4'b1010,
-        ALU_NULL = 4'b1111;
-        // MASK_B = 2'b00,
-        // MASK_H = 2'b01,
-        // MASK_W = 2'b10,
-        // MASK_NULL = 2'b11;
+        ALU_NULL = 4'b1111,
+        MASK_B = 2'b00,
+        MASK_H = 2'b01,
+        MASK_W = 2'b10,
+        MASK_NULL = 2'b11;
 
 always @(*) begin
     case(opcode)
@@ -57,8 +61,8 @@ always @(*) begin
                     default:alu_op=ALU_NULL;
                     endcase
             end
-        7'b0000011,7'b0100011,7'b1100111,
-        7'b0010111,7'b1100011,7'b1101111://load,store,jalr,auipc,B-type,jal
+        7'b0000011,7'b0100011,7'b1100111,//load,store,jalr,
+        7'b0010111,7'b1100011,7'b1101111://auipc,B-type,jal
             alu_op=ALU_ADD;
         default:
             alu_op=ALU_NULL;
@@ -73,8 +77,8 @@ end
 //ALU_b_sel
 always @(*) begin
     case(opcode)
-        7'b0010011,7'b0000011,7'b0100011,
-        7'b1100111,7'b1100011,7'b1101111, 7'b0010111://I-type & load & jalr & B-type & jal & auipc
+        7'b0010011,7'b0000011,7'b0100011,//I-type & load & store
+        7'b1100111,7'b1100011,7'b1101111, 7'b0010111: //jalr & B-type & jal & auipc
             ALU_B_sel=0;
         default:
             ALU_B_sel=1;
@@ -91,5 +95,34 @@ always @(*) begin
     endcase
 end
 
+//RF_data_sel
+always @(*) begin
+    case(opcode)
+        7'b0000011:RF_data_sel=2'b01;//Load-type; reg=DM[?]
+        7'b1101111,7'b1100111:RF_data_sel=2'b10;//jal & jalr; reg=pc+4
+        7'b0110111:RF_data_sel=2'b11;//lui;reg=imm
+        default:RF_data_sel=2'b00;//reg=result
+    endcase
+end
+
+//DM_w_en
+always @(*) begin
+    DM_w_en=(opcode==7'b0100011)?1'b1:1'b0;
+end
+
+//mask
+always @(*) begin
+    case(func3[1:0])
+        2'b00:mask=MASK_B;
+        2'b01:mask=MASK_H;
+        2'b10:mask=MASK_W;
+        default:mask=MASK_NULL;
+    endcase
+end
+
+//DM_r_en
+always @(*) begin
+    DM_r_en=(opcode==7'b0000011)?1'b1:1'b0;
+end
 
 endmodule
