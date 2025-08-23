@@ -150,6 +150,7 @@ import "DPI-C" function void pmem_write_v(
 reg [31:0] rdata,wdata;
 reg [31:0] raddr,waddr;
 reg [31:0] len;
+reg write_ready;
 assign wdata = src2;
 assign waddr = result;
 assign raddr = result;
@@ -170,8 +171,14 @@ always @(*) begin
     else begin
         rdata = 0;
     end
-    if (DM_w_en) begin // 有写请求时
+    if (write_ready) begin // 有写请求时
         pmem_write_v(waddr, wdata, len);
+    end 
+end
+
+always @(posedge clk)begin
+  if (DM_w_en) begin // 有写请求时
+        write_ready<=1;
     end 
 end
 endmodule
