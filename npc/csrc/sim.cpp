@@ -33,10 +33,6 @@ void single_cycle() {
   // nvboard_update();
   top->clk = 1; top->eval();
   top->inst=pmem_read(top->pc,4);
-  if(pc!=top->pc){
-    pc=top->pc;
-    cout<<"pc:"<<hex<<pc<<" inst:"<<hex<<top->inst<<endl;
-  }
   update_cpu();
   contextp->timeInc(10);
   tfp->dump(contextp->time());
@@ -128,6 +124,10 @@ void trace_and_difftest(u_int32_t pc){
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
+    if(pc!=top->pc){
+    pc=top->pc;
+    cout<<"pc:"<<hex<<pc<<" inst:"<<hex<<top->inst<<endl;
+    }
     single_cycle();
     trace_and_difftest(cpu.pc);//删除了decoder的部分
     if (npc_state.state != NPC_RUNNING) break;
