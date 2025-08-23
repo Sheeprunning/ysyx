@@ -74,7 +74,7 @@ end
 always @(*) begin
     case(opcode)
         7'b0010011,7'b0000011,7'b0100011,
-        7'b1100111,7'b1100011,7'b1101111://I-type & load & jalr & B-type &jal
+        7'b1100111,7'b1100011,7'b1101111, 7'b0010111://I-type & load & jalr & B-type & jal & auipc
             ALU_B_sel=0;
         default:
             ALU_B_sel=1;
