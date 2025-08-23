@@ -33,7 +33,7 @@ __EXPORT void difftest_regcpy(void *dut, bool direction) {
   CPU_state *Dut=(CPU_state *)dut;
   if(direction==DIFFTEST_TO_REF){
     
-    cpu.pc=Dut->pc;printf("传递pc:%0#x\n",Dut->pc);
+    cpu.pc=Dut->pc;
     for(int i=0;i<MUXDEF(CONFIG_RVE, 16, 32);i++){
       cpu.gpr[i]=Dut->gpr[i];
     }
