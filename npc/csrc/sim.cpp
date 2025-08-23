@@ -93,7 +93,7 @@ extern "C" {
       return pmem_read(raddr,len);
     }
     void pmem_write_v(int waddr,  int len , int wdata){
-      printf("len:%s\n",len);
+      printf("len:%d wdata:%d\n",len,wdata);
       pmem_write(waddr,len,wdata);
     }
 }

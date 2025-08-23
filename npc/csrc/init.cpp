@@ -53,7 +53,7 @@ inline void host_write(void *addr, int len, u_int32_t data) {
     case 1: *(uint8_t  *)addr = data; return;
     case 2: *(uint16_t *)addr = data; return;
     case 4: *(uint32_t *)addr = data; return;
-    default: printf("len:%s\n",len);assert(0);
+    default: assert(0);
   }
 }
 

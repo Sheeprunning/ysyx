@@ -172,13 +172,14 @@ always @(*) begin
         rdata = 0;
     end
     if (write_ready) begin // 有写请求时
-        pmem_write_v(waddr, wdata, len);
+        pmem_write_v(waddr, len, wdata);
     end 
 end
 
-always @(posedge clk)begin
-  if (DM_w_en) begin // 有写请求时
-        write_ready<=1;
-    end 
+always @(posedge clk or posedge rst)begin
+    if(rst)write_ready<=0;
+    else if (DM_w_en) begin // 有写请求时
+            write_ready<=1;
+        end 
 end
 endmodule
