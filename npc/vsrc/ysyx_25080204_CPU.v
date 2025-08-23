@@ -145,7 +145,7 @@ assign RF_w_data=(RF_data_sel==2'b00)?result:(RF_data_sel==2'b01)?rdata:(RF_data
 
 import "DPI-C" function int pmem_read_v(input int raddr,input int len);
 import "DPI-C" function void pmem_write_v(
-  input int waddr, input int wdata, input int len);
+  input int waddr, input int len , input int wdata );
 
 reg [31:0] rdata,wdata;
 reg [31:0] raddr,waddr;

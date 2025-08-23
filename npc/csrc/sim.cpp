@@ -92,8 +92,8 @@ extern "C" {
     int pmem_read_v( int raddr,int len){
       return pmem_read(raddr,len);
     }
-    void pmem_write_v(int waddr, int wdata, int len){
-      pmem_write(waddr,wdata,len);
+    void pmem_write_v(int waddr,  int len , int wdata){
+      pmem_write(waddr,len,wdata);
     }
 }
 
