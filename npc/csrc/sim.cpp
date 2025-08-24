@@ -31,8 +31,11 @@ void single_cycle() {
   step_and_dump_wave();
   // nvboard_update();
   top->clk = 1; 
-  if(top->rst!=1)
+  if(top->rst!=1){
     top->inst=pmem_read(top->pc,4);
+    cout<<"pc:"<<hex<<top->pc<<" inst:" <<setw(8) << setfill('0')<<hex<<top->inst<<endl;      
+  }
+
   else 
     top->inst=0;
   step_and_dump_wave();
@@ -132,9 +135,6 @@ void trace_and_difftest(u_int32_t pc){
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
-    if(pc!=top->pc){
-    cout<<"pc:"<<hex<<pc<<" inst:" <<setw(8) << setfill('0')<<hex<<top->inst<<endl;
-    }
     pc=top->pc;
     single_cycle();
     trace_and_difftest(cpu.pc);//删除了decoder的部分
