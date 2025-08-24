@@ -31,8 +31,9 @@ void single_cycle() {
   contextp->timeInc(10);
   tfp->dump(contextp->time());
   // nvboard_update();
-  top->clk = 1; top->eval();
-  top->inst=pmem_read(top->pc,4);
+  top->clk = 1; 
+  if(top->rst!=1)top->inst=pmem_read(top->pc,4);
+  else top->inst=0;top->eval();
   update_cpu();
   contextp->timeInc(10);
   tfp->dump(contextp->time());
