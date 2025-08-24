@@ -27,16 +27,17 @@ void update_cpu(){
 }
 
 void single_cycle() {
-  top->clk = 0; top->eval();
-  contextp->timeInc(10);
-  tfp->dump(contextp->time());
+  top->clk = 0; 
+  step_and_dump_wave();
   // nvboard_update();
   top->clk = 1; 
-  if(top->rst!=1)top->inst=pmem_read(top->pc,4);
-  else top->inst=0;top->eval();
+  if(top->rst!=1)
+    top->inst=pmem_read(top->pc,4);
+  else 
+    top->inst=0;
+  step_and_dump_wave();
   update_cpu();
-  contextp->timeInc(10);
-  tfp->dump(contextp->time());
+
   // nvboard_update();
 }
 
