@@ -133,9 +133,9 @@ void trace_and_difftest(u_int32_t pc){
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
     if(pc!=top->pc){
-    pc=top->pc;
     cout<<"pc:"<<hex<<pc<<" inst:" <<setw(8) << setfill('0')<<hex<<top->inst<<endl;
     }
+    pc=top->pc;
     single_cycle();
     trace_and_difftest(cpu.pc);//删除了decoder的部分
     if (npc_state.state != NPC_RUNNING) break;
