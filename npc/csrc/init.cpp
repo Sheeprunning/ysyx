@@ -38,6 +38,7 @@ int parse_args(int argc, char *argv[]) {
 }
 
 uint8_t* guest_to_host(u_int32_t paddr) { return pmem + paddr - CONFIG_MBASE; }
+int check_paddr(u_int32_t paddr){return paddr>CONFIG_MBASE&& paddr < CONFIG_MBASE + CONFIG_MSIZE;}
 
 inline u_int32_t host_read(void *addr, int len) {
   switch (len) {
@@ -58,11 +59,20 @@ inline void host_write(void *addr, int len, u_int32_t data) {
 }
 
 u_int32_t pmem_read(u_int32_t addr, int len) {
+  if(!check_paddr(addr)){
+    printf("addr:%0#x len:%d\n",addr,len);
+    assert(0);
+  }
+  
   u_int32_t ret = host_read(guest_to_host(addr), len);
   return ret;
 }
 
 void pmem_write(u_int32_t addr, int len, u_int32_t data) {
+  if(!check_paddr(addr)){
+    printf("addr:%0#x len:%d\n",addr,len);
+    assert(0);
+  }
   host_write(guest_to_host(addr), len, data);
 }
 
