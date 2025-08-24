@@ -24,6 +24,7 @@ ysyx_25080204_CPU CPU(
 import "DPI-C" function void npc_ebreak_finish();
 always @(*)begin
     if(inst==32'h100073)npc_ebreak_finish();
+    $display("[CLK %0t]ebreak",$time);
 end
 
 
