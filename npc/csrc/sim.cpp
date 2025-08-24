@@ -53,7 +53,7 @@ void sim_init(){
   top = new TOP_NAME{contextp};
   contextp->traceEverOn(true);
   top->trace(tfp, 99);
-  tfp->open("wave.vcd");
+  tfp->open("../wave.vcd");
   reset();
 }
 
