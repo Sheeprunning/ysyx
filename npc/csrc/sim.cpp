@@ -63,6 +63,7 @@ void sim_exit(){
   delete top;
   delete tfp;
   delete contextp;
+  cout<<"仿真结束！\n";
 }
 
 
