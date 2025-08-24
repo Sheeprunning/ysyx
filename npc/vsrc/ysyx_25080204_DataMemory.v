@@ -51,10 +51,13 @@ always @(posedge clk or posedge rst) begin
             wdata_t <= wdata;
             len_t <= len;
         end
-        if(write_ready)begin
+        
+    end
+end
+always@(write_ready)begin
+  if(write_ready)begin
             pmem_write_v(waddr_t, len_t, wdata_t);
             $display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, waddr_t, wdata_t);
         end
-    end
 end
 endmodule
