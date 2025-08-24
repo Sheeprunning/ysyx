@@ -71,6 +71,7 @@ u_int32_t pmem_read(u_int32_t addr, int len) {
 void pmem_write(u_int32_t addr, int len, u_int32_t data) {
   if(!check_paddr(addr)){
     printf("addr:%0#x len:%d\n",addr,len);
+    sim_exit();
     assert(0);
   }
   host_write(guest_to_host(addr), len, data);
