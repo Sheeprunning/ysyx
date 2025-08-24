@@ -11,14 +11,6 @@ module ysyx_25080204_CPU(
 
 wire [31:0]next_pc;
 
-
-wire [31:0]A;
-wire [31:0]B;
-wire [31:0]result;
-// wire Zero;
-// wire Overflow;
-// wire CF;
-
 wire [4:0]rd;
 wire [4:0]rs1;
 wire [4:0]rs2;
@@ -26,6 +18,10 @@ wire [6:0]opcode;
 wire [31:0]imm_num;
 wire [6:0]func7;
 wire [2:0]func3;
+
+wire [31:0]RF_w_data;
+wire [31:0]src1;
+wire [31:0]src2;
 
 wire [3:0]alu_op;
 wire ALU_A_sel;
@@ -35,11 +31,18 @@ wire [1:0]RF_data_sel;
 wire DM_r_en;
 wire DM_w_en;
 wire [1:0]mask;
+wire sext_en;
 
-wire [31:0]RF_w_data;
-wire [31:0]src1;
-wire [31:0]src2;
+wire [31:0]A;
+wire [31:0]B;
+wire [31:0]result;
+// wire Zero;
+// wire Overflow;
+// wire CF;
 
+wire [31:0]rdata;
+
+wire [31:0]sext_out_data;
 
 ysyx_25080204_pc PC(
     .next_pc(next_pc),
@@ -92,6 +95,7 @@ ysyx_25080204_ControlUnit CU(
     .RF_data_sel(RF_data_sel),
     .DM_r_en(DM_r_en),
     .DM_w_en(DM_w_en),
+    .sext_en(sext_en),
     .mask(mask)
 );
 
@@ -141,50 +145,27 @@ ysyx_25080204_ALU ALU(
     .CF(CF)
 );
 
-assign RF_w_data=(RF_data_sel==2'b00)?result:(RF_data_sel==2'b01)?rdata:(RF_data_sel==2'b10)?pc+4:imm_num;
 
-import "DPI-C" function int pmem_read_v(input int raddr,input int len);
-import "DPI-C" function void pmem_write_v(
-  input int waddr, input int len , input int wdata );
 
-reg [31:0] rdata,wdata;
-reg [31:0] raddr,waddr;
-reg [31:0] len,w_len;
-reg write_ready;
-assign raddr = result;
+ysyx_25080204_DataMemory DM(
+    .clk(clk),
+    .rst(rst),
+    .DM_r_en(DM_r_en),
+    .DM_w_en(DM_w_en),
+    .raddr(result),
+    .waddr(result),
+    .wdata(src2),
+    .mask(mask),
+    .rdata(rdata)
+);
 
-always @(*)begin
-    case(mask)
-        2'b00:len=1;
-        2'b01:len=2;
-        2'b10:len=4;
-        default:len=0;
-    endcase
-end
+ysyx_25080204_sext SEXT(
+    .sext_en(sext_en),
+    .mask(mask),
+    .sext_data(rdata),
+    .sext_out_data(sext_out_data)
+);
 
-always @(*) begin
-    if (DM_r_en) begin // 有读写请求时
-        rdata = pmem_read_v(raddr,len);
-    end
-    else begin
-        rdata = 0;
-    end
-end
+assign RF_w_data=(RF_data_sel==2'b00)?result:(RF_data_sel==2'b01)?sext_out_data:(RF_data_sel==2'b10)?pc+4:imm_num;
 
-always @(posedge clk or posedge rst) begin
-    if (rst) begin
-        write_ready <= 0;
-        waddr <= 0;
-        wdata <= 0;
-        w_len <= 0;
-    end else begin
-        write_ready <= DM_w_en;
-        if (DM_w_en) begin
-            waddr <= result;
-            wdata <= src2;
-            w_len <= len;
-        end
-        if(write_ready)pmem_write_v(waddr, w_len, wdata);
-    end
-end
 endmodule

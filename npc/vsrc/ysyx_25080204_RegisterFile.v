@@ -25,7 +25,7 @@ always @(posedge clk or posedge rst) begin
     if(rst)begin
     end
     else if (wen && waddr != 0) begin
-        $display("[CLK %0t] Write: rf[%0d] = 0x%08x (dec: %0d)", $time, waddr, wdata, wdata);
+        $display("[CLK %0t] Write: rf[%0d] = 0x%08x ", $time, waddr, wdata);
     end
 end
 export "DPI-C" task show_reg;

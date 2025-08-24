@@ -9,6 +9,7 @@ module ysyx_25080204_ControlUnit(
     output reg [1:0]RF_data_sel,
     output reg DM_r_en,
     output reg DM_w_en,
+    output reg sext_en,
     output reg [1:0]mask
 );
 
@@ -85,14 +86,24 @@ always @(*) begin
     endcase
 end
 
-//rf_w
+//mask
 always @(*) begin
-    case(opcode)
-        7'b0100011,7'b1100011://S-type & B-Type
-            rf_w=0;
-        default:
-            rf_w=1;
+    case(func3[1:0])
+        2'b00:mask=MASK_B;
+        2'b01:mask=MASK_H;
+        2'b10:mask=MASK_W;
+        default:mask=MASK_NULL;
     endcase
+end
+
+//sext_en
+always @(*) begin
+    sext_en=!(func3==3'b100||func3==3'b101);//lbu & lhu; 
+end
+
+//DM_r_en
+always @(*) begin
+    DM_r_en=(opcode==7'b0000011)?1'b1:1'b0;
 end
 
 //RF_data_sel
@@ -105,25 +116,24 @@ always @(*) begin
     endcase
 end
 
-//mask
+//rf_w
 always @(*) begin
-    case(func3[1:0])
-        2'b00:mask=MASK_B;
-        2'b01:mask=MASK_H;
-        2'b10:mask=MASK_W;
-        default:mask=MASK_NULL;
+    case(opcode)
+        7'b0100011,7'b1100011://S-type & B-Type
+            rf_w=0;
+        default:
+            rf_w=1;
     endcase
 end
+
+
 
 //DM_w_en
 always @(*) begin
     DM_w_en=(opcode==7'b0100011)?1'b1:1'b0;
 end
 
-//DM_r_en
-always @(*) begin
-    DM_r_en=(opcode==7'b0000011)?1'b1:1'b0;
-end
+
 
 
 
