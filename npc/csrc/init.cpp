@@ -38,7 +38,7 @@ int parse_args(int argc, char *argv[]) {
 }
 
 uint8_t* guest_to_host(u_int32_t paddr) { return pmem + paddr - CONFIG_MBASE; }
-int check_paddr(u_int32_t paddr){return paddr>CONFIG_MBASE&& paddr < CONFIG_MBASE + CONFIG_MSIZE;}
+int check_paddr(u_int32_t paddr){return paddr>=CONFIG_MBASE&& paddr < CONFIG_MBASE + CONFIG_MSIZE;}
 
 inline u_int32_t host_read(void *addr, int len) {
   switch (len) {
