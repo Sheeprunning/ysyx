@@ -30,6 +30,7 @@ end
 
 always @(*) begin
     if (DM_r_en) begin // 有读写请求时
+         $display("[CLK %0t] READ: DM[%0d]", $time, raddr);
         rdata = pmem_read_v(raddr,len);
     end
     else begin
