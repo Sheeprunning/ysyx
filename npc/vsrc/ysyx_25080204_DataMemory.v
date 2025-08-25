@@ -28,13 +28,13 @@ always @(*)begin
     endcase
 end
 
-always_comb begin
-    if (DM_r_en) begin // 有读写请求时
+always @(*) begin
+    if (DM_r_en&&raddr>32'h80000000 && raddr<32'h88000000) begin // 有读写请求时
          $display("[CLK %0t] READ: DM[%0x]", $time, raddr);
         rdata = pmem_read_v(raddr,len);
     end
     else begin
-        rdata = 32'hdeaddead;
+        rdata = 32'hdeaddddd;
     end
 end
 
