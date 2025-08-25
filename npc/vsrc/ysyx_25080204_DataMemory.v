@@ -28,8 +28,7 @@ always @(*)begin
     endcase
 end
 
-always @(*) begin
-$display("[DEBUG] DM_r_en=%b, raddr=%h, len=%h", DM_r_en, raddr, len);
+always_comb begin
     if (DM_r_en) begin // 有读写请求时
          $display("[CLK %0t] READ: DM[%0x]", $time, raddr);
         rdata = pmem_read_v(raddr,len);
