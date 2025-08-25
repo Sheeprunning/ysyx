@@ -129,7 +129,7 @@ int isa_reg_str2val(const char *s, bool *success){
 }
 
 void trace_and_difftest(u_int32_t pc){
-  difftest_step(cpu.pc, pc);
+  difftest_step(cpu.pc, top->rootp->top__DOT__CPU__DOT__next_pc);
 }
 
 void execute(uint32_t n){
