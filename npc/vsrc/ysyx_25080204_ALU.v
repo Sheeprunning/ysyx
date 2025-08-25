@@ -25,9 +25,9 @@ wire [31:0] sra_result;
 wire [31:0]slt_result;
 wire [31:0]sltu_result;
 
-assign B_n=B^{32{opcode[0]}}+{31'b0,opcode[0]};//({n{Cin}} ^ B) + Cin;一般补码是这样的
+assign B_n={B^{32{opcode[0]}}}+{31'b0,opcode[0]};//({n{Cin}} ^ B) + Cin;一般补码是这样的
 assign {CF,add_result}={1'b0,A}+{1'b0,B_n};
-assign sub_result=A-B;
+assign sub_result=add_result;
 assign Overflow=(A[31]==B_n[31])&&(A[31]!=add_result[31]);
 assign and_result=A&B;
 assign or_result=A|B;
