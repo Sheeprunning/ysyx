@@ -55,7 +55,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation (without NVBoard)..."
-	@$(BIN) -i $(IMG) -d $(DIFF)
+	@$(BIN) -i $(IMG) -d $(DIFF) -b
 endif
 
 # rules for verilator

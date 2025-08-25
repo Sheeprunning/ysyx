@@ -32,9 +32,9 @@ assign Overflow=(A[31]==B_n[31])&&(A[31]!=add_result[31]);
 assign and_result=A&B;
 assign or_result=A|B;
 assign xor_result=A^B;
-assign sll_result=A<<B;
-assign srl_result=A>>B;
-assign sra_result=A>>>B;
+assign sll_result=A<<B[4:0];
+assign srl_result=A>>B[4:0];
+assign sra_result=$signed(A)>>>B[4:0];
 assign slt_result={31'b0,$signed(A)<$signed(B)};
 assign sltu_result={31'b0,A<B};
 always@(*)begin

@@ -18,18 +18,21 @@ static const u_int32_t img[]={
 int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"image"      , required_argument, NULL, 'i'},
-    {"diff"     , required_argument, NULL, 'd'},
+    {"diff"       , required_argument, NULL, 'd'},
+    {"batch"      , no_argument      , NULL, 'b'},
     {0            , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "i:d:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "i:d:b", table, NULL)) != -1) {
     switch (o) {
       case 'i': img_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
+      case 'b': sdb_set_batch_mode(); break;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-i,--image=IMAGE_BIN    initial  with file.bin\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
+        printf("\t-b,--batch              run with batch mode\n");
         printf("\n");
         exit(0);
     }
