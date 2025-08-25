@@ -17,17 +17,14 @@ module ysyx_25080204_RegisterFile #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
                 rf[i]<=0;
             end
         end
-    else if (wen && waddr!=0) rf[waddr] <= wdata;
+    else if (wen && waddr!=0)begin
+        $display("[CLK %0t] Write: rf[%0d] = 0x%08x ", $time, waddr, wdata);
+        rf[waddr] <= wdata;
+     end
   end
   assign src1=rf[rs1];
   assign src2=rf[rs2];
-always @(posedge clk or posedge rst) begin
-    if(rst)begin
-    end
-    else if (wen && waddr != 0) begin
-        $display("[CLK %0t] Write: rf[%0d] = 0x%08x ", $time, waddr, wdata);
-    end
-end
+
 export "DPI-C" task show_reg;
  
 
