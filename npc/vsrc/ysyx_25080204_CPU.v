@@ -52,6 +52,7 @@ ysyx_25080204_pc PC(
 );
 
 ysyx_25080204_next_pc dnpc(
+    .clk(clk),
     .rst(rst),
     .pc(pc),
     .bj_en(bj_en),

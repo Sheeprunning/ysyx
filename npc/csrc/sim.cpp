@@ -35,7 +35,6 @@ void single_cycle() {
     top->inst=pmem_read(top->pc,4);
     cout<<"pc:"<<hex<<top->pc<<" inst:" <<setw(8) << setfill('0')<<hex<<top->inst<<endl;      
   }
-
   else 
     top->inst=0;
   step_and_dump_wave();
