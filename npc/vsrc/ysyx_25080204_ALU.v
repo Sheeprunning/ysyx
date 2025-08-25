@@ -34,7 +34,7 @@ assign or_result=A|B;
 assign xor_result=A^B;
 assign sll_result=A<<B;
 assign srl_result=A>>B;
-assign sra_result=$signed(A)>>>B;
+assign sra_result=$signed(A)>>B;
 assign slt_result={31'b0,$signed(A)<$signed(B)};
 assign sltu_result={31'b0,A<B};
 always@(*)begin
