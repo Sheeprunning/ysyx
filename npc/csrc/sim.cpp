@@ -13,13 +13,26 @@ CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
 
+void test_disassemble() {
+    uint32_t inst = 0x00000013;  // nop 指令
+    char buf[128];
+    
+    disassemble(buf, sizeof(buf), 0x80000000, (uint8_t*)&inst, 4);
+    printf("Disassembly: '%s'\n", buf);
+    
+    // 测试其他指令
+    inst = 0x00008067;  // ret
+    disassemble(buf, sizeof(buf), 0x80000004, (uint8_t*)&inst, 4);
+    printf("Disassembly: '%s'\n", buf);
+}
+
 void print_inst(u_int32_t pc,u_int32_t inst){
   char logbuf[128];
   char *p=logbuf;
   p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pc);
-  p += snprintf(p, 4,"%08x",inst);
+  p += snprintf(p, 120,"%08x",inst);
   disassemble(p , logbuf+sizeof(logbuf)-p , pc , (uint8_t*)&inst,4);
-  printf("%s",logbuf);
+  printf("%s\n",logbuf);
 }
 
 void step_and_dump_wave(){
@@ -177,6 +190,7 @@ void cpu_exec(uint32_t n){
 
 int sim(int argc, char *argv[]) {
     init_main(argc,argv);
+    test_disassemble();
     // nvboard_bind_all_pins(top);
     // nvboard_init();
     sdb_mainloop();
