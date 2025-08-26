@@ -8,6 +8,7 @@
 #include <iostream>
 #include <assert.h>
 #include "sdb.h"
+#include "disasm.h"
 
 #define CONFIG_MSIZE 0x8000000
 #define CONFIG_MBASE 0x80000000

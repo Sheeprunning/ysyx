@@ -13,6 +13,15 @@ CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
 
+void print_inst(u_int32_t pc,u_int32_t inst){
+  char logbuf[128];
+  char *p=logbuf;
+  p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pc);
+  p += snprintf(p, 4,"%08x",inst);
+  disassemble(p , logbuf+sizeof(logbuf)-p , pc , (uint8_t*)&inst,4);
+  printf("%s",logbuf);
+}
+
 void step_and_dump_wave(){
   top->eval();
   contextp->timeInc(10);

@@ -58,6 +58,12 @@ sim: $(BIN)
 	@$(BIN) -i $(IMG) -d $(DIFF) -b
 endif
 
+# Include all filelist.mk to merge file lists
+FILELIST_MK = $(shell find -L ./csrc -name "filelist.mk")
+include $(FILELIST_MK)
+
+$(CSRCS):$(LIBCAPSTONE)
+
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""

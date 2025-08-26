@@ -97,15 +97,15 @@ int init_mem() {
     memcpy(pmem,img,sizeof(img));
     size=16;
   }
-  cout << "-----PMEM Initialization Check:-----" << endl;
-    for (int i = 0; i < size/4; i++) { 
-        u_int32_t inst;
-        memcpy(&inst, pmem + i * 4, 4);  // 按 4 字节读取
-        if(inst==0)break;
-        cout << "pmem["<< setw(8) << setfill('0') <<hex  << i * 4+CONFIG_MBASE << "]: 0x" << 
-        setw(8) << setfill('0') << inst << dec << endl;
-    }
-    cout << "----------" << endl;
+  // cout << "-----PMEM Initialization Check:-----" << endl;
+  //   for (int i = 0; i < size/4; i++) { 
+  //       u_int32_t inst;
+  //       memcpy(&inst, pmem + i * 4, 4);  // 按 4 字节读取
+  //       if(inst==0)break;
+  //       cout << "pmem["<< setw(8) << setfill('0') <<hex  << i * 4+CONFIG_MBASE << "]: 0x" << 
+  //       setw(8) << setfill('0') << inst << dec << endl;
+  //   }
+  //   cout << "----------" << endl;
     return size;
 }
 
@@ -119,4 +119,6 @@ void init_main(int argc, char *argv[]){
     printf("仿真初始化完成！\n");
     init_difftest(diff_so_file, img_size, difftest_port);
     printf("差分测试初始化完成！\n");
+    init_disasm();
+    printf("反汇编工具初始化完成！\n");
 }
