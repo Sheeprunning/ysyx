@@ -42,7 +42,8 @@ void single_cycle() {
   top->clk = 1; 
   if(top->rst!=1){
     top->inst=pmem_read(top->pc,4);
-    cout<<"pc:"<<hex<<top->pc<<" inst:" <<setw(8) << setfill('0')<<hex<<top->inst<<endl;      
+    cout<<"pc:"<<hex<<top->pc<<" inst:" <<setw(8) << setfill('0')<<hex<<top->inst<<endl; 
+    print_inst(top->pc,top->inst);     
   }
   else 
     top->inst=0;
