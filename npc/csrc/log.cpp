@@ -26,6 +26,6 @@ void log_add(const char *filename,char *context){
         
     FILE *fp=fopen(fullpath,"a");
     assert(fp);
-    fprintf(fp,"%s",context);
+    fprintf(fp,"%s\n",context);
     fclose(fp);
 }
