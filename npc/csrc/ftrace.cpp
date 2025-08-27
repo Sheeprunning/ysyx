@@ -7,21 +7,31 @@ int func_size=0;
 extern "C" {
     void jal_ftrace(int rd,uint32_t pc,uint32_t target){
         int index;
+        char log[128];
         index=func_judge(target);
         if(index!=-1&&rd==1){//在riscv中，函数调用会把返回地址保存在目标寄存器 ra（x1）
-            printf(COLOR_YELLOW "0x%x: call [%s@0x%x]\n" COLOR_RESET, pc, func[index].name, target);
+            sprintf(log,"0x%08x: call [%s@0x%08x]",pc, func[index].name, target);
+            printf(COLOR_YELLOW "%s\n" COLOR_RESET, log);
+            log_add("ftrace.txt",log);
         }
     }
 
     void jalr_ftrace(int32_t inst,int rd,int imm,uint32_t pc,uint32_t target){
         int index;
+        char log[128];
         if (inst==0x00008067) {
                 index=func_judge(pc);
-                printf(COLOR_YELLOW "0x%x: ret [%s]\n" COLOR_RESET, pc,func[index].name);
+                sprintf(log,"0x%x: ret [%s]",pc,func[index].name);
+                printf(COLOR_YELLOW "%s\n" COLOR_RESET, log);
+                log_add("ftrace.txt",log);
                 return ;
             }
         index=func_judge(target);
-        if(index!=-1)printf("0x%x: call %s@0x%x\n", pc, func[index].name, target);
+        if(index!=-1){
+            sprintf(log,"0x%x: call %s@0x%x", pc, func[index].name, target);
+            printf("%s\n",log);
+            log_add("ftrace.txt",log);
+        }
     }
 }
 int func_judge(unsigned long address){

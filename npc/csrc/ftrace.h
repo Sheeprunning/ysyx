@@ -7,6 +7,7 @@
 #include <string.h>
 #include "common.h"
 #include "sim.h"
+#include "log.h"
 
 typedef struct 
 {
