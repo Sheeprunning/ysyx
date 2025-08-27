@@ -11,7 +11,7 @@ void init_log(){
         char fullpath[256];
         build_path(fullpath, sizeof(fullpath), logname[i]);
         
-        FILE *fp = fopen(fullpath, "w");
+        FILE *fp = fopen(logname[i], "w");
         if(!fp)printf("%s打开失败\n",fullpath);
         assert(fp);
         fprintf(fp, "%s\n", logname[i]);
@@ -24,7 +24,7 @@ void log_add(const char *filename,char *context){
     char fullpath[256];
     build_path(fullpath, sizeof(fullpath), filename);
         
-    FILE *fp=fopen(fullpath,"a");
+    FILE *fp=fopen(filename,"a");
     assert(fp);
     fprintf(fp,"%s",context);
     fclose(fp);
