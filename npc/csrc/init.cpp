@@ -121,4 +121,6 @@ void init_main(int argc, char *argv[]){
     printf("差分测试初始化完成！\n");
     init_disasm();
     printf("反汇编工具初始化完成！\n");
+    init_log();
+    printf("日志工具初始化完成！\n");
 }
