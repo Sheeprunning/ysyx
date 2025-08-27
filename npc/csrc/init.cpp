@@ -25,7 +25,7 @@ int parse_args(int argc, char *argv[]) {
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "i:d:b", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "bi:d:f:", table, NULL)) != -1) {
     switch (o) {
       case 'i': img_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
