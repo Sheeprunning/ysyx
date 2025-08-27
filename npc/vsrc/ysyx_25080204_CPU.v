@@ -168,4 +168,15 @@ ysyx_25080204_sext SEXT(
 
 assign RF_w_data=(RF_data_sel==2'b00)?result:(RF_data_sel==2'b01)?sext_out_data:(RF_data_sel==2'b10)?pc+4:imm_num;
 
+import "DPI-C" function void jal_ftrace(input int rd,input int pc,input int target);
+import "DPI-C" function void jalr_ftrace(
+    input int inst,input int rd,input int imm,input int pc,input int target);
+always@(posedge clk)begin
+    if(opcode==7'b1101111)begin//jal
+      jal_ftrace({27'b0,rd},pc,result);
+    end
+    if(opcode==7'b1100111)begin//jalr
+      jalr_ftrace(inst,{27'b0,rd},imm_num,pc,result);
+    end
+end
 endmodule

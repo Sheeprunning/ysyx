@@ -22,6 +22,7 @@ CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)
 IMG ?=  ./default.bin
 DIFF ?= $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+NPCFLAGS ?=
 
 # constraint file
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
@@ -44,7 +45,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation with NVBoard..."
-	@$(BIN) -i $(IMG)
+	@$(BIN) -i $(IMG) $(NPCFLAGS)
 #don't run nvboard
 else
 $(SRC_AUTO_BIND): | $(BUILD_DIR)
@@ -55,7 +56,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation (without NVBoard)..."
-	@$(BIN) -i $(IMG) -d $(DIFF) -b
+	@$(BIN) -i $(IMG) -d $(DIFF) -b $(NPCFLAGS)
 endif
 
 # Include all filelist.mk to merge file lists

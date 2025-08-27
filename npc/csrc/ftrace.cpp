@@ -4,26 +4,26 @@ Func func[100];
 int func_size=0;
 
 #ifdef CONFIG_FTRACE
+extern "C" {
+    void jal_ftrace(int rd,uint32_t pc,uint32_t target){
+        int index;
+        index=func_judge(target);
+        if(index!=-1&&rd==1){//在riscv中，函数调用会把返回地址保存在目标寄存器 ra（x1）
+            printf("0x%x: call [%s@0x%x]\n", pc, func[index].name, target);
+        }
+    }
 
-void jal_ftrace(int rd,uint32_t pc,uint32_t target){
-    int index;
-    index=func_judge(target);
-    if(index!=-1&&rd==1){//在riscv中，函数调用会把返回地址保存在目标寄存器 ra（x1）
-        printf("0x%x: call [%s@0x%x]\n", pc, func[index].name, target);
+    void jalr_ftrace(int32_t inst,int rd,int imm,uint32_t pc,uint32_t target){
+        int index;
+        if (inst==0x00008067) {
+                index=func_judge(pc);
+                printf("0x%x: ret [%s]\n", pc,func[index].name);
+                return ;
+            }
+        index=func_judge(target);
+        if(index!=-1)printf("0x%x: call %s@0x%x\n", pc, func[index].name, target);
     }
 }
-
-void jalr_ftrace(int32_t inst,int rd,int imm,uint32_t pc,uint32_t target){
-    int index;
-    if (inst==0x00008067) {
-            index=func_judge(pc);
-            printf("0x%x: ret [%s]\n", pc,func[index].name);
-            return ;
-        }
-    index=func_judge(target);
-    if(index!=-1)printf("0x%x: call %s@0x%x\n", pc, func[index].name, target);
-}
-
 int func_judge(unsigned long address){
     for(int i=0;i<func_size;i++){
         if(address>=func[i].start && address<=func[i].end)
