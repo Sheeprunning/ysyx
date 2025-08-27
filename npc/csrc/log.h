@@ -4,6 +4,6 @@
 #include "common.h"
 
 void init_log();
-void log_add(char *filename,char *context);
+void log_add(const char *filename,char *context);
 
 #endif
