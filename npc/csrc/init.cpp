@@ -71,8 +71,10 @@ u_int32_t pmem_read(u_int32_t addr, int len) {
     sim_exit();
     assert(0);
   }
-  
   u_int32_t ret = host_read(guest_to_host(addr), len);
+  char log[128];
+  sprintf(log,"R 0x%08x %d 0x%08x",addr,len,ret);
+  log_add("itrace.txt",log);
   return ret;
 }
 
@@ -82,6 +84,9 @@ void pmem_write(u_int32_t addr, int len, u_int32_t data) {
     sim_exit();
     assert(0);
   }
+  char log[128];
+  sprintf(log,"W 0x%08x %d 0x%08x",addr,len,data);
+  log_add("itrace.txt",log);
   host_write(guest_to_host(addr), len, data);
 }
 

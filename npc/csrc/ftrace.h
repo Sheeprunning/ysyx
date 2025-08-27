@@ -11,7 +11,7 @@
 
 typedef struct 
 {
-    const char *name;
+    char *name;
     unsigned long start;
     unsigned long end;
 }Func;
