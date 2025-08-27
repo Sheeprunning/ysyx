@@ -9,9 +9,8 @@ extern "C" {
         int index;
         char log[128];
         index=func_judge(target);
-        printf(COLOR_RED "%s\n" COLOR_RESET,func[index].name);
         if(index!=-1&&rd==1){//在riscv中，函数调用会把返回地址保存在目标寄存器 ra（x1）
-            sprintf(log,"0x%08x: call [%s@0x%08x]",pc, func[index].name, target);
+            sprintf(log,"0x%x: call [%s@0x%x]",pc, func[index].name, target);
             printf(COLOR_YELLOW "%s\n" COLOR_RESET, log);
             log_add("ftrace.txt",log);
         }
