@@ -10,6 +10,7 @@
 #include "sdb.h"
 #include "log.h"
 #include "disasm.h"
+#include "ftrace.h"
 
 #define CONFIG_MSIZE 0x8000000
 #define CONFIG_MBASE 0x80000000

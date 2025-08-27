@@ -10,5 +10,6 @@
 #include <iostream>
 #include <iomanip>
 
+#define CONFIG_FTRACE 1
 
 #endif

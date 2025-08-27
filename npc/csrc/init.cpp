@@ -5,6 +5,7 @@ using namespace std;
 
 uint8_t *pmem = NULL;
 char* img_file =NULL;
+char* ftrace_file=NULL;
 static char *diff_so_file = NULL;
 static int difftest_port = 1234;
 
@@ -17,10 +18,11 @@ static const u_int32_t img[]={
 
 int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
-    {"image"      , required_argument, NULL, 'i'},
-    {"diff"       , required_argument, NULL, 'd'},
-    {"batch"      , no_argument      , NULL, 'b'},
-    {0            , 0                , NULL,  0 },
+    {"image"    , required_argument, NULL, 'i'},
+    {"diff"     , required_argument, NULL, 'd'},
+    {"batch"    , no_argument      , NULL, 'b'},
+    {"ftrace"   , required_argument, NULL, 'f'},
+    {0          , 0                , NULL,  0 },
   };
   int o;
   while ( (o = getopt_long(argc, argv, "i:d:b", table, NULL)) != -1) {
@@ -28,11 +30,13 @@ int parse_args(int argc, char *argv[]) {
       case 'i': img_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
       case 'b': sdb_set_batch_mode(); break;
+      case 'f': ftrace_file = optarg; break;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-i,--image=IMAGE_BIN    initial  with file.bin\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-b,--batch              run with batch mode\n");
+        printf("\t-f,--ftrace=FTRACE_ELF  run ftrace with file.elf\n");
         printf("\n");
         exit(0);
     }
@@ -122,5 +126,6 @@ void init_main(int argc, char *argv[]){
     init_disasm();
     printf("反汇编工具初始化完成！\n");
     init_log();
+    if(ftrace_file)process_elf_file(ftrace_file);
     printf("日志工具初始化完成！\n");
 }
