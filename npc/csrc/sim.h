@@ -13,13 +13,9 @@
 #include "init.h"
 #include "sdb.h"
 #include "npc.h"
+#include "log.h"
 
 // #include <nvboard.h>
-
-#define COLOR_RED    "\033[1;31m"
-#define COLOR_GREEN  "\033[1;32m"
-#define COLOR_RESET  "\033[0m"
-#define ANSI_FMT(str, color) color str COLOR_RESET
 
 // 全局变量声明
 extern VerilatedContext* contextp;

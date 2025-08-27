@@ -20,7 +20,7 @@ void print_inst(u_int32_t pc,u_int32_t inst){
   p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pc);
   p += snprintf(p, 120,"%08x ",inst);
   disassemble(p , logbuf+sizeof(logbuf)-p , pc , (uint8_t*)&inst,4);
-  printf("%s\n",logbuf);
+  printf(COLOR_BLUE "%s\n" COLOR_RESET,logbuf);
   log_add("itrace.txt",logbuf);
 }
 

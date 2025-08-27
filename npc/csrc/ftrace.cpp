@@ -9,7 +9,7 @@ extern "C" {
         int index;
         index=func_judge(target);
         if(index!=-1&&rd==1){//在riscv中，函数调用会把返回地址保存在目标寄存器 ra（x1）
-            printf("0x%x: call [%s@0x%x]\n", pc, func[index].name, target);
+            printf(COLOR_YELLOW "0x%x: call [%s@0x%x]\n" COLOR_RESET, pc, func[index].name, target);
         }
     }
 
@@ -17,7 +17,7 @@ extern "C" {
         int index;
         if (inst==0x00008067) {
                 index=func_judge(pc);
-                printf("0x%x: ret [%s]\n", pc,func[index].name);
+                printf(COLOR_YELLOW "0x%x: ret [%s]\n" COLOR_RESET, pc,func[index].name);
                 return ;
             }
         index=func_judge(target);
