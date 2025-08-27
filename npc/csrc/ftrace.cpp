@@ -43,7 +43,7 @@ int func_judge(unsigned long address){
 }
 
 void print_symbol(Elf32_Sym *sym, const char *strtab) {
-    strcpy(func[func_size].name , strtab + sym->st_name);
+    func[func_size].name = strdup(strtab + sym->st_name);  
     func[func_size].start = (unsigned long)sym->st_value ;
     func[func_size].end=func[func_size].start +sym->st_size-4;
     printf("  %-40s 0x%08lx - 0x%08lx\n", func[func_size].name, func[func_size].start , func[func_size].end);
