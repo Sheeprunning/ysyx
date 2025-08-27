@@ -1,9 +1,9 @@
 #include "log.h"
 
-char* logname[]={"itrace.txt","ftrace.txt","mtrace.txt"};
+const char* logname[]={"itrace.txt","ftrace.txt","mtrace.txt"};
 
 void build_path(char *dest, size_t size, const char *filename) {
-    snprintf(dest, size, "../build/%s", filename);
+    snprintf(dest, size, "../../build/%s", filename);
 }
 
 void init_log(){
@@ -12,7 +12,7 @@ void init_log(){
         build_path(fullpath, sizeof(fullpath), logname[i]);
         
         FILE *fp = fopen(fullpath, "w");
-        if(!fp)printf("%s\n",fullpath);
+        if(!fp)printf("%s打开失败\n",fullpath);
         assert(fp);
         fprintf(fp, "%s\n", logname[i]);
         fclose(fp);
