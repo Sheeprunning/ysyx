@@ -103,7 +103,7 @@ static int parse_args(int argc, char *argv[]) {
   return 0;
 }
 
-void init_monitor(int argc, char *argv[]) {
+void init_monitor(int argc, char *argv[]) {printf("666666666\n");
   /* Perform some global initialization. */
 
   /* Parse arguments. */
@@ -147,7 +147,7 @@ static long load_img() {
   return size;
 }
 
-void am_init_monitor() {printf("6666666666666666666666\n");
+void am_init_monitor() {
   init_rand();
   init_mem();
   init_isa();
