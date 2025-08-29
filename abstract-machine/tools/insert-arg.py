@@ -14,7 +14,7 @@ print("mainargs={0}".format(mainargs))
 
 fp = open(bin, 'r+b')
 data = fp.read()
-idx = data.find(str.encode(placeholder))
+idx = data.find(str.encode(placeholder))#寻找占位符，str.encode(placeholder)是转为2进制字节
 if idx == -1:
     print("Error: placeholder not found!\n")
     exit(1)

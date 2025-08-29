@@ -147,7 +147,7 @@ static long load_img() {
   return size;
 }
 
-void am_init_monitor() {
+void am_init_monitor() {printf("6666666666666666666666\n");
   init_rand();
   init_mem();
   init_isa();
