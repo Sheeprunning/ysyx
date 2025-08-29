@@ -31,7 +31,7 @@ void add_pio_map(const char *name, ioaddr_t addr, void *space, uint32_t len, io_
       maps[nr_map].name, maps[nr_map].low, maps[nr_map].high);
 
   nr_map ++;
-}
+}//添加新的io端口
 
 /* CPU interface */
 uint32_t pio_read(ioaddr_t addr, int len) {
