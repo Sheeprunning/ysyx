@@ -57,41 +57,134 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
             continue;
         }
         
+        const char *fmt_start = fmt;
+
         fmt++; // 跳过'%'
+        int width=0;
+        int zero_pad=0;
+        int left_align=0;
+
+        while(*fmt=='0' || *fmt=='-'){
+            if(*fmt=='0')zero_pad=1;
+            if(*fmt=='-')left_align=1;
+            fmt++;
+        }
+
+        while(*fmt>='0'&&*fmt<'9'){
+            width = width * 10 + (*fmt - '0');
+            fmt++;
+        }
+
+        char buffer[32];  // 临时缓冲区用于数字转换
+        char *temp_ptr;
+        int num, len, padding;
+        
         switch (*fmt) {
-            case 'd': {      // 处理十进制整数
-                int num = va_arg(ap, int);
-                out = itoa(num, out, 10);
+            case 'd': {
+                num = va_arg(ap, int);
+                temp_ptr = itoa(num, buffer, 10);
+                len = temp_ptr - buffer;
+                
+                padding = width > len ? width - len : 0;
+                
+                if (!left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = zero_pad ? '0' : ' ';
+                    }
+                }
+
+                for (int i = 0; i < len; i++) {
+                    *out++ = buffer[i];
+                }
+                if (left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = ' ';
+                    }
+                }
                 break;
             }
-            case 's': {      // 处理字符串
+            
+            case 's': {
                 char *s = va_arg(ap, char *);
+                len = strlen(s);
+                padding = width > len ? width - len : 0;
+                
+                if (!left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = ' ';
+                    }
+                }
                 while (*s) *out++ = *s++;
+                
+                if (left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = ' ';
+                    }
+                }
                 break;
             }
-            case 'c': {      // 处理字符
-                *out++ = va_arg(ap, int);
+            
+            case 'c': {
+                char c = va_arg(ap, int);
+                padding = width > 1 ? width - 1 : 0;
+                
+                if (!left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = ' ';
+                    }
+                }
+                
+                *out++ = c;
+                
+                if (left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = ' ';
+                    }
+                }
                 break;
             }
-            case 'x': {      // 处理十六进制
+            
+            case 'x': {
                 uint32_t num = va_arg(ap, uint32_t);
-                out = itoa(num, out, 16);
+                temp_ptr = itoa(num, buffer, 16);
+                len = temp_ptr - buffer;
+                padding = width > len ? width - len : 0;
+                
+                if (!left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = zero_pad ? '0' : ' ';
+                    }
+                }
+                
+                for (int i = 0; i < len; i++) {
+                    *out++ = buffer[i];
+                }
+                
+                if (left_align && padding > 0) {
+                    for (int i = 0; i < padding; i++) {
+                        *out++ = ' ';
+                    }
+                }
                 break;
             }
-            case '%': {      // 处理'%'字面量
+            
+            case '%': {
                 *out++ = '%';
                 break;
             }
-            default: {       // 无效格式符
-                *out++ = '%';
-                *out++ = *fmt;
+            
+            default: {
+                while (fmt_start <= fmt) {
+                    *out++ = *fmt_start++;
+                }
                 break;
             }
         }
         fmt++;
+
     }
-    *out = '\0';             // 添加字符串终结符
-    return out - start;      // 返回写入的字符数（不含'\0'）
+    *out = '\0';             
+    return out - start;      
 }
 
 int sprintf(char *out, const char *fmt, ...) {
