@@ -19,5 +19,6 @@ void init_dtrace(const char *filename){
 void add_dtrace(char type,int addr,const char *device_name,int data){
     dtrace_fp =fopen(ftrace_name,"a");
     fprintf(dtrace_fp, "%3c 0x%08x %-10s 0x%08x \n", type, addr, device_name, data);
+    fclose(dtrace_fp);
 }
 
