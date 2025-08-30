@@ -22,6 +22,7 @@
 #include "../src/isa/loongarch32r/local-include/reg.h"
 #include "../../../utils/iringbuf.h"
 #include "../../../utils/mtrace.h"
+#include "../../../utils/dtrace.h"
 #include <memory/paddr.h>
 
 static int is_batch_mode = false;
@@ -222,6 +223,7 @@ void init_sdb() {
   /* Append for 环形缓冲 & 访存记录*/
   init_iringbuf();
   init_mtrace("/home/sheeprunning/ysyx-workbench/nemu/build/mtrace-log.txt");
+  IFDEF(CONFIG_DTRACE, init_dtrace("build/ftrace,txt"));
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
