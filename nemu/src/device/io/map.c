@@ -17,6 +17,7 @@
 #include <memory/host.h>
 #include <memory/vaddr.h>
 #include <device/map.h>
+#include "/home/sheeprunning/ysyx-workbench/nemu/src/utils/dtrace.h"
 
 #define IO_SPACE_MAX (32 * 1024 * 1024)
 
@@ -58,6 +59,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   paddr_t offset = addr - map->low;
   invoke_callback(map->callback, offset, len, false); // prepare data to read
   word_t ret = host_read(map->space + offset, len);
+  add_dtrace('R',addr,map->name,ret);
   printf("USING DEVICE : Reading from %s\n",map->name);
   return ret;
 }
@@ -68,5 +70,5 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   paddr_t offset = addr - map->low;
   host_write(map->space + offset, len, data);
   invoke_callback(map->callback, offset, len, true);
-  printf("USING DEVICE : Writing to %s\n",map->name);
+  add_dtrace('W',addr,map->name,data);
 }
