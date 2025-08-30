@@ -5,6 +5,7 @@
 #define KEY_CODE_MASK 0x7FFF
 
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
-  kbd->keydown = (inl(KBD_ADDR)&KEYDOWN_MASK)!=0;
-  kbd->keycode = inl(KBD_ADDR)&KEY_CODE_MASK;
+  uint32_t key_data = inl(KBD_ADDR);
+  kbd->keydown = (key_data&KEYDOWN_MASK)!=0;
+  kbd->keycode = key_data&KEY_CODE_MASK;
 }
