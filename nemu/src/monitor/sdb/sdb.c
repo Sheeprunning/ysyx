@@ -223,7 +223,7 @@ void init_sdb() {
   /* Append for 环形缓冲 & 访存记录*/
   init_iringbuf();
   init_mtrace("/home/sheeprunning/ysyx-workbench/nemu/build/mtrace-log.txt");
-  IFDEF(CONFIG_DTRACE, init_dtrace("build/ftrace,txt"));
+  init_dtrace("/home/sheeprunning/ysyx-workbench/nemu/build/dtrace-log.txt");
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
