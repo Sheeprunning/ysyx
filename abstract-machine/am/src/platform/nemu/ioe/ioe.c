@@ -55,5 +55,5 @@ bool ioe_init() {
   return true;
 }
 
-void ioe_read (int reg, void *buf) { ((handler_t)lut[reg])(buf); }
+void ioe_read (int reg, void *buf) { ((handler_t)lut[reg])(buf); }//lut[reg]的返回值是数据指针,也就是地址，需要转换为函数指针才能使用
 void ioe_write(int reg, void *buf) { ((handler_t)lut[reg])(buf); }
