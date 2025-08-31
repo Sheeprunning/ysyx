@@ -28,16 +28,16 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     return;
     
   }else outl(SYNC_ADDR, 1);
-  // uint32_t screen_w = inl(VGACTL_ADDR) >> 16;
-  // uint32_t *pixels=(uint32_t*)ctl->pixels;
-  // int x=ctl->x;
-  // int y=ctl->y;
-  // uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  // for (int i = 0; i < ctl->h ; i ++){
-  //   for(int j= 0; j< ctl->w ; j++){
-  //     fb[(y+i)*(screen_w)+(x+j)]=pixels[i*screen_w+j];
-  //   }
-  // }
+  uint32_t screen_w = inl(VGACTL_ADDR) >> 16;
+  uint32_t *pixels=(uint32_t*)ctl->pixels;
+  int x=ctl->x;
+  int y=ctl->y;
+  uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
+  for (int i = 0; i < ctl->h ; i ++){
+    for(int j= 0; j< ctl->w ; j++){
+      fb[(y+i)*(screen_w)+(x+j)]=pixels[i*screen_w+j];
+    }
+  }
 }
 
 void __am_gpu_status(AM_GPU_STATUS_T *status) {
