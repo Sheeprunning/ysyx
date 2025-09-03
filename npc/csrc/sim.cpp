@@ -119,7 +119,7 @@ extern "C" {
       
     }
     void pmem_write_v(int waddr,  int len , int wdata){
-      if(raddr==0xa00003f5){
+      if(waddr==0xa00003f5){
         putchar(wdata);
       }else{
         pmem_write(waddr,len,wdata);
