@@ -30,7 +30,7 @@ end
 
 always @(*) begin
     if (DM_r_en&&raddr>32'h80000000 && raddr<32'h88000000) begin // 有读请求时
-         $display("[CLK %0t] READ: DM[%0x]", $time, raddr);
+         //$display("[CLK %0t] READ: DM[%0x]", $time, raddr);
         rdata = pmem_read_v(raddr);
     end
     else begin
@@ -57,7 +57,7 @@ end
 always@(*)begin
   if(write_ready)begin
             pmem_write_v(waddr_t, len_t, wdata_t);
-            $display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, waddr_t, wdata_t);
+            //$display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, waddr_t, wdata_t);
         end
 end
 endmodule

@@ -223,4 +223,14 @@ int process_elf_file(const char* filename) {
     fclose(file);
     return 0;
 }
+#else
+    extern "C" {
+    void jal_ftrace(int rd,uint32_t pc,uint32_t target){
+  
+    }
+
+    void jalr_ftrace(int32_t inst,int rd,int imm,uint32_t pc,uint32_t target){
+       
+    }
+}
 #endif

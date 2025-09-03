@@ -44,7 +44,9 @@ void single_cycle() {
   top->clk = 1; 
   if(top->rst!=1){
     top->inst=pmem_read(top->pc,4);
+    #ifdef CONFIG_ITRACE
     print_inst(top->pc,top->inst);     
+    #endif
   }
   else 
     top->inst=0;

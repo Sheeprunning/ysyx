@@ -5,6 +5,10 @@
 #include <iostream>
 #include "dut.h"
 
+// #define CONFIG_FTRACE 1
+// #define CONFIG_ITRACE 1
+
+
 #define FMT_WORD "0x%08x"
 #define COLOR_RED     "\033[1;31m"
 #define COLOR_GREEN   "\033[1;32m"

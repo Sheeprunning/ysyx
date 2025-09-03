@@ -18,7 +18,7 @@ module ysyx_25080204_RegisterFile #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
             end
         end
     else if (wen && waddr!=0)begin
-        $display("[CLK %0t] Write: rf[%0d] = 0x%08x ", $time, waddr, wdata);
+        //$display("[CLK %0t] Write: rf[%0d] = 0x%08x ", $time, waddr, wdata);
         rf[waddr] <= wdata;
      end
   end
