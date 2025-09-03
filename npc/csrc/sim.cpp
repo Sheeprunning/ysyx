@@ -104,8 +104,8 @@ extern "C" {
     }
     void show_reg(); 
     int get_reg();
-    int pmem_read_v( int raddr,int len){
-      return pmem_read(raddr,len);
+    int pmem_read_v( int raddr){
+      return pmem_read(raddr,4);
     }
     void pmem_write_v(int waddr,  int len , int wdata){
       pmem_write(waddr,len,wdata);

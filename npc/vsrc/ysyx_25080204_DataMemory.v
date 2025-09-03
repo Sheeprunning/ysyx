@@ -11,7 +11,7 @@ module ysyx_25080204_DataMemory(
 );
 
 
-import "DPI-C" function int pmem_read_v(input int raddr,input int len);
+import "DPI-C" function int pmem_read_v(input int raddr);
 import "DPI-C" function void pmem_write_v(
   input int waddr_t, input int len , input int wdata );
 
@@ -31,7 +31,7 @@ end
 always @(*) begin
     if (DM_r_en&&raddr>32'h80000000 && raddr<32'h88000000) begin // 有读写请求时
          $display("[CLK %0t] READ: DM[%0x]", $time, raddr);
-        rdata = pmem_read_v(raddr,len);
+        rdata = pmem_read_v(raddr);
     end
     else begin
         rdata = 32'hdeaddddd;
@@ -61,3 +61,4 @@ always@(*)begin
         end
 end
 endmodule
+
