@@ -105,10 +105,26 @@ extern "C" {
     void show_reg(); 
     int get_reg();
     int pmem_read_v( int raddr){
-      return pmem_read(raddr,4);
+      if(raddr==0xa0000048||raddr==0xa000004c){
+        struct timeval now;
+        gettimeofday(&now, NULL);
+        uint64_t us = now.tv_sec * 1000000 + now.tv_usec;
+        if(raddr==0xa0000048)
+          return (uint32_t)us;
+        else 
+          return us>>32;
+      }else{
+        return pmem_read(raddr,4);
+      }
+      
     }
     void pmem_write_v(int waddr,  int len , int wdata){
-      pmem_write(waddr,len,wdata);
+      if(raddr==0xa00003f5){
+        putchar(wdata);
+      }else{
+        pmem_write(waddr,len,wdata);
+      }
+      
     }
 }
 

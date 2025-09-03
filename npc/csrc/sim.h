@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <sys/time.h>
 #include <getopt.h>
 #include "svdpi.h"
 #include "init.h"
