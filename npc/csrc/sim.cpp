@@ -121,7 +121,7 @@ extern "C" {
       
     }
     void pmem_write_v(int waddr,  int len , int wdata){
-      if(waddr==0xa00003f5){
+      if(waddr==0xa00003f8){
         printf("正在访问串口。。。%d\n",wdata);
         putchar(wdata);
       }else{
