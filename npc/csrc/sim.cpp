@@ -166,7 +166,9 @@ void execute(uint32_t n){
   for(int i=0;i<n;i++){
     pc=top->pc;
     single_cycle();
+    #ifdef DIFFTEST
     trace_and_difftest(cpu.pc);//删除了decoder的部分
+    #endif
     if (npc_state.state != NPC_RUNNING) break;
   }
 }
