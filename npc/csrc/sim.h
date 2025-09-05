@@ -15,6 +15,7 @@
 #include "sdb.h"
 #include "npc.h"
 #include "log.h"
+#include "time.h"
 
 // #include <nvboard.h>
 

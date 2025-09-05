@@ -97,7 +97,8 @@ const char *regs2[] = {
   "x24", "x25", "x26", "x27", "x28", "x29", "x30", "x31"
 };
 
-extern "C" {
+extern "C" 
+{
     void npc_ebreak_finish() {
         VL_PRINTF("[DPI-C] EBREAK triggered, stopping simulation.\n");
         Verilated::gotFinish(true);
@@ -107,11 +108,9 @@ extern "C" {
     void show_reg(); 
     int get_reg();
     int pmem_read_v( int raddr){
-      if(raddr==0xa0000048||raddr==0xa000004c){
-        struct timeval now;
-        gettimeofday(&now, NULL);
-        uint64_t us = now.tv_sec * 1000000 + now.tv_usec;
-        if(raddr==0xa0000048)
+      if(raddr==RTC_ADDR||raddr==RTC_ADDR+4){
+        uint64_t us = get_time();
+        if(raddr==RTC_ADDR)
           return (uint32_t)us;
         else 
           return us>>32;
@@ -121,7 +120,7 @@ extern "C" {
       
     }
     void pmem_write_v(int waddr,  int len , int wdata){
-      if(waddr==0xa00003f8){
+      if(waddr==SERIAL_PORT){
         putchar(wdata);
       }else{
         pmem_write(waddr,len,wdata);
