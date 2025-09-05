@@ -2,7 +2,7 @@
 
 enum {
     NO_DEVICE=0,
-    FB=1;
+    FB=1
 };
 
 void device_update() {
@@ -27,7 +27,9 @@ int device_main(u_int32_t addr,  int len , u_int32_t data,int is_write){
         u_int32_t index=(addr-FB_ADDR)/4;
         fb[index]=data;
         return 1;
-    }
+      }return 0;
+    }else{
+      return 0;
     }
     
 }

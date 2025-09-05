@@ -1,6 +1,7 @@
 #include "time.h"
 #include <sys/time.h>
 #include <stdint.h>
+#include <cstddef>
 
 static uint64_t boot_time=0;
 

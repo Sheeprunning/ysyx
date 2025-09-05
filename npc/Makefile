@@ -71,6 +71,7 @@ CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
 LDFLAGS += -lreadline -lhistory -lncurses
 CXXFLAGS += -fsanitize=address
 LDFLAGS += -fsanitize=address
+LDFLAGS += -lSDL2
 
 $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE) 
 	rm -rf $(OBJ_DIR)
