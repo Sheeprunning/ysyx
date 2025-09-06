@@ -5,7 +5,7 @@
 
 #include ISA_H // the macro `ISA_H` is defined in CFLAGS
                // it will be expanded as "x86/x86.h", "mips/mips32.h", ...
-
+//asm volatile("汇编模板" : 输出操作数 : 输入操作数 : 被破坏的寄存器);%0是占位符
 #if defined(__ISA_X86__)
 # define nemu_trap(code) asm volatile ("int3" : :"a"(code))
 #elif defined(__ISA_MIPS32__)
