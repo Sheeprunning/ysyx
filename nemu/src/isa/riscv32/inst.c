@@ -68,7 +68,7 @@ static word_t csr_read(uint32_t csr){
     case MTVEC:  return cpu.csr.mtvec;
     case MCAUSE: return cpu.csr.mcause;
     case MSTATUS: return cpu.csr.mstatus;
-    case MEPC: return cpu.csr.mepc;
+    case MEPC:printf("mepc(NEMU):0x%8x",cpu.csr.mepc); return cpu.csr.mepc;  
     default: panic("unsupported read on csr = 0x%x", csr);
   }
 }
