@@ -65,10 +65,10 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
 
 static word_t csr_read(uint32_t csr){
   switch(csr){
-    case MTVEC:  return cpu.csr.mtvec;
+    case MTVEC:  printf("mtvec:0x%8x",cpu.csr.mtvec);return cpu.csr.mtvec;
     case MCAUSE: return cpu.csr.mcause;
     case MSTATUS: return cpu.csr.mstatus;
-    case MEPC:printf("mepc(NEMU):0x%8x",cpu.csr.mepc); return cpu.csr.mepc;  
+    case MEPC: return cpu.csr.mepc;
     default: panic("unsupported read on csr = 0x%x", csr);
   }
 }
