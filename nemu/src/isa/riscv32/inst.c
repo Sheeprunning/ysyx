@@ -14,7 +14,7 @@
 ***************************************************************************************/
 
 #include "local-include/reg.h"
-#include "/home/sheeprunning/ysyx-workbench/nemu/src/utils/ftrace.h"
+#include <ftrace.h>
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>

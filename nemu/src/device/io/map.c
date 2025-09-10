@@ -17,7 +17,7 @@
 #include <memory/host.h>
 #include <memory/vaddr.h>
 #include <device/map.h>
-#include "/home/sheeprunning/ysyx-workbench/nemu/src/utils/dtrace.h"
+#include <dtrace.h>
 
 #define IO_SPACE_MAX (32 * 1024 * 1024)
 

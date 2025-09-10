@@ -1,4 +1,4 @@
-#include "ftrace.h"
+#include <ftrace.h>
 
 Func func[100];
 int func_size=0;

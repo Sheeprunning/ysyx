@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <isa.h>
+#include <etrace.h>
 
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
@@ -21,6 +22,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
    */
   cpu.csr.mcause=NO;
   cpu.csr.mepc=epc;
+  add_etrace(NO,epc);
   return cpu.csr.mtvec;
 }
 

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "dtrace.h"
+#include <dtrace.h>
 
 FILE *dtrace_fp = NULL;
 char ftrace_name[128];

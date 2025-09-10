@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "mtrace.h"
+#include <mtrace.h>
 
 FILE *mtrace_fp = NULL;
 

@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
-#include "/home/sheeprunning/ysyx-workbench/nemu/src/utils/ftrace.h"
+#include <ftrace.h>
 
 void init_rand();
 void init_log(const char *log_file);

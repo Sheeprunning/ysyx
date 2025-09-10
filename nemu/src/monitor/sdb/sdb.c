@@ -20,9 +20,10 @@
 #include <utils.h>
 #include "sdb.h"
 #include "../src/isa/loongarch32r/local-include/reg.h"
-#include "../../../utils/iringbuf.h"
-#include "../../../utils/mtrace.h"
-#include "../../../utils/dtrace.h"
+#include <iringbuf.h>
+#include <mtrace.h>
+#include <dtrace.h>
+#include <etrace.h>
 #include <memory/paddr.h>
 
 static int is_batch_mode = false;
@@ -224,6 +225,7 @@ void init_sdb() {
   init_iringbuf();
   init_mtrace("/home/sheeprunning/ysyx-workbench/nemu/build/mtrace-log.txt");
   init_dtrace("/home/sheeprunning/ysyx-workbench/nemu/build/dtrace-log.txt");
+  init_etrace("/home/sheeprunning/ysyx-workbench/nemu/build/etrace-log.txt");
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }
