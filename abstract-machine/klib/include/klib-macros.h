@@ -1,7 +1,7 @@
 #ifndef KLIB_MACROS_H__
 #define KLIB_MACROS_H__
 
-#define ROUNDUP(a, sz)      ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
+#define ROUNDUP(a, sz)      ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))//向上对齐：通过去除低位将地址a向上舍入到sz的倍数
 #define ROUNDDOWN(a, sz)    ((((uintptr_t)a)) & ~((sz) - 1))
 #define LENGTH(arr)         (sizeof(arr) / sizeof((arr)[0]))
 #define RANGE(st, ed)       (Area) { .start = (void *)(st), .end = (void *)(ed) }
