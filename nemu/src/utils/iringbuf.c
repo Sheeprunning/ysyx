@@ -23,7 +23,7 @@ void iringbuf_show(){
     if(head!=-1){
         printf("iringbuf:....\n");
         for(int i=0;i<BUF_SIZE;i++){
-            if(i==(head-1)%BUF_SIZE)printf("->");
+            if(i==head)printf("->");
             printf("  %s\n",iringbuf[i].buf);
         }      
     }
