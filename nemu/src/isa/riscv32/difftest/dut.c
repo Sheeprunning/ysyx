@@ -24,7 +24,7 @@ void print_dut_and_ref(CPU_state *ref_r,int p){
     if(i==p)printf("->");
     printf("|x[%2d]  |%7s|%12x|%12x|\n", i, reg_name(i), gpr(i), ref_r->gpr[i]);
   }
-
+  if(p==-1)printf("->");
     printf("|   dnpc|   dnpc|%12x|%12x|\n",cpu.pc, ref_r->pc);
   printf("---------------------------------------------\n");
 }
@@ -36,6 +36,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   }
     
   for(int i=0;i<32;i++){
+    difftest_check_reg(reg_name(i), pc, ref_r->gpr[i], gpr(i));
     if(ref_r->gpr[i] != gpr(i)){
       print_dut_and_ref(ref_r,i);
       return false;
