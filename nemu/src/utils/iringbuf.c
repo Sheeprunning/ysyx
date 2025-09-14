@@ -6,7 +6,7 @@
 
 static ringbuf iringbuf[BUF_SIZE]={};
 
-static int head=0;
+static int head=-1;
 
 void init_iringbuf(){
     for(int i=0;i<BUF_SIZE;i++){
@@ -15,12 +15,12 @@ void init_iringbuf(){
 }
 
 void iringbuf_add(char *buf){
-    strncpy(iringbuf[head].buf, buf, sizeof(iringbuf[head].buf));
     head = (head + 1) % BUF_SIZE;
+    strncpy(iringbuf[head].buf, buf, sizeof(iringbuf[head].buf));
 }
 
 void iringbuf_show(){
-    if(head!=0){
+    if(head!=-1){
         printf("iringbuf:....\n");
         for(int i=0;i<BUF_SIZE;i++){
             if(i==(head-1)%BUF_SIZE)printf("->");

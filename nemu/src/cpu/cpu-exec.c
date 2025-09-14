@@ -141,7 +141,6 @@ void cpu_exec(uint64_t n) {
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
     case NEMU_ABORT:
-    iringbuf_show();
       IFDEF(CONFIG_IRINGBUF, iringbuf_show());
       Log("nemu: %s at pc = " FMT_WORD,
           ANSI_FMT("ABORT", ANSI_FG_RED),
