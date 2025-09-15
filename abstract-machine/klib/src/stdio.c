@@ -13,8 +13,12 @@ va_end	清理 ap 的状态（某些平台需要释放资源）	相当于 iter = 
 */
 static char* itoa(int val, char *buf, int base) {
     static const char digits[] = "0123456789abcdef";
+    unsigned abs_val=val;
     char *p = buf;
-    unsigned abs_val = (val < 0) ? -val : val;
+    if(base==10){
+        abs_val = (val < 0) ? -val : val;
+    }
+    
     
     // 处理负数
     if (val < 0 && base == 10) *p++ = '-';
