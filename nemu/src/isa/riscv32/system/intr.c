@@ -20,10 +20,10 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * Then return the address of the interrupt/exception vector.
    */
-  if(((cpu.csr.mstatus>>3)&1)==0){//右移三位取MIE
-    cpu.csr.mstatus=(cpu.csr.mstatus & ~(1<<3))|((cpu.csr.mstatus>>7&1)<<3);//右移7位取MPIE
-    return epc+4;
-  }
+  // if(((cpu.csr.mstatus>>3)&1)==0){//右移三位取MIE
+  //   cpu.csr.mstatus=(cpu.csr.mstatus & ~(1<<3))|((cpu.csr.mstatus>>7&1)<<3);//右移7位取MPIE
+  //   return epc+4;
+  // }
   cpu.csr.mcause=NO;
   cpu.csr.mepc=epc;
   cpu.csr.mstatus = (cpu.csr.mstatus & ~(1 << 7)) | ((cpu.csr.mstatus >> 3 & 1) << 7); // MPIE = MIE
