@@ -60,9 +60,9 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         const char *fmt_start = fmt;
 
         fmt++; // 跳过'%'
-        int width=0;
-        int zero_pad=0;
-        int left_align=0;
+        int width=0;//宽
+        int zero_pad=0;//填充0
+        int left_align=0;//左对齐
 
         while(*fmt=='0' || *fmt=='-'){
             if(*fmt=='0')zero_pad=1;
