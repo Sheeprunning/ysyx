@@ -28,7 +28,7 @@
 #define MEPC    0x341
 #define MCAUSE  0x342
 
-#define YIELD   11
+#define MEIE 11
 
 enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_R, TYPE_B,
@@ -153,9 +153,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 110 ????? 0110011", rem    , R, R(rd) = (int32_t)src1 % (int32_t)src2);
   INSTPAT("0000001 ????? ????? 111 ????? 0110011", remu   , R, R(rd) = src1 % src2);
 
-  INSTPAT("0011000 00010 00000 000 00000 1110011", mret   , R, s->dnpc=cpu.csr.mepc+4);
+  INSTPAT("0011000 00010 00000 000 00000 1110011", mret   , R, s->dnpc=cpu.csr.mepc);
 
-  INSTPAT("0000000 00000 00000 000 00000 1110011", ecall  , N, s->dnpc=isa_raise_intr(YIELD, s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 1110011", ecall  , N, s->dnpc=isa_raise_intr(MEIE, s->pc));
   INSTPAT("0000000 00001 00000 000 00000 1110011", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ???????", inv    , N, INV(s->pc));//输出无法匹配的pc
   INSTPAT_END();
