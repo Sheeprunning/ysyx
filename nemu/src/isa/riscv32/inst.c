@@ -128,7 +128,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 111 ????? 0010011", andi   , I, R(rd) = src1 & imm);
 
   INSTPAT("??????? ????? ????? 001 ????? 1110011", csrrw  , I, R(rd) = csr_read(imm);
-  csr_write(imm,src1););
+  csr_write(imm,src1););//当rs1=x0，可以视为只读，相当与csr=src1
   INSTPAT("??????? ????? ????? 010 ????? 1110011", csrrs  , I, word_t t=csr_read(imm);
   csr_write(imm,t|src1); R(rd) = t);//当rs1=x0，可以视为只读，相当与rd=csr
 
@@ -154,7 +154,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 110 ????? 0110011", rem    , R, R(rd) = (int32_t)src1 % (int32_t)src2);
   INSTPAT("0000001 ????? ????? 111 ????? 0110011", remu   , R, R(rd) = src1 % src2);
 
-  INSTPAT("0011000 00010 00000 000 00000 1110011", mret   , R, s->dnpc=cpu.csr.mepc);
+  INSTPAT("0011000 00010 00000 000 00000 1110011", mret   , R, s->dnpc=cpu.csr.mepc;
+  cpu.csr.mstatus = (cpu.csr.mstatus & ~(1 << 3)) | ((cpu.csr.mstatus >> 7 & 1) << 3);
+);
 
   INSTPAT("0000000 00000 00000 000 00000 1110011", ecall  , N, s->dnpc=isa_raise_intr(MEIE, s->pc));
   INSTPAT("0000000 00001 00000 000 00000 1110011", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
