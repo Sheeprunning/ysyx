@@ -6,10 +6,11 @@ module ysyx_25080204_ControlUnit(
     output reg ALU_A_sel,
     output reg ALU_B_sel,
     output reg rf_w,
-    output reg [1:0]RF_data_sel,
+    output reg [2:0]RF_data_sel,
     output reg DM_r_en,
     output reg DM_w_en,
     output reg sext_en,
+    output reg CSR_wen,
     output reg [1:0]mask
 );
 
@@ -109,10 +110,11 @@ end
 //RF_data_sel
 always @(*) begin
     case(opcode)
-        7'b0000011:RF_data_sel=2'b01;//Load-type; reg=DM[?]
-        7'b1101111,7'b1100111:RF_data_sel=2'b10;//jal & jalr; reg=pc+4
-        7'b0110111:RF_data_sel=2'b11;//lui;reg=imm
-        default:RF_data_sel=2'b00;//reg=result
+        7'b0000011:RF_data_sel=3'b001;//Load-type; reg=DM[?]
+        7'b1101111,7'b1100111:RF_data_sel=3'b010;//jal & jalr; reg=pc+4
+        7'b0110111:RF_data_sel=3'b011;//lui;reg=imm
+        7'b1110011:RF_data_sel=3'b100;//csr
+        default:RF_data_sel=3'b000;//reg=result
     endcase
 end
 
@@ -133,9 +135,10 @@ always @(*) begin
     DM_w_en=(opcode==7'b0100011)?1'b1:1'b0;
 end
 
-
-
-
+//CSR_wen
+always @(*) begin
+    CSR_wen=opcode==(7'b1110011)?1'b1:1'b0;
+end
 
 
 

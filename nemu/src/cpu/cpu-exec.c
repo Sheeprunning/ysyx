@@ -29,7 +29,7 @@
 
 CPU_state cpu =  {
     .csr = {
-        .mstatus =0x1800 // 你想要的初始值，例如设置MPP等位
+        .mstatus =0x1800 // 设置初值
     }
 };
 uint64_t g_nr_guest_inst = 0;

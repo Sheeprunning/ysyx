@@ -107,6 +107,32 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
                 }
                 break;
             }
+
+            case 'l': {
+                if(*(++fmt)=='d'){
+                    num = va_arg(ap, int);
+                    temp_ptr = itoa(num, buffer, 10);
+                    len = temp_ptr - buffer;
+                    
+                    padding = width > len ? width - len : 0;
+                    
+                    if (!left_align && padding > 0) {
+                        for (int i = 0; i < padding; i++) {
+                            *out++ = zero_pad ? '0' : ' ';
+                        }
+                    }
+
+                    for (int i = 0; i < len; i++) {
+                        *out++ = buffer[i];
+                    }
+                    if (left_align && padding > 0) {
+                        for (int i = 0; i < padding; i++) {
+                            *out++ = ' ';
+                        }
+                    }
+                    break;
+                }
+            }
             
             case 's': {
                 char *s = va_arg(ap, char *);

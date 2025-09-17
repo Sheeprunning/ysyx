@@ -34,7 +34,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   return true;
 }
 
-Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
+Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {//创建一个初始线程的上下文，初始 所以不用保存寄存器等
   Context *c=(Context*) ((uintptr_t)kstack.end-sizeof(Context));
   c->mepc=(uintptr_t)entry;
   c->gpr[10]=(uintptr_t)arg;//a0
