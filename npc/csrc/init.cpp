@@ -67,7 +67,7 @@ inline void host_write(void *addr, int len, u_int32_t data) {
 
 u_int32_t pmem_read(u_int32_t addr, int len) {
   if(!check_paddr(addr)){
-    printf("addr:%0#x len:%d\n",addr,len);
+    printf("超出访存位置！addr:0x%08x len:%d\n",addr,len);
     sim_exit();
     assert(0);
   }
