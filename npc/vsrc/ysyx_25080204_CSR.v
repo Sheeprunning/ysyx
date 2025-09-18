@@ -67,7 +67,7 @@ always @(posedge clk or posedge rst) begin
         //把特权级切换为MPP暂未实现
     end
     else if(wen)begin
-        $display("[CLK %0t] Write: CSR[%0x] = 0x%08x ", $time, waddr, csr_wdata);
+        //$display("[CLK %0t] Write: CSR[%0x] = 0x%08x ", $time, waddr, csr_wdata);
         case(waddr)
             MSTATUS:mstatus<=csr_wdata;
             MTVEC:mtvec<=csr_wdata;
