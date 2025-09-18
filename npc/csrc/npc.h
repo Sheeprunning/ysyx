@@ -1,4 +1,3 @@
-//我把和npc有关的全放在这好了
 #ifndef _NPC_H_
 #define _NPC_H_
 
