@@ -24,8 +24,9 @@ module ysyx_25080204_Decoder (
     
     //wire is_r_type = (opcode == 7'b0110011);  // R-type
     wire is_i_type = (opcode == 7'b0000011 ||  // LOAD
-                 opcode == 7'b0010011 ||  // 立即数运算 (ADDI, ANDI, etc.)
-                 opcode == 7'b1100111);     //I-type 
+                 opcode == 7'b0010011 ||    // 立即数运算 
+                 opcode == 7'b1100111 ||    //I-type 
+                 opcode == 7'b1110011);     //CSR
     wire is_s_type = (opcode == 7'b0100011);//S-type
     wire is_b_type = (opcode == 7'b1100011);//B-type
     wire is_u_type = (opcode == 7'b0110111 ||  // LUI
