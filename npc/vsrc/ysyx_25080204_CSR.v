@@ -63,7 +63,7 @@ always @(posedge clk or posedge rst) begin
             mstatus[MPIE],//MIE=MPIE
             mstatus[2:0]
             };
-        // $display("[CLK %0t] mret: mepc = 0x%08x", $time, mepc);
+        $display("[CLK %0t] mret: mepc = 0x%08x", $time, mepc);
         //把特权级切换为MPP暂未实现
     end
     else if(wen)begin
