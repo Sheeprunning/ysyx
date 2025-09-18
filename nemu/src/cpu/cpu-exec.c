@@ -28,9 +28,10 @@
 #define MAX_INST_TO_PRINT 100
 
 CPU_state cpu =  {
-    .csr = {
-        .mstatus =0x1800 // 设置初值
-    }
+  .priv =0,
+  .csr = {
+      .mstatus =0x1800 // 设置初值
+  }
 };
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us

@@ -158,7 +158,7 @@ static int decode_exec(Decode *s) {
   cpu.csr.mstatus = (cpu.csr.mstatus & ~(1 << 3)) | ((cpu.csr.mstatus >> 7 & 1) << 3);
 );
 
-  INSTPAT("0000000 00000 00000 000 00000 1110011", ecall  , N, s->dnpc=isa_raise_intr(MEIE, s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 1110011", ecall  , N, s->dnpc=isa_raise_intr(8, s->pc));
   INSTPAT("0000000 00001 00000 000 00000 1110011", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ???????", inv    , N, INV(s->pc));//输出无法匹配的pc
   INSTPAT_END();
