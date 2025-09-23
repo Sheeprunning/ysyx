@@ -13,7 +13,6 @@ CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
 
-
 void print_inst(u_int32_t pc,u_int32_t inst){
   char logbuf[128];
   char *p=logbuf;

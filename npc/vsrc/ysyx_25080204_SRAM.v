@@ -9,7 +9,7 @@ import "DPI-C" function int pmem_read_v(input int raddr);
 
 always @(posedge clk or posedge rst) begin
     if(rst)begin
-        inst <= 0;
+        inst <= 32'h00000013;
     end
     else begin
         inst <= pmem_read_v(pc);
