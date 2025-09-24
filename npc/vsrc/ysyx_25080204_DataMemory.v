@@ -1,36 +1,14 @@
 module ysyx_25080204_DataMemory(
     input clk,
     input rst,
-    
-    input [31:0]araddr,//读的地址
-    input arvalid,//读地址有效
-    output arready,//准备就绪读
- 
-    output reg [31:0]rdata,
-    output [1:0]rresp,//读数据是正确
-    output rvalid,//已经读出数据
-    input rready,//准备就绪接收
-
-    input [31:0]awaddr,
-    input awvalid,//写地址有效
-    output awready//准备就绪获取写地址
-
+    input DM_r_en,
+    input DM_w_en,
+    input [31:0]raddr,
+    input [31:0]waddr,
     input [31:0]wdata,
-    input [1:0]wstrb,//掩码
-    input wvalid,//写数据有效
-    output wready,//准备就系获取写数据
-
-    output [1:0]bresp,//是否写成功
-    output bvalid,//已经写完
-    input bready//准备就绪获取是否成功写入
-    
+    input [1:0]mask,
+    output reg [31:0]rdata
 );
-
-localparam R_READY=2'b00;
-localparam R_BUSY = 2'b01;
-
-localparam W_READY=2'b00;
-localparam W_BUSY = 2'b01;
 
 
 import "DPI-C" function int pmem_read_v(input int raddr);
@@ -40,11 +18,9 @@ import "DPI-C" function void pmem_write_v(
 reg [31:0] waddr_t,wdata_t;
 reg [31:0] len,len_t;
 reg write_ready;
-reg [1:0]r_state,w_state;
-
 
 always @(*)begin
-    case(wstrb)
+    case(mask)
         2'b00:len=1;
         2'b01:len=2;
         2'b10:len=4;
@@ -60,29 +36,6 @@ always @(*) begin
     else begin
         rdata = 32'hdeaddddd;
     end
-end
-
-always @(posedge clk or posedge rst)begin
-  if(rst)begin
-    arready<=1;
-    rdata<=0;
-    rresp<=2'b0;
-    rvalid<=0;
-
-    awready<=1;
-    bresp<=0;
-    bvalid<=0;
-
-    state<=READY;
-  end
-  else begin
-    case(state)
-      READY:begin
-        if()
-      end
-    endcase
-  end
-
 end
 
 always @(posedge clk or posedge rst) begin
