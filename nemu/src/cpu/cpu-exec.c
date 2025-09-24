@@ -140,7 +140,7 @@ void cpu_exec(uint64_t n) {
       Log("nemu: %s at pc = " FMT_WORD,
           ((nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
-          nemu_state.halt_pc);statistic();break;
+          nemu_state.halt_pc);
     case NEMU_ABORT:
       IFDEF(CONFIG_IRINGBUF, iringbuf_show());
       Log("nemu: %s at pc = " FMT_WORD,

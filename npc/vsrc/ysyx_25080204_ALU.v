@@ -1,10 +1,10 @@
 module ysyx_25080204_ALU(
-    input  [3:0]opcode,
-    input  [31:0]A,B,
+    input reg [3:0]opcode,
+    input reg [31:0]A,B,
     output reg [31:0]result,
-    output  Zero,
-    output  Overflow,
-    output  CF
+    output reg Zero,
+    output reg Overflow,
+    output reg CF
 );
 localparam ALU_ADD = 4'b0000, ALU_SUB = 4'b0001, 
         ALU_AND = 4'b0010, ALU_OR = 4'b0011,
