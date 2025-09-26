@@ -6,6 +6,7 @@ module top(
     output CF,
     output [31:0]cpu_pc,
     output [31:0]cpu_inst,
+    output reg check,
     output [31:0] a0
 );
 
@@ -303,6 +304,9 @@ always @(posedge clk or posedge rst) begin
     else will_stall<=load||store;
 end
 // stall信号组合逻辑
+always @(posedge clk or posedge rst) begin
+    check<=~stall;
+end
 assign stall = r_stall || w_stall || inst_stall || will_stall;
 
 // ebreak处理
