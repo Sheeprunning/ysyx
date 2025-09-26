@@ -104,7 +104,8 @@ reg [1:0] r_state, w_state, inst_state;
 localparam R_IDLE = 2'b00;
 localparam R_WAIT = 2'b01;
 localparam W_IDLE = 2'b00;
-localparam W_WAIT = 2'b01;
+localparam W_WRITE = 2'b01;
+localparam W_BRESP = 2'b10;
 localparam INST_RESET = 2'b00;
 localparam INST_IDLE  = 2'b01;
 localparam INST_WAIT  = 2'b10;
@@ -241,16 +242,22 @@ always @(posedge clk or posedge rst) begin
                     wvalid_reg <= 1'b1;
                     wdata_reg <= wdata_from_reg;
                     wstrb_reg <= mem_mask;
-                    bready_reg <= 1'b1;
+                    
                     w_stall <= 1'b1;
-                    w_state <= W_WAIT;
+                    w_state <= W_WRITE;
                 end
             end
-            W_WAIT: begin
+            W_WRITE: begin
+              if(wready&&wvalid)begin
+                bready_reg <= 1'b1;
+                awvalid_reg <= 1'b0;
+                wvalid_reg <= 1'b0;
+                w_state <= W_BRESP;
+              end
+            end
+            W_BRESP: begin
                 if(bvalid && bready) begin
                     bresp_reg<=bresp;
-                    awvalid_reg <= 1'b0;
-                    wvalid_reg <= 1'b0;
                     bready_reg <= 1'b0;
                     w_stall <= 1'b0;
                     w_state <= W_IDLE;
