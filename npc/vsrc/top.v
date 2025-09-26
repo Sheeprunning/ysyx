@@ -105,8 +105,9 @@ localparam R_IDLE = 2'b00;
 localparam R_WAIT = 2'b01;
 localparam W_IDLE = 2'b00;
 localparam W_WAIT = 2'b01;
-localparam INST_IDLE = 2'b00;
-localparam INST_WAIT = 2'b01;
+localparam INST_RESET = 2'b00;
+localparam INST_IDLE  = 2'b01;
+localparam INST_WAIT  = 2'b10;
 
 // 数据存储器实例化
 ysyx_25080204_DataMemory data_mem (
@@ -268,9 +269,16 @@ always @(posedge clk or posedge rst) begin
         inst_rready_reg <= 1'b0;
         inst_reg <= 32'h00000013; 
         inst_stall <= 1'b0;
-        inst_state <= INST_IDLE;
+        inst_state <= INST_RESET;
     end else begin
         case(inst_state)
+            INST_RESET: begin
+                inst_arvalid_reg <= 1'b1;
+                inst_araddr_reg <= pc;
+                inst_rready_reg <= 1'b1;
+                inst_stall <= 1'b1;
+                inst_state <= INST_WAIT;
+            end
             INST_IDLE: begin
                 if(!stall) begin
                     inst_arvalid_reg <= 1'b1;
