@@ -101,7 +101,7 @@ always @(posedge clk or posedge rst)begin
     case(w_state)
         W_READY:begin
             if(awready&&awvalid)begin//读入写地址握手成功
-                $display("[CLK %0t]MEMERY awaddr=0x%08x handshake with CPU !", $time ,awaddr);
+                //$display("[CLK %0t]MEMERY awaddr=0x%08x handshake with CPU !", $time ,awaddr);
                 awready<=1'b0;//取消就绪
                 wready<=1'b1;
                 awaddr_t<=awaddr;
@@ -110,7 +110,7 @@ always @(posedge clk or posedge rst)begin
         end
         W_ADDR:begin//也可以尝试直接写入数据
             if(wready&&wvalid)begin//读数据握手成功
-                $display("[CLK %0t]MEMERY wdata=0x%08x handshake with CPU !", $time,wdata);
+                //$display("[CLK %0t]MEMERY wdata=0x%08x handshake with CPU !", $time,wdata);
                 wready<=1'b0;//取消就绪
                 wstrb_t<=wstrb;
                 wdata_t<=wdata;
@@ -126,7 +126,7 @@ always @(posedge clk or posedge rst)begin
               
         W_BRESP:begin
             if(bvalid&&bready)begin
-                $display("[CLK %0t]MEMERY bresp handshake with CPU !", $time);
+                //$display("[CLK %0t]MEMERY bresp handshake with CPU !", $time);
                 write_ready<=1'b0;
                 awready<=1'b1;
                 wready<=1'b0;
@@ -168,7 +168,7 @@ end
 
 always@(*)begin
   if(write_ready)begin
-            $display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
+            //$display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
             pmem_write_v(awaddr_t, len_t, wdata_t);
         end
 end
