@@ -264,7 +264,7 @@ always @(posedge clk or posedge rst) begin
         inst_araddr_reg <= 32'b0;
         inst_rready_reg <= 1'b0;
         inst_reg <= 32'h00000013; 
-        inst_stall <= 1'b1;//初始化为1，pc刚启动时便等待指令
+        inst_stall <= 1'b0;
         inst_state <= INST_IDLE;
     end else begin
         case(inst_state)
