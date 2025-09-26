@@ -242,7 +242,6 @@ always @(posedge clk or posedge rst) begin
                     wvalid_reg <= 1'b1;
                     wdata_reg <= wdata_from_reg;
                     wstrb_reg <= mem_mask;
-                    
                     w_stall <= 1'b1;
                     w_state <= W_WRITE;
                 end
