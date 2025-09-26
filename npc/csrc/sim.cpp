@@ -12,6 +12,7 @@ TOP_NAME* top;
 CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
+bool first=true;
 
 void print_inst(u_int32_t pc,u_int32_t inst){
   char logbuf[128];
@@ -161,8 +162,14 @@ void execute(uint32_t n){
     pc=top->rootp->top__DOT__pc;
     single_cycle();
     #ifdef DIFFTEST
-    if(top->rootp->top__DOT__CPU__DOT__PC__DOT__pc_stall)
-    trace_and_difftest(cpu.pc);//删除了decoder的部分
+    
+    if(top->rootp->top__DOT__CPU__DOT__PC__DOT__pc_stall){
+      if(first)
+        first=false;//因为一开始我就会吧pc_stall设置为1表示取指，所以第一次运行的时候nemu不运行
+      else 
+        trace_and_difftest(cpu.pc);//删除了decoder的部分
+    }
+    
     #endif
     if (npc_state.state != NPC_RUNNING) break;
   }
