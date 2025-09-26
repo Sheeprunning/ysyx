@@ -44,7 +44,6 @@ reg [31:0] len_t;
 reg [1:0]wstrb_t;
 reg [1:0]r_state,w_state;
 
-reg write_ready;
 
 //读通道
 
@@ -88,8 +87,6 @@ end
 
 always @(posedge clk or posedge rst)begin
   if(rst)begin
-    write_ready<=0;
-
     awready<=1; 
     wready<=1'b0;
     bresp<=0;
@@ -118,7 +115,6 @@ always @(posedge clk or posedge rst)begin
             end
         end
         W_DATA:begin
-            write_ready<=1'b1;
             bresp<={1'b0,~(awaddr_t>32'h80000000 && awaddr_t<32'h88000000)};
             bvalid<=1'b1;
             w_state<=W_BRESP;
@@ -127,7 +123,7 @@ always @(posedge clk or posedge rst)begin
         W_BRESP:begin
             if(bvalid&&bready)begin
                 //$display("[CLK %0t]MEMERY bresp handshake with CPU !", $time);
-                write_ready<=1'b0;
+                pmem_write_v(awaddr_t, len_t, wdata_t);
                 awready<=1'b1;
                 wready<=1'b0;
                 bvalid<=1'b0;
@@ -140,22 +136,6 @@ always @(posedge clk or posedge rst)begin
 
 end
 
-// always @(posedge clk or posedge rst) begin
-//     if (rst) begin
-//         write_ready <= 0;
-//         awaddr_t <= 0;
-//         wdata_t <= 0;
-//         len_t <= 0;
-//     end else begin
-//         write_ready <= DM_w_en;
-//         if (DM_w_en) begin
-//             awaddr_t <= waddr;
-//             wdata_t <= wdata;
-//             len_t <= len;
-//         end
-        
-//     end
-// end
 
 always @(*)begin
   case (wstrb_t)
@@ -166,11 +146,6 @@ always @(*)begin
   endcase
 end
 
-always@(*)begin
-  if(write_ready)begin
-            //$display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
-            pmem_write_v(awaddr_t, len_t, wdata_t);
-        end
-end
+
 endmodule
 
