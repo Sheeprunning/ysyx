@@ -161,7 +161,7 @@ always @(*)begin
   case (wstrb_t)
     2'b00:len_t=1;
     2'b01:len_t=2;
-    2'b11:len_t=4;
+    2'b10:len_t=4;
     default:len_t=0;
   endcase
 end
