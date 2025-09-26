@@ -12,7 +12,7 @@ TOP_NAME* top;
 CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
-bool first=true;
+int first=0;
 
 void print_inst(u_int32_t pc,u_int32_t inst){
   char logbuf[128];
@@ -164,10 +164,9 @@ void execute(uint32_t n){
     #ifdef DIFFTEST
     
     if(top->rootp->top__DOT__CPU__DOT__PC__DOT__pc_stall){
-      if(first)
-        first=false;//因为一开始我就会吧pc_stall设置为1表示取指，所以第一次运行的时候nemu不运行
-      else 
+        first++;
         trace_and_difftest(cpu.pc);//删除了decoder的部分
+        cout<<first<<endl;
     }
     
     #endif
