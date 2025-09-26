@@ -204,6 +204,7 @@ always @(posedge clk or posedge rst) begin
             end
             R_WAIT: begin
                 if(rvalid && rready) begin
+                $display("[CLK %0t]CPU handshake with DM! ", $time);
                     rdata_from_dm_reg <= rdata;
                     rresp_reg<=rresp;
                     arvalid_reg <= 1'b0;
@@ -280,6 +281,7 @@ always @(posedge clk or posedge rst) begin
             INST_WAIT: begin
             $display("[CLK %0t]CPU STATE:R_WAIT ", $time);
                 if(inst_rvalid && inst_rready) begin
+                $display("[CLK %0t]CPU handshake with IM! ", $time);
                     inst_reg <= inst_rdata;
                     inst_rresp_reg<=inst_rresp;
                     inst_arvalid_reg <= 1'b0;
@@ -301,7 +303,7 @@ always @(posedge clk or posedge rst) begin
     else will_stall<=load||store;
 end
 // stall信号组合逻辑
-assign stall = r_stall || w_stall || inst_stall ||will_stall;
+assign stall = r_stall || w_stall || inst_stall || will_stall;
 
 // ebreak处理
 import "DPI-C" function void npc_ebreak_finish();
