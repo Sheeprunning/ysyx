@@ -236,7 +236,7 @@ always @(posedge clk or posedge rst) begin
     end else begin
         case(w_state)
             W_IDLE: begin
-                if(DM_w_en) begin
+                if(DM_w_en&&will_stall) begin//忘记设计stall状态的处理，导致多次写数据
                     awvalid_reg <= 1'b1;
                     awaddr_reg <= w_r_addr;
                     wvalid_reg <= 1'b1;
@@ -311,11 +311,11 @@ always @(posedge clk or posedge rst) begin
     end 
 end
 
-assign load = (inst_rdata[6:0]==7'b0000011)&&inst_rvalid;
+assign load = (inst_rdata[6:0]==7'b0000011)&&inst_rvalid;//和rvalid进行与，这样在读完指令后不会一直保持有效
 assign store = (inst_rdata[6:0]==7'b0100011)&&inst_rvalid;
 always @(posedge clk or posedge rst) begin
     if(rst)will_stall<=1'b0;
-    else if(will_stall)will_stall<=1'b0;//这个保证只持续一周期
+    else if(will_stall)will_stall<=1'b0;//保证只持续一周期
     else will_stall<=load||store;
 end
 // stall信号组合逻辑
