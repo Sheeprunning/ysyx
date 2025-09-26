@@ -203,6 +203,7 @@ always @(posedge clk or posedge rst) begin
                 end
             end
             R_WAIT: begin
+            $display("[CLK %0t]CPU STATE:R_WAIT ", $time);
                 if(rvalid && rready) begin
                     rdata_from_dm_reg <= rdata;
                     rresp_reg<=rresp;
