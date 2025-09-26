@@ -168,7 +168,7 @@ end
 
 always@(*)begin
   if(write_ready)begin
-            //$display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
+            $display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
             pmem_write_v(awaddr_t, len_t, wdata_t);
         end
 end
