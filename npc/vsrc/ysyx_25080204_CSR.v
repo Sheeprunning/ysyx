@@ -1,6 +1,7 @@
 module ysyx_25080204_CSR(
     input clk,
     input rst,
+    input stall,
     input wen,
     input en_ecall,
     input en_mret,
@@ -43,7 +44,10 @@ always @(posedge clk or posedge rst) begin
         mepc<=32'h0;
         mcause<=32'h0;
     end
-    if(en_ecall)begin
+    if(stall)begin
+      //保持
+    end
+    else if(en_ecall)begin
         mstatus<={
             mstatus[31:13], cur_pri,//MPP
             mstatus[10:8],  mstatus[MIE],//MPIE=MIE

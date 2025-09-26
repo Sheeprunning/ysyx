@@ -186,6 +186,7 @@ ysyx_25080204_sext SEXT(
 ysyx_25080204_CSR CSR(
     .clk(clk),
     .rst(rst),
+    .stall(stall),
     .wen(CSR_wen),
     .en_ecall(en_ecall),
     .en_mret(en_mret),
