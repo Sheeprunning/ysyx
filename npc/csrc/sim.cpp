@@ -163,10 +163,10 @@ void execute(uint32_t n){
     single_cycle();
     #ifdef DIFFTEST
     
-    if(top->rootp->top__DOT__CPU__DOT__PC__DOT__pc_stall){
+    if(!top->rootp->top__DOT__CPU__DOT__PC__DOT__pc_stall&&!top->rootp->top__DOT__stall){
         first++;
         trace_and_difftest(cpu.pc);//删除了decoder的部分
-        cout<<first<<endl;
+        cout<<"第"<<first<<"次进行test"<<endl;
     }
     
     #endif
