@@ -1,6 +1,7 @@
 module ysyx_25080204_RegisterFile #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
   input clk,
   input rst,
+  input stall,
   input [DATA_WIDTH-1:0] wdata,
   input [ADDR_WIDTH-1:0] waddr,
   input [ADDR_WIDTH-1:0]rs1,
@@ -17,7 +18,7 @@ module ysyx_25080204_RegisterFile #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
                 rf[i]<=0;
             end
         end
-    else if (wen && waddr!=0)begin
+    else if (wen && waddr!=0 && !stall)begin
         //$display("[CLK %0t] Write: rf[%0d] = 0x%08x ", $time, waddr, wdata);
         rf[waddr] <= wdata;
      end

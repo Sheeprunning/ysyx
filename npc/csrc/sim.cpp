@@ -13,7 +13,6 @@ CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
 
-
 void print_inst(u_int32_t pc,u_int32_t inst){
   char logbuf[128];
   char *p=logbuf;
@@ -34,7 +33,7 @@ void update_cpu(){
   for(int i=0;i<32;i++){
     cpu.gpr[i]=top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
   }
-  cpu.pc=top->pc;
+  cpu.pc=top->rootp->top__DOT__pc;
 }
 
 void single_cycle() {
@@ -43,13 +42,10 @@ void single_cycle() {
   // nvboard_update();
   top->clk = 1; 
   if(top->rst!=1){
-    top->inst=pmem_read(top->pc,4);
     #ifdef CONFIG_ITRACE
-    print_inst(top->pc,top->inst);     
+    print_inst(top->cpu_pc,top->cpu_inst);     
     #endif
   }
-  else 
-    top->inst=0;
   step_and_dump_wave();
   update_cpu();
 
@@ -162,7 +158,7 @@ void trace_and_difftest(u_int32_t pc){
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
-    pc=top->pc;
+    pc=top->rootp->top__DOT__pc;
     single_cycle();
     #ifdef DIFFTEST
     trace_and_difftest(cpu.pc);//删除了decoder的部分

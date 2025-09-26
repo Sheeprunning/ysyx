@@ -2,9 +2,16 @@ module ysyx_25080204_CPU(
     input clk,
     input rst,
     input [31:0]inst,
+    input [31:0]rdata,
+    input stall,
     output Zero,
     output Overflow,
     output CF,
+    output DM_r_en,
+    output DM_w_en,
+    output [31:0]w_r_addr,
+    output [31:0]wdata,
+    output [1:0]mem_mask,
     output [31:0]a0,
     output [31:0]pc
 );
@@ -30,8 +37,7 @@ wire ALU_A_sel;
 wire ALU_B_sel;
 wire rf_w;
 wire [2:0]RF_data_sel;
-wire DM_r_en;
-wire DM_w_en;
+
 wire sext_en;
 wire CSR_wen;
 wire [1:0]mask;
@@ -43,7 +49,6 @@ wire [31:0]result;
 // wire Overflow;
 // wire CF;
 
-wire [31:0]rdata;
 
 wire [31:0]sext_out_data;
 
@@ -53,10 +58,12 @@ wire [31:0]csr_npc;
 wire csr_jen;
 wire [31:0]csr_rdata;
 
+
 ysyx_25080204_pc PC(
     .next_pc(next_pc),
     .clk(clk),
     .rst(rst),
+    .stall(stall),
     .pc(pc)
 );
 
@@ -83,9 +90,12 @@ ysyx_25080204_Decoder Decoder(
     .func3(func3)    
 );
 
+assign wdata=src2;
+
 ysyx_25080204_RegisterFile RF (
     .clk(clk),
     .rst(rst),
+    .stall(stall),
     .wdata(RF_w_data),
     .waddr(rd),
     .rs1(rs1),
@@ -114,6 +124,8 @@ ysyx_25080204_ControlUnit CU(
 assign A=ALU_A_sel?src1:pc;
 assign B=ALU_B_sel?src2:imm_num;
 assign a0=RF.rf[10];
+
+assign mem_mask=mask;
 
 wire beq_taken=(src1==src2);
 wire bne_taken=!beq_taken;
@@ -161,19 +173,7 @@ ysyx_25080204_ALU ALU(
     .CF(CF)
 );
 
-
-
-ysyx_25080204_DataMemory DM(
-    .clk(clk),
-    .rst(rst),
-    .DM_r_en(DM_r_en),
-    .DM_w_en(DM_w_en),
-    .raddr(result),
-    .waddr(result),
-    .wdata(src2),
-    .mask(mask),
-    .rdata(rdata)
-);
+assign w_r_addr=result;
 
 ysyx_25080204_sext SEXT(
     .sext_en(sext_en),
