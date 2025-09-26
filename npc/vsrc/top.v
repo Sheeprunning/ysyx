@@ -93,7 +93,7 @@ wire        DM_r_en, DM_w_en;
 wire [31:0] w_r_addr;
 wire [31:0] wdata_from_reg;
 wire [1:0]  mem_mask;
-wire [31:0] pc;
+wire [31:0] next_pc_for_inst,pc;
 wire        stall;
 wire        load,store;//提前根据指令计算是否stall
 
@@ -180,6 +180,7 @@ ysyx_25080204_CPU CPU(
     .wdata(wdata_from_reg),
     .mem_mask(mem_mask),
     .a0(a0),
+    .next_pc_for_inst(next_pc_for_inst),
     .pc(pc)
 );
 
@@ -273,7 +274,7 @@ always @(posedge clk or posedge rst) begin
             INST_IDLE: begin
                 if(!stall) begin
                     inst_arvalid_reg <= 1'b1;
-                    inst_araddr_reg <= pc;
+                    inst_araddr_reg <= next_pc_for_inst;
                     inst_rready_reg <= 1'b1;
                     inst_stall <= 1'b1;
                     inst_state <= INST_WAIT;

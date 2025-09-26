@@ -13,6 +13,7 @@ module ysyx_25080204_CPU(
     output [31:0]wdata,
     output [1:0]mem_mask,
     output [31:0]a0,
+    output [31:0]next_pc_for_inst,
     output [31:0]pc
 );
 
@@ -77,7 +78,7 @@ ysyx_25080204_next_pc dnpc(
     .next_pc(next_pc)
 );
 
-
+assign next_pc_for_inst=next_pc;
 
 ysyx_25080204_Decoder Decoder(
     .inst(inst),
