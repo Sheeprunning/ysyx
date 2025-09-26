@@ -118,7 +118,7 @@ extern "C"
     }
     void pmem_write_v(int waddr,  int len , int wdata){
       if(waddr==SERIAL_PORT){
-        putchar(wdata);
+        putchar(wdata); 
       }else{
         pmem_write(waddr,len,wdata);
       }
