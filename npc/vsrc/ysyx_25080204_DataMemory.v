@@ -60,6 +60,7 @@ always @(posedge clk or posedge rst)begin
   else begin
     case(r_state)
         R_READY:begin
+        $display("[CLK %0t]MEMERY STATE:R_READY ", $time);
             if(arready&&arvalid)begin//读地址握手成功
                 arready<=1'b0;//取消读就绪
                 rresp<={1'b0,~(araddr>32'h80000000 && araddr<32'h88000000)};
@@ -69,6 +70,7 @@ always @(posedge clk or posedge rst)begin
             end
         end
         R_BUSY:begin
+            $display("[CLK %0t]MEMERY STATE:R_BUSY ", $time);
             if(rvalid&&rready)begin
                 arready<=1'b1;
                 rvalid<=1'b0;
