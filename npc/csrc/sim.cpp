@@ -166,9 +166,9 @@ void execute(uint32_t n){
     if(top->check){
         if(first==0)first++;
         else{
-          first++;
+          // cout<<"第"<<first<<"次进行test....."<<endl;first++;
           trace_and_difftest(cpu.pc);//删除了decoder的部分
-          cout<<"第"<<first<<"次进行test"<<endl;
+          
         }
         
     }

@@ -45,7 +45,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation with NVBoard..."
-	@$(BIN) -i $(IMG) -f $(ELF)
+	@$(BIN) -i $(IMG) -f $(ELF) -b
 #don't run nvboard
 else
 $(SRC_AUTO_BIND): | $(BUILD_DIR)
