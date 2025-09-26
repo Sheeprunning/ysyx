@@ -161,6 +161,7 @@ void execute(uint32_t n){
     pc=top->rootp->top__DOT__pc;
     single_cycle();
     #ifdef DIFFTEST
+    if(!top->rootp->top__DOT__stall&&!top->rootp->top__DOT__CPU__DOT__PC__DOT__pc_stall)
     trace_and_difftest(cpu.pc);//删除了decoder的部分
     #endif
     if (npc_state.state != NPC_RUNNING) break;
