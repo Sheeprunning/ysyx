@@ -55,28 +55,23 @@ wire [31:0]sext_out_data;
 
 wire en_ecall;
 wire en_mret;
-wire [31:0]csr_npc;
+wire [31:0]csr_j_addr;
 wire csr_jen;
 wire [31:0]csr_rdata;
 
 
-ysyx_25080204_pc PC(
-    .next_pc(next_pc),
+ysyx_25080204_1_IFU IFU(
     .clk(clk),
     .rst(rst),
     .stall(stall),
-    .pc(pc)
-);
-
-ysyx_25080204_next_pc dnpc(
-    .rst(rst),
-    .pc(pc),
     .bj_en(bj_en),
     .csr_jen(csr_jen),
     .bj_addr(result),
-    .csr_npc(csr_npc),
+    .csr_j_addr(csr_j_addr),
+    .pc(pc),
     .next_pc(next_pc)
 );
+
 
 assign next_pc_for_inst=next_pc;
 
@@ -197,7 +192,7 @@ ysyx_25080204_CSR CSR(
     .waddr(imm_num),
     .wdata(src1),
     .rdata(csr_rdata),
-    .next_pc(csr_npc)
+    .next_pc(csr_j_addr)
 );
 
 assign RF_w_data=(RF_data_sel==3'b000)?result:
