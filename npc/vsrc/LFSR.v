@@ -7,12 +7,12 @@ module LFSR(
     output f//标志是否全零
 );
 wire t=set?(din[4]^din[3]^din[2]^din[0]):(dout[4]^dout[3]^dout[2]^dout[0]);
-always @(posedge clk or set)begin
+always @(posedge clk or posedge set)begin
     if(set)begin
       dout<=din;
     end
     else begin
-    $display("[CLK %0t]random:%d ", $time,dout);
+    // $display("[CLK %0t]random:%d ", $time,dout);
         dout<=direction?{t,dout[7:1]}:{dout[6:0],t};
     end
 end

@@ -50,7 +50,7 @@ reg delay_f;
 wire [7:0]lfsr_out;
 LFSR LFSR(
     .clk(clk),
-    .din(8'b0),
+    .din(8'b00000001),
     .set(rst),
     .direction(1'b1),
     .dout(lfsr_out),
