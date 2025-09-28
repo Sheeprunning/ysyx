@@ -1,4 +1,4 @@
-module ysyx_25080204_CPU(
+module ysyx_25080204_0_CPU(
     input clk,
     input rst,
     input [31:0]inst,
@@ -55,7 +55,6 @@ wire [31:0]sext_out_data;
 
 wire en_ecall;
 wire en_mret;
-wire [31:0]csr_j_addr;
 wire csr_jen;
 wire [31:0]csr_rdata;
 
@@ -64,10 +63,6 @@ ysyx_25080204_1_IFU IFU(
     .clk(clk),
     .rst(rst),
     .stall(stall),
-    .bj_en(bj_en),
-    .csr_jen(csr_jen),
-    .bj_addr(result),
-    .csr_j_addr(csr_j_addr),
     .pc(pc),
     .next_pc(next_pc)
 );
@@ -127,14 +122,34 @@ assign a0=RF.rf[10];
 assign mem_mask=mask;
 
 
-ysyx_25080204_ALU ALU(
-    .opcode(alu_op),
+ysyx_25080204_3_EXE EXE(
+    .clk(clk),
+    .rst(rst),
+    .stall(stall),
+
+    .alu_op(alu_op),
     .A(A),
     .B(B),
     .result(result),
     .Zero(Zero),
     .Overflow(Overflow),
-    .CF(CF)
+    .CF(CF),
+
+    .CSR_wen(CSR_wen),
+    .en_ecall(en_ecall),
+    .en_mret(en_mret),
+    .csr_op(func3),
+    .pc(pc),
+    .cur_pri(current_privilege),//当前特权级
+    .CSR_raddr(imm_num),
+    .CSR_waddr(imm_num),
+    .CSR_wdata(src1),
+    .CSR_rdata(csr_rdata),
+
+    .bj_en(bj_en),
+    .csr_jen(csr_jen),
+    .bj_addr(result),
+    .next_pc(next_pc)
 );
 
 assign w_r_addr=result;
@@ -146,22 +161,7 @@ ysyx_25080204_sext SEXT(
     .sext_out_data(sext_out_data)
 );
 
-ysyx_25080204_CSR CSR(
-    .clk(clk),
-    .rst(rst),
-    .stall(stall),
-    .wen(CSR_wen),
-    .en_ecall(en_ecall),
-    .en_mret(en_mret),
-    .csr_op(func3),
-    .pc(pc),
-    .cur_pri(current_privilege),//当前特权级
-    .raddr(imm_num),
-    .waddr(imm_num),
-    .wdata(src1),
-    .rdata(csr_rdata),
-    .next_pc(csr_j_addr)
-);
+
 
 assign RF_w_data=(RF_data_sel==3'b000)?result:
                 (RF_data_sel==3'b001)?sext_out_data:

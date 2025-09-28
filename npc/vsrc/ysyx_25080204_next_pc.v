@@ -1,6 +1,6 @@
 module ysyx_25080204_next_pc (
     input rst,
-    input [31:0]pc,
+    input [31:0]snpc,
     input bj_en,
     input csr_jen,
     input [31:0]bj_addr,
@@ -12,7 +12,7 @@ always @(*) begin
         next_pc=32'h80000000;           
     end
     else begin
-        next_pc=bj_en?bj_addr:csr_jen?csr_j_addr:pc+4;
+        next_pc=bj_en?bj_addr:csr_jen?csr_j_addr:snpc;
     end
 end
 endmodule

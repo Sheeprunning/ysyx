@@ -167,7 +167,7 @@ ysyx_25080204_DataMemory inst_mem (
 );
 
 // CPU实例化
-ysyx_25080204_CPU CPU(
+ysyx_25080204_0_CPU CPU(
     .clk(clk),
     .rst(rst),
     .inst(inst),              
