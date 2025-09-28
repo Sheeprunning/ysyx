@@ -99,7 +99,7 @@ ysyx_25080204_2_IDU IDU(
     .csr_jen(csr_jen)  
 );
 
-assign wdata=src2;
+
 
 ysyx_25080204_RegisterFile RF (
     .clk(clk),
@@ -153,6 +153,7 @@ ysyx_25080204_3_EXE EXE(
 );
 
 assign w_r_addr=result;
+assign wdata=src2;
 
 ysyx_25080204_sext SEXT(
     .sext_en(sext_en),
