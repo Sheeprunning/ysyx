@@ -12,15 +12,15 @@ module top(
 
 //暂存寄存器
 //AR
-reg [31:0] araddr_reg;
-reg        arvalid_reg;
-wire [31:0] araddr;
-wire        arvalid;
+reg [31:0] lsu_araddr_reg;
+reg        lsu_arvalid_reg;
+wire [31:0] lsu_araddr;
+wire        lsu_arvalid;
 //R
 reg [31:0] rdata_from_dm_reg;
-reg        rready_reg;
+reg        lsu_rready_reg;
 wire [31:0] rdata_from_dm;
-wire        rready;
+wire        lsu_rready;
 //AW
 reg [31:0] awaddr_reg;
 reg        awvalid_reg;
@@ -48,9 +48,9 @@ wire [31:0] inst;
 wire        inst_rready;
 
 //立即作为赋值的线信号
-wire [31:0] rdata;
-wire [1:0]  rresp;
-wire        rvalid;
+wire [31:0] lsu_rdata;
+wire [1:0]  lsu_rresp;
+wire        lsu_rvalid;
 wire [1:0]  bresp;
 wire        bvalid;
 
@@ -59,26 +59,26 @@ wire [1:0]  inst_rresp;
 wire        inst_rvalid;
 
 /* verilator lint_off UNUSEDSIGNAL */
-wire        arready;
+wire        lsu_arready;
 wire        inst_arready;
 wire        awready;
 wire        wready;
 wire [1:0]  inst_bresp;
 
-reg [1:0]  rresp_reg;
+reg [1:0]  lsu_rresp_reg;
 reg [1:0]  inst_rresp_reg;
 reg [1:0]  bresp_reg;
 /* verilator lint_on UNUSEDSIGNAL */
 
 assign rdata_from_dm = rdata_from_dm_reg;
-assign araddr = araddr_reg;
-assign arvalid = arvalid_reg;
+assign lsu_araddr = lsu_araddr_reg;
+assign lsu_arvalid = lsu_arvalid_reg;
 assign awaddr = awaddr_reg;
 assign awvalid = awvalid_reg;
 assign wdata = wdata_reg;
 assign wstrb = wstrb_reg;
 assign wvalid = wvalid_reg;
-assign rready = rready_reg;
+assign lsu_rready = lsu_rready_reg;
 assign bready = bready_reg;
 assign inst_araddr = inst_araddr_reg;
 assign inst_arvalid = inst_arvalid_reg;
@@ -97,6 +97,15 @@ wire [31:0] next_pc_for_inst,pc;
 wire        stall;
 wire        load,store;//提前根据指令计算是否stall
 
+//仲裁器连线
+wire [31:0] arb_araddr; 
+wire        arb_arvalid; 
+wire        arb_rready;  
+
+wire        mem_arready; 
+wire [31:0] mem_rdata;   
+wire [1:0]  mem_rresp;   
+wire        mem_rvalid; 
 
 reg r_stall, w_stall, inst_stall ,will_stall;
 reg [1:0] r_state, w_state, inst_state;
@@ -110,63 +119,7 @@ localparam INST_RESET = 2'b00;
 localparam INST_IDLE  = 2'b01;
 localparam INST_WAIT  = 2'b10;
 
-// 数据存储器实例化
-ysyx_25080204_DataMemory data_mem (
-    .clk(clk),
-    .rst(rst),
-
-    .araddr(araddr),      
-    .arvalid(arvalid),   
-    .arready(arready),
-    
-    .rdata(rdata),
-    .rresp(rresp),
-    .rvalid(rvalid),
-    .rready(rready),    
-    
-    .awaddr(awaddr),    
-    .awvalid(awvalid),   
-    .awready(awready),
-    
-    .wdata(wdata),     
-    .wstrb(wstrb),      
-    .wvalid(wvalid),    
-    .wready(wready),
-    
-    .bresp(bresp),
-    .bvalid(bvalid),
-    .bready(bready)     
-);
-
-// 指令存储器实例化
-ysyx_25080204_DataMemory inst_mem (
-    .clk(clk),
-    .rst(rst),
-
-    .araddr(inst_araddr),      
-    .arvalid(inst_arvalid),    
-    .arready(inst_arready),
-    
-    .rdata(inst_rdata),
-    .rresp(inst_rresp),
-    .rvalid(inst_rvalid),
-    .rready(inst_rready),     
-    
-    .awaddr(32'b0),
-    .awvalid(1'b0),
-    .awready(awready),
-    
-    .wdata(32'b0),
-    .wstrb(2'b0),
-    .wvalid(1'b0),
-    .wready(wready),
-    
-    .bresp(inst_bresp),
-    .bvalid(bvalid),
-    .bready(1'b0)
-);
-
-// CPU实例化
+// CPU
 ysyx_25080204_0_CPU CPU(
     .clk(clk),
     .rst(rst),
@@ -186,12 +139,70 @@ ysyx_25080204_0_CPU CPU(
     .pc(pc)
 );
 
+//仲裁器
+ysyx_25080204_Arbiter arbiter_inst (
+    .clk(clk),
+    .rst(rst),
+    
+    .ifu_araddr(inst_araddr),
+    .ifu_arvalid(inst_arvalid),
+    .ifu_arready(inst_arready),
+    .ifu_rvalid(inst_rvalid),
+    .ifu_rdata(inst_rdata),
+    .ifu_rresp(inst_rresp),
+    .ifu_rready(inst_rready),
+    
+    .lsu_araddr(lsu_araddr),
+    .lsu_arvalid(lsu_arvalid),
+    .lsu_arready(lsu_arready),
+    .lsu_rvalid(lsu_rvalid),
+    .lsu_rdata(lsu_rdata),
+    .lsu_rresp(lsu_rresp),
+    .lsu_rready(lsu_rready),
+    
+    .arb_araddr(arb_araddr),
+    .arb_arvalid(arb_arvalid),
+    .mem_arready(mem_arready),
+    .mem_rdata(mem_rdata),
+    .mem_rresp(mem_rresp),
+    .mem_rvalid(mem_rvalid),
+    .arb_rready(arb_rready)
+);
+
+// 存储器
+ysyx_25080204_DataMemory data_mem (
+    .clk(clk),
+    .rst(rst),
+
+    .araddr(arb_araddr),      
+    .arvalid(arb_arvalid),   
+    .arready(mem_arready),
+    
+    .rdata(mem_rdata),
+    .rresp(mem_rresp),
+    .rvalid(mem_rvalid),
+    .rready(arb_rready),    
+    
+    .awaddr(awaddr),    
+    .awvalid(awvalid),   
+    .awready(awready),
+    
+    .wdata(wdata),     
+    .wstrb(wstrb),      
+    .wvalid(wvalid),    
+    .wready(wready),
+    
+    .bresp(bresp),
+    .bvalid(bvalid),
+    .bready(bready)     
+);
+
 // 数据存储器读请求
 always @(posedge clk or posedge rst) begin
     if(rst) begin
-        arvalid_reg <= 1'b0;
-        araddr_reg <= 32'b0;
-        rready_reg <= 1'b0;
+        lsu_arvalid_reg <= 1'b0;
+        lsu_araddr_reg <= 32'b0;
+        lsu_rready_reg <= 1'b0;
         rdata_from_dm_reg <= 32'b0;
         r_stall <= 1'b0;
         r_state <= R_IDLE;
@@ -199,20 +210,20 @@ always @(posedge clk or posedge rst) begin
         case(r_state)
             R_IDLE: begin
                 if(DM_r_en) begin
-                    arvalid_reg <= 1'b1;
-                    araddr_reg <= w_r_addr;
-                    rready_reg <= 1'b1;
+                    lsu_arvalid_reg <= 1'b1;
+                    lsu_araddr_reg <= w_r_addr;
+                    lsu_rready_reg <= 1'b1;
                     r_stall <= 1'b1;
                     r_state <= R_WAIT;//arready握手之后仍保持arvalid
                 end
             end
             R_WAIT: begin
-                if(rvalid && rready) begin
+                if(lsu_rvalid && lsu_rready) begin
                 //$display("[CLK %0t]CPU handshake with DM! ", $time);
-                    rdata_from_dm_reg <= rdata;
-                    rresp_reg<=rresp;
-                    arvalid_reg <= 1'b0;
-                    rready_reg <= 1'b0;
+                    rdata_from_dm_reg <= lsu_rdata;
+                    lsu_rresp_reg<=lsu_rresp;
+                    lsu_arvalid_reg <= 1'b0;
+                    lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
                 end

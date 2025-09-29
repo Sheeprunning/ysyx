@@ -44,21 +44,21 @@ reg [31:0] len_t;
 reg [1:0]wstrb_t;
 reg [1:0]r_state,w_state;
 
-//用于测试的线性反馈移位寄存器，获取随机延迟
-reg [7:0] delay_cnt;
-reg delay_f;
-wire [7:0]lfsr_out;
-LFSR LFSR(
-    .clk(clk),
-    .din(8'b00000001),
-    .set(rst),
-    .direction(1'b1),
-    .dout(lfsr_out),
-    .f(f) 
-);
-/* verilator lint_off UNUSEDSIGNAL */
-wire f;
-/* verilator lint_on UNUSEDSIGNAL */
+// //用于测试的线性反馈移位寄存器，获取随机延迟
+// reg [7:0] delay_cnt;
+// reg delay_f;
+// wire [7:0]lfsr_out;
+// LFSR LFSR(
+//     .clk(clk),
+//     .din(8'b00000001),
+//     .set(rst),
+//     .direction(1'b1),
+//     .dout(lfsr_out),
+//     .f(f) 
+// );
+// /* verilator lint_off UNUSEDSIGNAL */
+// wire f;
+// /* verilator lint_on UNUSEDSIGNAL */
 //读通道
 
 always @(posedge clk or posedge rst)begin
@@ -69,38 +69,38 @@ always @(posedge clk or posedge rst)begin
     rvalid<=0;
     r_state<=R_READY;
 
-    delay_f<=0;
-    delay_cnt<=0;
+    // delay_f<=0;
+    // delay_cnt<=0;
   end
   else begin
     case(r_state)
         R_READY:begin
         // $display("[CLK %0t]MEMERY STATE:R_READY ", $time);
-            if(arready&&arvalid&&!delay_f)begin//读地址握手成功
+            if(arready&&arvalid/*&&!delay_f*/)begin//读地址握手成功
           
                 arready<=1'b0;//取消读就绪
-                // rresp<={1'b0,~(araddr>32'h80000000 && araddr<32'h88000000)};
-                // rdata<=pmem_read_v(araddr);
-                // rvalid<=1'b1;
-                //r_state<=R_BUSY;
-
-                //delay tests
-                delay_cnt<=lfsr_out;
-                delay_f <= 1;//进入延迟状态
-                
-            end
-            //delay tests
-            else if(delay_f)begin
-            $display("[CLK %0t]DELAYING、、、、%d ", $time,delay_cnt);
-              if(delay_cnt>0)delay_cnt<=delay_cnt-1;
-              else begin
-                delay_f<=0;
                 rresp<={1'b0,~(araddr>32'h80000000 && araddr<32'h88000000)};
                 rdata<=pmem_read_v(araddr);
                 rvalid<=1'b1;
                 r_state<=R_BUSY;
-              end
+
+                // //delay tests
+                // delay_cnt<=lfsr_out;
+                // delay_f <= 1;//进入延迟状态
+                
             end
+            //delay tests
+            // else if(delay_f)begin
+            // $display("[CLK %0t]DELAYING READING、、、、%d ", $time,delay_cnt);
+            //   if(delay_cnt>0)delay_cnt<=delay_cnt-1;
+            //   else begin
+            //     delay_f<=0;
+            //     rresp<={1'b0,~(araddr>32'h80000000 && araddr<32'h88000000)};
+            //     rdata<=pmem_read_v(araddr);
+            //     rvalid<=1'b1;
+            //     r_state<=R_BUSY;
+            //   end
+            // end
         end
         R_BUSY:begin
             // $display("[CLK %0t]MEMERY STATE:R_BUSY ", $time);
