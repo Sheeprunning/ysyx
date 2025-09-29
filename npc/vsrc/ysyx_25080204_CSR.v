@@ -12,7 +12,7 @@ module ysyx_25080204_CSR(
     input [31:0]waddr,
     input [31:0]wdata,
     output [31:0]rdata,
-    output [31:0]next_pc
+    output [31:0]next_pc 
 );
 localparam  MSTATUS =32'h300,   MTVEC = 32'h305,
             MEPC = 32'h341,     MCAUSE = 32'h342;

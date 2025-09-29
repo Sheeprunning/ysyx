@@ -5,8 +5,8 @@
 #include "dut.h"
 
 // #define CONFIG_FTRACE 1
-// #define CONFIG_ITRACE 1
-// #define DIFFTEST 1
+#define CONFIG_ITRACE 1
+#define DIFFTEST 1
 
 
 #define FMT_WORD "0x%08x"
