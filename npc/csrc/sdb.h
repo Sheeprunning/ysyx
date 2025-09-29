@@ -11,7 +11,7 @@
 #include "expr.h"
 #include "sim.h"
 #include "npc.h"
-
+#include "watchpoint.h"
 
 /* 核心函数 */
 void sdb_set_batch_mode(void);

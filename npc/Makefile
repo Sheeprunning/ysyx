@@ -56,7 +56,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation (without NVBoard)..."
-	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) -b
+	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF)
 endif
 
 # Include all filelist.mk to merge file lists

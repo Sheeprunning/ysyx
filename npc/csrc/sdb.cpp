@@ -84,19 +84,19 @@ static int cmd_x(char *args){
   return 0;
 }
 
-// static int cmd_w(char *args){
-//   new_wp(args);
-//   return 0;
-// }
+static int cmd_w(char *args){
+  new_wp(args);
+  return 0;
+}
 
-// static int cmd_d(char *args){
-//   int No=0;
-//   if(sscanf(args,"%d",&No)==1){
-//     free_wp(No);
-//   }
-//   else free_wp(0);//默认取消第一个
-//   return 0;
-// }
+static int cmd_d(char *args){
+  int No=0;
+  if(sscanf(args,"%d",&No)==1){
+    free_wp(No);
+  }
+  else free_wp(0);//默认取消第一个
+  return 0;
+}
 
 
 static int cmd_help(char *args);
@@ -114,9 +114,9 @@ static struct {
   {"si", "Execute the program n steps",cmd_si},
   {"info", "Show the status of register or watchpoint", cmd_info},
   {"x", "Show the the data of memory ", cmd_x},
-  {"p", "Caculate a expression", cmd_p}
-//   {"w", "Set a watchpoint", cmd_w},
-//   {"d", "Delete the watchpoint", cmd_d}
+  {"p", "Caculate a expression", cmd_p},
+  {"w", "Set a watchpoint", cmd_w},
+  {"d", "Delete the watchpoint", cmd_d}
 };
 
 #define NR_CMD ARRLEN(cmd_table)
@@ -186,6 +186,6 @@ void init_sdb() {
 //   /* Append for 环形缓冲 & 访存记录*/
 //   init_iringbuf();
 //   init_mtrace("/home/sheeprunning/ysyx-workbench/nemu/build/mtrace-log.txt");
-//   /* Initialize the watchpoint pool. */
-//   init_wp_pool();
+  /* Initialize the watchpoint pool. */
+  init_wp_pool();
 }

@@ -154,26 +154,37 @@ int isa_reg_str2val(const char *s, bool *success){
 }
 
 void trace_and_difftest(u_int32_t pc){
-  difftest_step(pc, cpu.pc);
+  #ifdef DIFFTEST
+    if(top->check){
+      if(first==0)first++;
+      else{
+      // cout<<"第"<<first<<"次进行test....."<<endl;first++;
+      difftest_step(pc, cpu.pc);
+      } 
+    }
+  #endif
+  #ifdef CONFIG_WATCHPOINT
+  bool success=true;
+  int change;
+  WP *wp = compare_watchpoint(&success,&change);
+  if(wp){
+    printf("--NO-- --EXP-- --VALUE--\n");
+    printf("%-8d %-7s %-#8x->%#x\n",wp->NO,wp->wp_exp,wp->value,change);
+    printf("Watchpoint change!Procedure stop!");
+    set_npc_state(NPC_STOP, pc , -1);
+    wp->value=change;
+  }
+#endif
 }
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
     pc=top->rootp->top__DOT__pc;
     single_cycle();
-    #ifdef DIFFTEST
     
-    if(top->check){
-        if(first==0)first++;
-        else{
-          // cout<<"第"<<first<<"次进行test....."<<endl;first++;
-          trace_and_difftest(cpu.pc);//删除了decoder的部分
+    trace_and_difftest(cpu.pc);//删除了decoder的部分
           
-        }
-        
-    }
-    
-    #endif
+       
     if (npc_state.state != NPC_RUNNING) break;
   }
 }
