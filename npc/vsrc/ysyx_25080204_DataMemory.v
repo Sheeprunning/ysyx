@@ -105,6 +105,7 @@ always @(posedge clk or posedge rst)begin
         R_BUSY:begin
             // $display("[CLK %0t]MEMERY STATE:R_BUSY ", $time);
             if(rvalid&&rready)begin
+            $display("[CLK %0t]MEMERY handshake with arbiter!rdata=0x%08x ", $time,rdata);
                 arready<=1'b1;
                 rvalid<=1'b0;
                 rresp<=2'b0;
@@ -143,7 +144,7 @@ always @(posedge clk or posedge rst)begin
         W_ADDR:begin//也可以尝试直接写入数据
         // $display("[CLK %0t]WRITE STATE:W_ADDR ", $time);
             if(wready&&wvalid)begin//读数据握手成功
-                //$display("[CLK %0t]MEMERY wdata=0x%08x handshake with CPU !", $time,wdata);
+                $display("[CLK %0t]MEMERY wdata=0x%08x handshake with CPU !", $time,wdata);
                 wready<=1'b0;//取消就绪
                 wstrb_t<=wstrb;
                 wdata_t<=wdata;

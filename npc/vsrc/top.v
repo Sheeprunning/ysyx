@@ -170,7 +170,7 @@ ysyx_25080204_Arbiter arbiter_inst (
 );
 
 // 存储器
-ysyx_25080204_DataMemory data_mem (
+ysyx_25080204_DataMemory SRAM (
     .clk(clk),
     .rst(rst),
 
@@ -219,7 +219,7 @@ always @(posedge clk or posedge rst) begin
             end
             R_WAIT: begin
                 if(lsu_rvalid && lsu_rready) begin
-                //$display("[CLK %0t]CPU handshake with DM! ", $time);
+                $display("[CLK %0t]CPU handshake with SRAM! ", $time);
                     rdata_from_dm_reg <= lsu_rdata;
                     lsu_rresp_reg<=lsu_rresp;
                     lsu_arvalid_reg <= 1'b0;
