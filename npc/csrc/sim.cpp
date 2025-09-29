@@ -127,9 +127,16 @@ extern "C"
 }
 
 void call_show_reg() {
-    svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
-    svSetScope(scope);
-    show_reg();  
+    // svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
+    // svSetScope(scope);
+    // show_reg(); 
+    svScope scope = svGetScopeFromName("TOP.top.CPU.RF"); 
+    printf("---------------------------------------------\n");
+    printf("| index |  name | NPC-value |\n");
+    for (int i = 0; i < 32; i++) {
+      printf("|x[%2d]  |%7s|%12x|\n", i, regs[i], top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i]);
+    }
+  
 }
 
 int isa_reg_str2val(const char *s, bool *success){
