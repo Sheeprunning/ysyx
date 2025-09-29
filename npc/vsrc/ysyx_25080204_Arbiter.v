@@ -74,7 +74,7 @@ always@(*)begin
       arb_rready=0;
     end
     R_IFU:begin
-    $display("[CLK %0t]master IFU connect with SRAM! ", $time);
+    // $display("[CLK %0t]master IFU connect with SRAM! ", $time);
       arb_araddr=ifu_araddr;
       arb_arvalid=ifu_arvalid;
       ifu_arready=mem_arready;
@@ -83,7 +83,7 @@ always@(*)begin
       arb_rready=ifu_rready;
     end
     R_LSU:begin
-    $display("[CLK %0t]master LSU connect with SRAM! ", $time);
+    // $display("[CLK %0t]master LSU connect with SRAM! ", $time);
       arb_araddr=lsu_araddr;
       arb_arvalid=lsu_arvalid;
       lsu_arready=mem_arready;

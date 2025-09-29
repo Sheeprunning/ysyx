@@ -219,13 +219,13 @@ always @(posedge clk or posedge rst) begin
             end
             R_WAIT: begin
                 if(lsu_rvalid && lsu_rready) begin
-                $display("[CLK %0t]CPU handshake with SRAM! ", $time);
                     rdata_from_dm_reg <= lsu_rdata;
                     lsu_rresp_reg<=lsu_rresp;
                     lsu_arvalid_reg <= 1'b0;
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
+        $display("[CLK %0t]CPU handshake with SRAM! READ the data:0x%08x ", $time,lsu_rdata);
                 end
             end
             default:begin end
