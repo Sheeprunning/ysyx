@@ -162,7 +162,7 @@ always @(posedge clk or posedge rst)begin
         // $display("[CLK %0t]WRITE STATE:W_BRESP ", $time);
             if(bvalid&&bready)begin
                 //$display("[CLK %0t]MEMERY bresp handshake with CPU !", $time);
-                $display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
+                //$display("[CLK %0t] Write: DM[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
                 pmem_write_v(awaddr_t, len_t, wdata_t);
                 awready<=1'b1;
                 wready<=1'b0;
