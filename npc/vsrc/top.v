@@ -209,7 +209,7 @@ always @(posedge clk or posedge rst) begin
     end else begin
         case(r_state)
             R_IDLE: begin
-                if(DM_r_en) begin
+                if(DM_r_en&&will_stall) begin
                     lsu_arvalid_reg <= 1'b1;
                     lsu_araddr_reg <= w_r_addr;
                     lsu_rready_reg <= 1'b1;
