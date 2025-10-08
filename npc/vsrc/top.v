@@ -225,7 +225,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
-        $display("[CLK %0t]LSU handshake with SRAM! READ the data=0x%08x ", $time,lsu_rdata);
+        //$display("[CLK %0t]LSU handshake with SRAM! READ the data=0x%08x ", $time,lsu_rdata);
                 end
             end
             default:begin end
@@ -308,7 +308,7 @@ always @(posedge clk or posedge rst) begin
             INST_WAIT: begin
             // $display("[CLK %0t]CPU STATE:R_WAIT ", $time);
                 if(inst_rvalid && inst_rready) begin
-                $display("[CLK %0t]IFU handshake with IM! GET inst=0x%08x", $time,inst_rdata);
+                //$display("[CLK %0t]IFU handshake with IM! GET inst=0x%08x", $time,inst_rdata);
                     inst_reg <= inst_rdata;
                     inst_rresp_reg<=inst_rresp;
                     inst_arvalid_reg <= 1'b0;

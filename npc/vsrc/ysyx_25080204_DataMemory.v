@@ -77,7 +77,7 @@ always @(posedge clk or posedge rst)begin
         R_READY:begin
         // $display("[CLK %0t]MEMERY STATE:R_READY ", $time);
             if(arready&&arvalid/*&&!delay_f*/)begin//读地址握手成功
-          $display("[CLK %0t]MEMERY handshake with Arbiter!READ araddr=0x%08x", $time,araddr);
+          //$display("[CLK %0t]MEMERY handshake with Arbiter!READ araddr=0x%08x", $time,araddr);
                 arready<=1'b0;//取消读就绪
                 rresp<={1'b0,~(araddr>32'h80000000 && araddr<32'h88000000)};
                 rdata<=pmem_read_v(araddr);
