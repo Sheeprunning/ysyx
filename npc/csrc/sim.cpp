@@ -14,7 +14,7 @@ NPCState npc_state;
 u_int32_t pc;
 int first=0;
 
-void print_inst(u_int32_t pc,u_int32_t inst){
+void print_inst(u_int32_t pc,u_int32_t inst){//只有在打开itrace时运行
   char logbuf[128];
   char *p=logbuf;
   p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pc);

@@ -56,7 +56,7 @@ always @(posedge clk or posedge rst) begin
             };
         mepc<=pc;
         mcause<=e_cause;
-        // $display("[CLK %0t] ecall: mepc = 0x%08x,mecause = 0x%08x", $time, pc, e_cause);
+        $display("[CLK %0t] ecall: mepc = 0x%08x,mecause = 0x%08x", $time, pc, e_cause);
         //切换为M特权级暂未实现
     end
     else if(en_mret)begin
