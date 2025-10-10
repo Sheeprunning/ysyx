@@ -1,7 +1,7 @@
 module ysyx_25080204_Arbiter(
     input clk,
     input rst,
-    //IFU接口
+    //IFU读接口
     input [31:0]ifu_araddr,
     input ifu_arvalid,
     output reg   ifu_arready,
@@ -10,7 +10,7 @@ module ysyx_25080204_Arbiter(
     output [31:0] ifu_rdata,
     output reg [1:0] ifu_rresp,
     input ifu_rready,
-    //LSU接口
+    //LSU读接口
     input [31:0] lsu_araddr,
     input lsu_arvalid,
     output reg   lsu_arready,
@@ -20,15 +20,43 @@ module ysyx_25080204_Arbiter(
     output reg [1:0] lsu_rresp,
     input lsu_rready,
 
-    //MEM接口
+    //Xbar读接口
     output [31:0]arb_araddr,
     output arb_arvalid,
-    input mem_arready,
+    input xbar_arready,
 
-    input [31:0]mem_rdata,
-    input [1:0]mem_rresp,
-    input mem_rvalid,
-    output reg arb_rready
+    input [31:0]xbar_rdata,
+    input [1:0]xbar_rresp,
+    input xbar_rvalid,
+    output reg arb_rready,
+
+    //LSU写接口
+    input [31:0]lsu_awaddr,
+    input lsu_awvalid,
+    output reg lsu_awready,
+
+    input [31:0]lsu_wdata,
+    input [1:0]lsu_wstrb,
+    input lsu_wvalid,
+    output reg lsu_wready,
+
+    output reg [1:0]lsu_bresp,
+    output reg lsu_bvalid,
+    input lsu_bready,
+
+    //Xbar写接口
+    output reg [31:0]arb_awaddr,
+    output reg arb_awvalid,
+    input xbar_awready,
+
+    output reg [31:0]arb_wdata,
+    output reg [1:0]arb_wstrb,
+    output reg arb_wvalid,
+    input  xbar_wready,
+
+    input [1:0]xbar_bresp,
+    input xbar_bvalid,
+    output reg arb_bready
    
 );
 
@@ -38,10 +66,10 @@ localparam R_LSU = 3;
 
 reg [1:0]r_state,r_next_state;
 
-assign ifu_rdata=mem_rdata;
-assign ifu_rresp=mem_rresp;
-assign lsu_rdata=mem_rdata;
-assign lsu_rresp=mem_rresp;
+assign ifu_rdata=xbar_rdata;
+assign ifu_rresp=xbar_rresp;
+assign lsu_rdata=xbar_rdata;
+assign lsu_rresp=xbar_rresp;
 //读仲裁
 always@(*)begin
   case(r_state)
@@ -77,20 +105,38 @@ always@(*)begin
     // $display("[CLK %0t]master IFU connect with SRAM! ", $time);
       arb_araddr=ifu_araddr;
       arb_arvalid=ifu_arvalid;
-      ifu_arready=mem_arready;
+      ifu_arready=xbar_arready;
       
-      ifu_rvalid=mem_rvalid;
+      ifu_rvalid=xbar_rvalid;
       arb_rready=ifu_rready;
     end
     R_LSU:begin
     // $display("[CLK %0t]master LSU connect with SRAM! ", $time);
       arb_araddr=lsu_araddr;
       arb_arvalid=lsu_arvalid;
-      lsu_arready=mem_arready;
+      lsu_arready=xbar_arready;
       
-      lsu_rvalid=mem_rvalid;
+      lsu_rvalid=xbar_rvalid;
       arb_rready=lsu_rready;
     end
   endcase
 end
+
+//写仲裁
+//现在似乎只有lsu会发出写信号，暂不实现写仲裁，直接相连
+always@(*)begin
+    arb_awaddr=lsu_awaddr;
+    arb_awvalid=lsu_awvalid;
+    lsu_awready=xbar_awready;
+
+    arb_wdata=lsu_wdata;
+    arb_wstrb=lsu_wstrb;
+    arb_wvalid=lsu_wvalid;
+    lsu_wready=xbar_wready;
+
+    lsu_bresp=xbar_bresp;
+    lsu_bvalid=xbar_bvalid;
+    arb_bready=lsu_bready;
+end
+
 endmodule

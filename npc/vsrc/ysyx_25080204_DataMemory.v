@@ -59,8 +59,8 @@ reg [1:0]r_state,w_state;
 // /* verilator lint_off UNUSEDSIGNAL */
 // wire f;
 // /* verilator lint_on UNUSEDSIGNAL */
-//读通道
 
+//读通道
 always @(posedge clk or posedge rst)begin
   if(rst)begin
     arready<=1;
