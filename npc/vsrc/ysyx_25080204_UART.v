@@ -82,7 +82,7 @@ always @(posedge clk or posedge rst)begin
         // $display("[CLK %0t]WRITE STATE:U_BRESP ", $time);
             if(bvalid&&bready)begin
                 //$display("[CLK %0t]UART bresp handshake with CPU !", $time);
-                $display("[CLK %0t] Write: UART[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
+                //$display("[CLK %0t] Write: UART[%0x] = 0x%08x ", $time, awaddr_t, wdata_t);
                 $write("%c",wdata_t[7:0]);
                 awready<=1'b1;
                 wready<=1'b0;
