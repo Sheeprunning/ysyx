@@ -64,7 +64,6 @@ always @(posedge clk or posedge rst)begin
                 arready<=1'b0;//取消读就绪
                 rresp<=2'b00;
                 rdata<=mtime;
-                $display("time : %d",mtime);
                 rvalid<=1'b1;
                 c_state<=C_BUSY;
             end
