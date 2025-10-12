@@ -53,19 +53,19 @@ always @(posedge clk or posedge rst)begin
     case(u_state)
         U_READY:begin
         // $display("[CLK %0t]WRITE STATE:U_READY ", $time);
-            if(awready&&awvalid)begin//读入写地址握手成功
+            if(awready&&awvalid)begin
                 //$display("[CLK %0t]UART awaddr=0x%08x handshake with CPU !", $time ,awaddr);
-                awready<=1'b0;//取消就绪
+                awready<=1'b0;
                 wready<=1'b1;
                 awaddr_t<=awaddr;
                 u_state<=U_ADDR;
             end
         end
-        U_ADDR:begin//也可以尝试直接写入数据
+        U_ADDR:begin
         // $display("[CLK %0t]WRITE STATE:U_ADDR ", $time);
-            if(wready&&wvalid)begin//写数据握手成功
+            if(wready&&wvalid)begin
       // $display("[CLK %0t]MEMERY wdata:0x%08x to addr:0x%08x handshake with CPU !", $time,wdata,awaddr_t);
-                wready<=1'b0;//取消就绪
+                wready<=1'b0;
                 wstrb_t<=wstrb;
                 wdata_t<=wdata;
                 u_state<=U_DATA;
@@ -127,7 +127,6 @@ always @(posedge clk or posedge rst)begin
         default:begin end
     endcase
   end
-
 end
 
 endmodule

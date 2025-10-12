@@ -77,6 +77,17 @@ wire [31:0] uart_rdata;
 wire [1:0]  uart_rresp;
 wire        uart_rvalid;
 wire        uart_rready;
+
+wire [31:0] clint_awaddr;
+wire        clint_awvalid;
+wire        clint_awready;
+wire [31:0] clint_wdata;
+wire        clint_wvalid;
+wire [1:0]  clint_wstrb;
+wire        clint_wready;
+wire [1:0]  clint_bresp;
+wire        clint_bvalid;
+wire        clint_bready;
 /* verilator lint_on UNUSEDSIGNAL */
 
 assign rdata_from_dm = rdata_from_dm_reg;
@@ -160,6 +171,15 @@ wire        uart_wready;
 wire [1:0]  uart_bresp;
 wire        uart_bvalid;
 wire        uart_bready;
+
+//CLINT信号
+wire [31:0] clint_araddr;
+wire        clint_arvalid;
+wire        clint_arready;
+wire [31:0] clint_rdata;
+wire [1:0]  clint_rresp;
+wire        clint_rvalid;
+wire        clint_rready;
 
 
 reg r_stall, w_stall, inst_stall ,will_stall;
@@ -310,7 +330,26 @@ ysyx_25080204_Xbar xbar_inst (
     .uart_wready(uart_wready),
     .uart_bresp(uart_bresp),
     .uart_bvalid(uart_bvalid),
-    .uart_bready (uart_bready)
+    .uart_bready (uart_bready),
+
+    .clint_araddr(clint_araddr),
+    .clint_arvalid(clint_arvalid),
+    .clint_arready(clint_arready),
+    .clint_rdata(clint_rdata),
+    .clint_rresp(clint_rresp),
+    .clint_rvalid(clint_rvalid),
+    .clint_rready(clint_rready),
+        
+    .clint_awaddr(clint_awaddr),
+    .clint_awvalid(clint_awvalid),
+    .clint_awready(clint_awready),
+    .clint_wdata(clint_wdata),
+    .clint_wvalid(clint_wvalid),
+    .clint_wstrb(clint_wstrb),
+    .clint_wready(clint_wready),
+    .clint_bresp(clint_bresp),
+    .clint_bvalid(clint_bvalid),
+    .clint_bready (clint_bready)
 );
 
 // 存储器
@@ -367,6 +406,34 @@ ysyx_25080204_UART UART (
     .bresp(uart_bresp),
     .bvalid(uart_bvalid),
     .bready(uart_bready)     
+);
+
+//外设2：CLINT
+ysyx_25080204_CLINT CLINT (
+    .clk(clk),
+    .rst(rst),
+
+    .araddr(clint_araddr),      
+    .arvalid(clint_arvalid),   
+    .arready(clint_arready),
+        
+    .rdata(clint_rdata),
+    .rresp(clint_rresp),
+    .rvalid(clint_rvalid),
+    .rready(clint_rready),    
+        
+    .awaddr(clint_awaddr),    
+    .awvalid(clint_awvalid),   
+    .awready(clint_awready),
+        
+    .wdata(clint_wdata),     
+    .wstrb(clint_wstrb),      
+    .wvalid(clint_wvalid),    
+    .wready(clint_wready),
+        
+    .bresp(clint_bresp),
+    .bvalid(clint_bvalid),
+    .bready(clint_bready) 
 );
 
 wire r_idle_to_r_wait=DM_r_en&&will_stall;
