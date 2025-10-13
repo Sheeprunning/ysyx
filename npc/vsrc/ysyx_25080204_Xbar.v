@@ -96,7 +96,7 @@ module ysyx_25080204_Xbar(
     output clint_bready
 );
 //读分配
-wire read_sram_valid=(arb_araddr>=32'h80000000&&arb_araddr<32'h80ffffff);
+wire read_sram_valid=(arb_araddr>=32'h80000000&&arb_araddr<32'h87ffffff);
 wire read_uart_valid=(arb_araddr==32'ha00003f8);
 wire read_clint_valid=(arb_araddr==32'ha0000048||arb_araddr==32'ha000004c);
 
