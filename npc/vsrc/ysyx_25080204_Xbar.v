@@ -125,7 +125,7 @@ assign  xbar_rvalid=read_sram_valid?sram_rvalid:
                     read_uart_valid?uart_rvalid:
                     read_clint_valid?clint_rvalid:0;
 //写分配
-wire write_sram_valid=(arb_awaddr>=32'h80000000&&arb_awaddr<32'h80ffffff);
+wire write_sram_valid=(arb_awaddr>=32'h80000000&&arb_awaddr<32'h87ffffff);
 wire write_uart_valid=(arb_awaddr==32'ha00003f8);
 wire write_clint_valid=(arb_awaddr==32'ha0000048||arb_awaddr==32'ha000004c);
 
