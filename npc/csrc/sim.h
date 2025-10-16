@@ -3,8 +3,8 @@
 
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "Vtop.h"
-#include "Vtop___024root.h"
+#include "VysyxSoCFull.h"
+#include "VysyxSoCFull___024root.h"
 #include <iostream>
 #include <string>
 #include <iomanip>
@@ -40,6 +40,8 @@ extern "C" {
     void npc_ebreak_finish();
     void show_reg(); 
 }
+extern "C" void flash_read(int32_t addr, int32_t *data);
+extern "C" void mrom_read(int32_t addr, int32_t *data);
 
 void call_show_reg();
 int isa_reg_str2val(const char *s, bool *success);

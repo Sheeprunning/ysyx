@@ -3,6 +3,7 @@ module ysyx_25080204_Arbiter(
     input rst,
     //IFU读接口
     input [31:0]ifu_araddr,
+    input [2:0] ifu_arsize,
     input ifu_arvalid,
     output reg   ifu_arready,
 
@@ -12,6 +13,7 @@ module ysyx_25080204_Arbiter(
     input ifu_rready,
     //LSU读接口
     input [31:0] lsu_araddr,
+    input [2:0]  lsu_arsize,
     input lsu_arvalid,
     output reg   lsu_arready,
 
@@ -22,6 +24,7 @@ module ysyx_25080204_Arbiter(
 
     //Xbar读接口
     output [31:0]arb_araddr,
+    output [2:0] arb_arsize,
     output arb_arvalid,
     input xbar_arready,
 
@@ -32,11 +35,12 @@ module ysyx_25080204_Arbiter(
 
     //LSU写接口
     input [31:0]lsu_awaddr,
+    input [2:0] lsu_awsize,
     input lsu_awvalid,
     output reg lsu_awready,
 
     input [31:0]lsu_wdata,
-    input [1:0]lsu_wstrb,
+    input [3:0]lsu_wstrb,
     input lsu_wvalid,
     output reg lsu_wready,
 
@@ -46,11 +50,12 @@ module ysyx_25080204_Arbiter(
 
     //Xbar写接口
     output reg [31:0]arb_awaddr,
+    output reg [2:0]arb_awsize,
     output reg arb_awvalid,
     input xbar_awready,
 
     output reg [31:0]arb_wdata,
-    output reg [1:0]arb_wstrb,
+    output reg [3:0]arb_wstrb,
     output reg arb_wvalid,
     input  xbar_wready,
 
@@ -106,7 +111,7 @@ always@(*)begin
       arb_araddr=ifu_araddr;
       arb_arvalid=ifu_arvalid;
       ifu_arready=xbar_arready;
-      
+      arb_arsize=ifu_arsize;
       ifu_rvalid=xbar_rvalid;
       arb_rready=ifu_rready;
     end
@@ -115,7 +120,7 @@ always@(*)begin
       arb_araddr=lsu_araddr;
       arb_arvalid=lsu_arvalid;
       lsu_arready=xbar_arready;
-      
+      arb_arsize=lsu_arsize;
       lsu_rvalid=xbar_rvalid;
       arb_rready=lsu_rready;
     end
@@ -127,6 +132,7 @@ end
 always@(*)begin
     arb_awaddr=lsu_awaddr;
     arb_awvalid=lsu_awvalid;
+    arb_awsize=lsu_awsize;
     lsu_awready=xbar_awready;
 
     arb_wdata=lsu_wdata;

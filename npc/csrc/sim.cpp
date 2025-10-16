@@ -32,17 +32,17 @@ void step_and_dump_wave(){
 
 void update_cpu(){
   for(int i=0;i<32;i++){
-    cpu.gpr[i]=top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
+    cpu.gpr[i]=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i];
   }
-  cpu.pc=top->rootp->top__DOT__pc;
+  cpu.pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
 }
 
 void single_cycle() {
-  top->clk = 0; 
+  top->clock = 0; 
   step_and_dump_wave();
   // nvboard_update();
-  top->clk = 1; 
-  if(top->rst!=1){
+  top->clock = 1; 
+  if(top->reset!=1){
     #ifdef CONFIG_ITRACE
     print_inst(top->cpu_pc,top->cpu_inst);     
     #endif
@@ -54,9 +54,9 @@ void single_cycle() {
 }
 
  void reset(int n=10) {
-  top->rst = 1;
+  top->reset = 1;
   while (n -- > 0) single_cycle();
-  top->rst = 0;
+  top->reset = 0;
 }
 
 void sim_init(){
@@ -100,7 +100,7 @@ extern "C"
         VL_PRINTF("[DPI-C] EBREAK triggered, stopping simulation.\n");
         Verilated::gotFinish(true);
         cout << "-----Result Check:-----" << endl;
-        set_npc_state(NPC_END,pc,top->a0);
+        set_npc_state(NPC_END,pc,top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[10]);
     }
     void show_reg(); 
     int get_reg();
@@ -126,6 +126,9 @@ extern "C"
     }
 }
 
+extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) { *data=0x00100073; }
+
 void call_show_reg() {
     // svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
     // svSetScope(scope);
@@ -134,7 +137,7 @@ void call_show_reg() {
     printf("---------------------------------------------\n");
     printf("| index |  name | NPC-value |\n");
     for (int i = 0; i < 32; i++) {
-      printf("|x[%2d]  |%7s|%12x|\n", i, regs[i], top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i]);
+      printf("|x[%2d]  |%7s|%12x|\n", i, regs[i], top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i]);
     }
   
 }
@@ -144,15 +147,13 @@ int isa_reg_str2val(const char *s, bool *success){
   for(int i=0;i<32;i++){
      if(strcmp(regs[i],s)==0){
       *success=true;
-      svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
-      return top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
+      return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i];
     }
   }
   for(int i=0;i<32;i++){
      if(strcmp(regs2[i],s)==0){
       *success=true;
-      svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
-      return top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
+      return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i];
     }
   }
   printf("输入的寄存器名称错误！\n");
@@ -186,7 +187,7 @@ void trace_and_difftest(u_int32_t pc){
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
-    pc=top->rootp->top__DOT__pc;
+    pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
     single_cycle();
     
     trace_and_difftest(cpu.pc);//删除了decoder的部分

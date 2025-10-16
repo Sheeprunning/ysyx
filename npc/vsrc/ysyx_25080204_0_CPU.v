@@ -11,7 +11,7 @@ module ysyx_25080204_0_CPU(
     output DM_w_en,
     output [31:0]w_r_addr,
     output [31:0]wdata,
-    output [1:0]mem_mask,
+    output [3:0]mem_mask,
     output [31:0]a0,
     output [31:0]next_pc_for_inst,
     output [31:0]pc
@@ -119,9 +119,6 @@ assign A=ALU_A_sel?src1:pc;
 assign B=ALU_B_sel?src2:imm_num;
 assign a0=RF.rf[10];
 
-assign mem_mask=mask;
-
-
 ysyx_25080204_3_EXE EXE(
     .clk(clk),
     .rst(rst),
@@ -161,8 +158,14 @@ ysyx_25080204_sext SEXT(
     .sext_data(rdata),
     .sext_out_data(sext_out_data)
 );
-
-
+wire [1:0] byte_offset = w_r_addr[1:0]; 
+wire [3:0] b_mask=(byte_offset==2'b00)?4'b0001:
+            (byte_offset==2'b01)?4'b0010:
+            (byte_offset==2'b10)?4'b0100:
+            (byte_offset==2'b11)?4'b1000:4'b0000;
+wire [3:0] h_mask=(byte_offset==2'b00)?4'b0011:
+            (byte_offset==2'b10)?4'b1100:4'b0000;
+assign mem_mask=(mask==2'b00)?b_mask:(mask==2'b01)?h_mask:(mask==2'b10)?4'b1111:4'b0000;
 
 assign RF_w_data=(RF_data_sel==3'b000)?result:
                 (RF_data_sel==3'b001)?sext_out_data:

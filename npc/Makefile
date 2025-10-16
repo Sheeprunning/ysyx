@@ -1,10 +1,16 @@
-TOPNAME ?= top
+TOPNAME ?= ysyxSoCFull
 NXDC_FILES = constr/top.nxdc
 INC_PATH ?=/vsrc
 
 VERILATOR = verilator
 VERILATOR_CFLAGS += -MMD --build -cc  --trace --Wall\
-                 -O3 --x-assign fast --x-initial fast --noassert
+                 -O3 --x-assign fast --x-initial fast --noassert\
+				 --timescale "1ns/1ns" --no-timing
+#将警告视为非致命错误
+VERILATOR_CFLAGS += -Wno-fatal
+#设置include路径
+VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/uart16550/rtl 
+VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/spi/rtl
 
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
