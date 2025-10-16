@@ -9,7 +9,7 @@ module ysyx_25080204_pc (
     reg pc_stall;
     always @(posedge clk or posedge rst) begin
         if (rst)begin
-            pc<=32'h80000000; 
+            pc<=32'h20000000; 
             pc_stall<=1'b1;     //每个周期取指肯定有延迟，pc变成next默认先保持一周期 
         end
         else if(!stall)begin
