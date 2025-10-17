@@ -72,9 +72,11 @@ u_int32_t pmem_read(u_int32_t addr, int len) {
     assert(0);
   }
   u_int32_t ret = host_read(guest_to_host(addr), len);
+  #ifdef CONFIG_MTRACE
   char log[128];
   sprintf(log,"R 0x%08x %d 0x%08x",addr,len,ret);
   log_add("mtrace.txt",log);
+  #endif
   return ret;
 }
 
@@ -126,8 +128,12 @@ void init_main(int argc, char *argv[]){
     printf("调试器初始化完成！\n");
     sim_init();
     printf("仿真初始化完成！\n");
+    #ifdef DIFFTEST
     init_difftest(diff_so_file, img_size, difftest_port);
     printf("差分测试初始化完成！\n");
+    #else
+    printf("差分测试:%soff%s\n",COLOR_RED,COLOR_RESET);
+    #endif
     init_disasm();
     printf("反汇编工具初始化完成！\n");
     init_log();
