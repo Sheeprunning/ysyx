@@ -44,7 +44,8 @@ void single_cycle() {
   top->clock = 1; 
   if(top->reset!=1){
     #ifdef CONFIG_ITRACE
-    print_inst(top->cpu_pc,top->cpu_inst);     
+    print_inst(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc,\
+      top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg);     
     #endif
   }
   step_and_dump_wave();
