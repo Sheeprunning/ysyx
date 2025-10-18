@@ -1812,6 +1812,7 @@ module AXI4MROM(	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/device/MROM.sca
     else	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/device/MROM.scala:51:24
       state <= _nodeIn_rid_T;	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/device/MROM.scala:51:24, src/main/scala/chisel3/util/Decoupled.scala:51:35
     if (_nodeIn_rid_T) begin	// src/main/scala/chisel3/util/Decoupled.scala:51:35
+    $display("正在获取指令！目标为：0x08x",{2'h0, auto_in_araddr});
       nodeIn_rdata_r <= _mrom_rdata;	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/device/MROM.scala:48:22, :61:32
       nodeIn_rid_r <= auto_in_arid;	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/device/MROM.scala:62:30
     end
