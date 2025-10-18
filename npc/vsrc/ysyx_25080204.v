@@ -481,9 +481,10 @@ always @(posedge clk or posedge rst) begin
     else will_stall<=load||store;
 end
 // stall信号组合逻辑
-// always @(posedge clk or posedge rst) begin
-//     check<=~stall;
-// end
+reg check;
+always @(posedge clk or posedge rst) begin
+    check<=~stall;
+end
 assign stall = r_stall || w_stall || inst_stall || will_stall;
 
 assign io_master_awlen=0;

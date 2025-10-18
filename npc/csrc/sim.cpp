@@ -164,7 +164,7 @@ int isa_reg_str2val(const char *s, bool *success){
 
 void trace_and_difftest(u_int32_t pc){
   #ifdef DIFFTEST
-    if(top->check){
+    if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
       if(first==0)first++;
       else{
       // cout<<"第"<<first<<"次进行test....."<<endl;first++;
