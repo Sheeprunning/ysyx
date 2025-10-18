@@ -11,7 +11,8 @@ VERILATOR_CFLAGS += -Wno-fatal
 #设置include路径
 VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/uart16550/rtl 
 VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/spi/rtl
-
+#刷新缓冲区
+VERILATOR_CFLAGS += "+verilator+flush"
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
