@@ -363,7 +363,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_arsize_reg <= 3'b010;
                     lsu_rready_reg <= 1'b1;
                     r_stall <= 1'b1;
-                    r_state <= R_WAIT;//arready握手之后仍保持arvalid
+                    r_state <= R_WAIT;
                 end
             end
             R_WAIT: begin
