@@ -374,7 +374,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
-        //$display("[CLK %0t]LSU handshake with SRAM! READ the data=0x%08x ", $time,lsu_rdata);
+        $display("[CLK %0t]LSU handshake with SRAM! READ the data=0x%08x ", $time,lsu_rdata);
                 end
             end
             default:begin end
