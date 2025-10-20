@@ -15,6 +15,7 @@ module ysyx_25080204_pc (
         else if(!stall)begin
             if(pc_stall)pc_stall<=1'b0;//第一个周期暂停pc，等待
             else begin
+            $display("[CLK %0t]EXCUTE:pc:0x%08x next_pc:0x%08x", $time,pc,next_pc);
                 pc<=next_pc;   
                 //pc_stall<=1'b1; 
             end
