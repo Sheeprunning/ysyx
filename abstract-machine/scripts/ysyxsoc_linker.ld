@@ -24,10 +24,14 @@ SECTIONS {
     *(.sbss*)
     *(.scommon)
   }
-  _stack_top = 0x0f000000;/*设置为sram的地址0x0f00_0000~0x0fff_ffff*/
-  . = _stack_top + 0x8000;
+  . = 0x0f000000;
+  _heap_start = .;
+  . = . + 0x1000;
+  _heap_end = .;
+  _stack_top = .;
+  . = _stack_top + 0x1000;
   _stack_pointer = .;
   end = .;
   _end = .;
-  _heap_start = ALIGN(0x1000);
+  
 }
