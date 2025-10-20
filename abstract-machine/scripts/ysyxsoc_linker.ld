@@ -28,7 +28,7 @@ SECTIONS {
   _heap_start = ALIGN(0x4);
   . = . + 0x1000;
   _heap_end = .;
-  _stack_top = ALIGN(0x4);
+  _stack_top = ALIGN(0x8);
   . = _stack_top + 0x1000;
   _stack_pointer = .;
   end = .;
