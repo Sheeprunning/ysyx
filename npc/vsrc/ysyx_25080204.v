@@ -506,6 +506,15 @@ assign io_slave_rdata = 32'b0;
 assign io_slave_rlast = 1'b0;
 assign io_slave_rid = 4'b0;
 
+
+// resp处理
+always @(*) begin
+    if(io_master_rresp!=2'b00 || io_master_bresp!=2'b00) begin  
+        npc_ebreak_finish();
+        $display("[CLK %0t] Access Fault!", $time);
+    end
+end
+
 // ebreak处理
 import "DPI-C" function void npc_ebreak_finish();
 always @(*) begin
