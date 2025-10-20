@@ -127,7 +127,10 @@ extern "C"
 }
 
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
-extern "C" void mrom_read(int32_t addr, int32_t *data) { *data=pmem_read(addr,4); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) { 
+  printf("read mrom[0x%08x]=0x%08x\n",addr,pmem_read(addr,4));
+  *data=pmem_read(addr,4); 
+}
 
 void call_show_reg() {
     // svScope scope = svGetScopeFromName("TOP.top.CPU.RF");

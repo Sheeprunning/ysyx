@@ -25,12 +25,12 @@ SECTIONS {
     *(.scommon)
   }
   . = 0x0f000000;
-  _heap_start = ALIGN(0x4);
+  _heap_start = ALIGN(4);
   . = . + 0x1000;
   _heap_end = .;
-  _stack_top = ALIGN(0x8);
+  _stack_top = ALIGN(4);
   . = _stack_top + 0x1000;
-  _stack_pointer = .;
+  _stack_pointer = ALIGN(4);
   end = .;
   _end = .;
   
