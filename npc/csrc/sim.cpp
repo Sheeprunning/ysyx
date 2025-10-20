@@ -12,7 +12,6 @@ TOP_NAME* top;
 CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
-int first=0;
 
 void print_inst(u_int32_t pc,u_int32_t inst){//只有在打开itrace时运行
   char logbuf[128];
@@ -165,11 +164,7 @@ int isa_reg_str2val(const char *s, bool *success){
 void trace_and_difftest(u_int32_t pc){
   #ifdef DIFFTEST
     if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
-      // if(first==0)first++;
-      // else{
-      // cout<<"第"<<first<<"次进行test....."<<endl;first++;
       difftest_step(pc, cpu.pc);
-      // } 
     }
   #endif
   #ifdef CONFIG_WATCHPOINT
