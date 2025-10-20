@@ -396,7 +396,7 @@ always @(posedge clk or posedge rst) begin
     end else begin
         case(w_state)
             W_IDLE: begin
-                if(DM_w_en&&will_stall) begin//忘记设计stall状态的处理，导致多次写数据
+                if(DM_w_en&&will_stall) begin
                     lsu_awvalid_reg <= 1'b1;
                     lsu_awsize_reg<= 3'b010;//四字节传输
                     lsu_awaddr_reg <= w_r_addr;
@@ -409,6 +409,7 @@ always @(posedge clk or posedge rst) begin
             end
             W_WRITE: begin
               if(lsu_wready&&lsu_wvalid)begin
+$display("[CLK %0t]LSU handshake with SRAM! addr=0x%08x  data=0x%08x strb=%04b", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg);
                 lsu_bready_reg <= 1'b1;
                 lsu_awvalid_reg <= 1'b0;
                 lsu_wvalid_reg <= 1'b0;
