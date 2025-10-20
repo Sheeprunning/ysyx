@@ -10,7 +10,7 @@ module ysyx_25080204_0_CPU(
     output DM_r_en,
     output DM_w_en,
     output [31:0]w_r_addr,
-    output [31:0]wdata,
+    output reg[31:0]wdata,
     output [3:0]mem_mask,
     output [31:0]a0,
     output [31:0]next_pc_for_inst,
@@ -150,7 +150,16 @@ ysyx_25080204_3_EXE EXE(
 );
 
 assign w_r_addr=result;
-assign wdata=src2;
+always@(*)begin
+  case(mem_mask)
+    4'b0010:wdata=src2<<8;
+    4'b0100:wdata=src2<<16;
+    4'b1000:wdata=src2<<24;
+    4'b1100:wdata=src2<<16;
+    default:wdata=src2;
+  endcase
+end
+
 
 ysyx_25080204_sext SEXT(
     .sext_en(sext_en),
