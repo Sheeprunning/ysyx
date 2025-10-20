@@ -154,7 +154,7 @@ assign wdata=src2;
 
 ysyx_25080204_sext SEXT(
     .sext_en(sext_en),
-    .mask(mask),
+    .mask(mem_mask),
     .sext_data(rdata),
     .sext_out_data(sext_out_data)
 );
