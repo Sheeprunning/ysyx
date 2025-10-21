@@ -21,8 +21,9 @@ SECTIONS {
     _sdata = .;
     *(.data*)
     _edata = .;
+    _data_size = _edata - _sdata;
   } > sram AT> mrom
-  _data_size = _edata - _sdata;
+  
   _lsdata = LOADADDR(.data);
 
   _data = .;
