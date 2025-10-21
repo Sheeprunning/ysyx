@@ -31,8 +31,9 @@ SECTIONS {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
+    _bss_size = . - _bss_start;
   }>sram
-  _bss_size = . - _bss_start;
+  
   .heap (NOLOAD) :{
     . = ALIGN(4);
     _heap_start = .;
