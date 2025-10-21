@@ -21,21 +21,22 @@ SECTIONS {
     _sdata = .;
     *(.data*)
     _edata = .;
-    _data_size = _edata - _sdata;
   } > sram AT> mrom
-  
   _lsdata = LOADADDR(.data);
 
   _data = .;
   .bss : {
-	_bss_start = .;
+	  _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-    _bss_size = . - _bss_start;
+    _bss_end = .;
   }>sram
   
+
   .heap (NOLOAD) :{
+    _data_size = _edata - _sdata;
+    _bss_size = _bss_end - _bss_start;
     . = ALIGN(4);
     _heap_start = .;
     . = . + 0x1000;
