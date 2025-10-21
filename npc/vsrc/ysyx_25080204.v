@@ -374,7 +374,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
-        $display("[CLK %0t]LSU handshake with SRAM! READ addr=0x%08x data=0x%08x ", $time,lsu_araddr_reg,lsu_rdata);
+        //$display("[CLK %0t]LSU handshake with SRAM! READ addr=0x%08x data=0x%08x ", $time,lsu_araddr_reg,lsu_rdata);
                 end
             end
             default:begin end
@@ -409,7 +409,7 @@ always @(posedge clk or posedge rst) begin
             end
             W_WRITE: begin
               if(lsu_wready&&lsu_wvalid)begin
-$display("[CLK %0t]LSU handshake with SRAM! addr=0x%08x  data=0x%08x strb=%04b", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg);
+//$display("[CLK %0t]LSU handshake with SRAM! addr=0x%08x  data=0x%08x strb=%04b", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg);
                 lsu_bready_reg <= 1'b1;
                 lsu_awvalid_reg <= 1'b0;
                 lsu_wvalid_reg <= 1'b0;
@@ -461,7 +461,7 @@ always @(posedge clk or posedge rst) begin
             // $display("[CLK %0t]CPU STATE:R_WAIT ", $time);
                 if(inst_arready&&inst_arvalid)inst_arvalid_reg<=1'b0;
                 if(inst_rvalid && inst_rready) begin
-                $display("[CLK %0t]IFU handshake with IM! PC:0x%08x GET inst=0x%08x", $time,inst_araddr_reg,inst_rdata);
+                //$display("[CLK %0t]IFU handshake with IM! PC:0x%08x GET inst=0x%08x", $time,inst_araddr_reg,inst_rdata);
                     inst_reg <= inst_rdata;
                     inst_rresp_reg<=inst_rresp;
                     inst_rready_reg <= 1'b0;
