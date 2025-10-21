@@ -65,7 +65,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
-  printf("0x%08x 0x%08x\n",s->pc,s->isa.inst);
+  //通过输出nemu当前执行的指令来对比是否正确读入bin
+  // printf("0x%08x 0x%08x\n",s->pc,s->isa.inst);
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);//16进制pc
