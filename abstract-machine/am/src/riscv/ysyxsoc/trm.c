@@ -26,7 +26,7 @@ void halt(int code) {
 
 void _trm_init() {
   memcpy(&_sdata,&_lsdata,_data_size);
-  memset(&_bss_start,0,_bss_size);
+  // memset(&_bss_start,0,_bss_size);
   int ret = main(mainargs);
   halt(ret);
 }
