@@ -226,5 +226,5 @@ int sim(int argc, char *argv[]) {
     // nvboard_init();
     sdb_mainloop();
     sim_exit();
-    return 0;
+    return 0; 
 }
