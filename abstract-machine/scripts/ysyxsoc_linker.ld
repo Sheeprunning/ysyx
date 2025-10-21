@@ -15,8 +15,7 @@ SECTIONS {
 
   .rodata : {
     *(.rodata*)
-    _data_size = _edata - _sdata;
-    _bss_size = _bss_end - _bss_start;
+    
   }
 
   .data : {
@@ -34,7 +33,8 @@ SECTIONS {
     *(.scommon)
     _bss_end = .;
   }>sram
-  
+  /* _data_size =ABSOLUTE(_edata - _sdata);
+  _bss_size = ABSOLUTE(_bss_end - _bss_start); */
 
   .heap (NOLOAD) :{
     . = ALIGN(4);
