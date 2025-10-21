@@ -18,6 +18,14 @@ SECTIONS {
     
   }
 
+  .bss : {
+    _bss_start = .;
+    *(.bss*)
+    *(.sbss*)
+    *(.scommon)
+    _bss_end = .;
+  }>sram
+
   .data : {
     _sdata = .;
     *(.data*)
@@ -26,13 +34,7 @@ SECTIONS {
   _lsdata = LOADADDR(.data);
 
   _data = .;
-  .bss : {
-	  _bss_start = .;
-    *(.bss*)
-    *(.sbss*)
-    *(.scommon)
-    _bss_end = .;
-  }>sram
+  
   /* _data_size =ABSOLUTE(_edata - _sdata);
   _bss_size = ABSOLUTE(_bss_end - _bss_start); */
 
