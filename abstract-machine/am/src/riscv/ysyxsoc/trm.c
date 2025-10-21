@@ -1,16 +1,18 @@
 #include <am.h>
 #include <klib-macros.h>
 #include <ysyxsoc.h>
+#include <klib.h>
 
-extern char _heap_start;
+extern char _heap_start, _heap_end;
+extern char _sdata, _edata, _data_size, _lsdata;
+extern char _bss_start, _bss_size;
 int main(const char *args);
 
 extern char _pmem_start;
 #define PMEM_SIZE (128 * 1024 * 1024)
 #define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
-#define HEAP_END  0x0fffffff //sram的尾地址
 
-Area heap = RANGE(&_heap_start, HEAP_END);
+Area heap = RANGE(&_heap_start, &_heap_end);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
 void putch(char ch) {
@@ -23,6 +25,8 @@ void halt(int code) {
 }
 
 void _trm_init() {
+  memcpy(&_sdata,&_lsdata,_data_size);
+  memset(&_bss_start,0,_bss_size);
   int ret = main(mainargs);
   halt(ret);
 }
