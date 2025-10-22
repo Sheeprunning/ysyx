@@ -35,8 +35,8 @@
 #define UART_MC   (UART_BASE + 4)
 #define UART_LSR  (UART_BASE + 5)
 #define UART_MS   (UART_BASE + 6)
-#define UART_LSB  (UART_BASE + 0)
-#define UART_MSB  (UART_BASE + 1)
+#define UART_MSB  (UART_BASE + 0)
+#define UART_LSB  (UART_BASE + 1)
 
 #define MMIO_BASE 0xa0000000
 
