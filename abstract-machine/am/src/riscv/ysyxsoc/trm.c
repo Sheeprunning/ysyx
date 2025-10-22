@@ -32,9 +32,9 @@ void rom_to_sram(){
 
 void uart_init() {
   uint8_t lcr = inb(UART_LCR);
-  outb(UART_LCR,0x80);
+  outb(UART_LCR,lcr | 0x80);
   outb(UART_MSB,0);
-  outb(UART_LSB,101);
+  outb(UART_LSB,5);
   outb(UART_LCR,lcr & 0x7F);
 }
 
