@@ -24,6 +24,20 @@
 # define DEVICE_BASE 0xa0000000
 #endif
 
+#define UART_BASE 0x10000000L
+
+#define UART_RB   (UART_BASE + 0)
+#define UART_THR  (UART_BASE + 0)
+#define UART_IE   (UART_BASE + 1)
+#define UART_II   (UART_BASE + 2)
+#define UART_FC   (UART_BASE + 2)
+#define UART_LCR  (UART_BASE + 3)
+#define UART_MC   (UART_BASE + 4)
+#define UART_LSR  (UART_BASE + 5)
+#define UART_MS   (UART_BASE + 6)
+#define UART_LSB  (UART_BASE + 0)
+#define UART_MSB  (UART_BASE + 1)
+
 #define MMIO_BASE 0xa0000000
 
 #define SERIAL_PORT     (DEVICE_BASE + 0x00003f8)

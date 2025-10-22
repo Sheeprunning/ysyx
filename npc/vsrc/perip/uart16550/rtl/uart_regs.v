@@ -477,6 +477,17 @@ end
 //   WRITES AND RESETS   //
 //
 // Line Control Register
+//LCR（8位）详解
+/*
+位 [1:0]: 数据位长度 (11 = 8位)
+位 2: 停止位长度 (0 = 1位停止位)
+位 3: 奇偶校验使能 (0 = 禁用)
+位 4: 偶校验选择 (0 = 奇校验， 1 = 偶校验)
+位 5: 固定奇偶位 (用于测试)
+位 6: 置位间隔 (强制TX输出低电平)
+位 7: 除数锁存访问位 (DLAB) (1 = 访问DLL/DLM, 0 = 访问RBR/THR/IER)
+*/
+
 always @(posedge clk or posedge wb_rst_i)
     if (wb_rst_i)
         lcr <= #1 8'b00000011; // 8n1 setting
@@ -594,6 +605,17 @@ end
 
 // Line Status Register
 
+// LSR(详解)
+/*
+位 0: 数据就绪 (DR) - 1 表示接收缓冲区有数据可读。
+位 1: 溢出错误 (OE) - 1 表示新数据覆盖了未读的旧数据（在无FIFO情况下很容易发生）。
+位 2: 奇偶校验错误 (PE)
+位 3: 帧错误 (FE) - 停止位不正确。
+位 4: 断线指示 (BI) - 接收到长时间的低电平。
+位 5: 发送保持寄存器空 (THRE) - 1 表示可以写入下一个要发送的字节。这是发送前必须检查的标志。
+位 6: 发送移位寄存器空 (TEMT)
+位 7: 错误标志
+*/
 // activation conditions
 assign lsr0 = (rf_count==0 && rf_push_pulse);  // data in receiver fifo available set condition
 assign lsr1 = rf_overrun;     // Receiver overrun error
