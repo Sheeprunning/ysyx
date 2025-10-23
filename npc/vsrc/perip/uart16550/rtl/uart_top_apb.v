@@ -55,7 +55,8 @@ module uart_top_apb (
    end
    always @ (posedge clock) begin
      reg_dat8_w_reg <= reg_dat8_w;
-     if(~reset & in_psel & ~in_penable)$display("select uart-top:addr:0x%08x",in_paddr);
+  if(~reset & in_psel & ~in_penable)
+  $display("select uart-top:addr:0x%08x pstrb:0x%04x",in_paddr,in_pstrb);
    end
    //--------------------------------------------------------
    // Registers
