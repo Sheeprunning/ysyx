@@ -376,7 +376,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
-$display("[CLK %0t]LSU handshake with MEM! READ size=%03b addr=0x%08x data=0x%08x ", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
+//$display("[CLK %0t]LSU handshake with MEM! READ size=%03b addr=0x%08x data=0x%08x ", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
                 end
             end
             default:begin end
@@ -411,7 +411,7 @@ always @(posedge clk or posedge rst) begin
             end
             W_WRITE: begin
               if(lsu_wready&&lsu_wvalid)begin
-$display("[CLK %0t]LSU handshake with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
+$display("\033[0;32m[CLK %0t]LSU handshake with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
                 lsu_bready_reg <= 1'b1;
                 lsu_awvalid_reg <= 1'b0;
                 lsu_wvalid_reg <= 1'b0;
