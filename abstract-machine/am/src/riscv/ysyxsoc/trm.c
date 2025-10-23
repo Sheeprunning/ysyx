@@ -41,7 +41,7 @@ void uart_init() {
 
 void _trm_init() {
   rom_to_sram();
-  uart_init();
+  //uart_init();
   int ret = main(mainargs);
   halt(ret);
 }
