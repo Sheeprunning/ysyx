@@ -1461,7 +1461,9 @@ module CPU(	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/CPU.scala:33:9
   input  [1:0]  auto_master_out_rresp,	// home/sheeprunning/ysyx-workbench/ysyxSoC/rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_master_out_rlast	// home/sheeprunning/ysyx-workbench/ysyxSoC/rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
 );
-
+always @(posedge clock)begin
+  if(auto_master_out_awvalid)$display("io_master_awaddr:0x%08x",auto_master_out_awaddr);
+end
   ysyx_25080204 cpu (	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/CPU.scala:38:21
     .clock                   (clock),
     .reset                   (reset),
