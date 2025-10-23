@@ -226,6 +226,7 @@ begin
         default: ;
         endcase
         $display("count:%d",count);
+        $display("pop:%d",pop);
     end
 end   // always
 
