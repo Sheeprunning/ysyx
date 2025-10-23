@@ -414,7 +414,10 @@ begin
         `UART_REG_IE   : wb_dat_o = dlab ? dl[`UART_DL2] : {4'b0, ier};
         `UART_REG_II   : wb_dat_o = {4'b1100,iir};
         `UART_REG_LC   : wb_dat_o = lcr;
-        `UART_REG_LS   : wb_dat_o = lsr;
+        `UART_REG_LS   : begin 
+                wb_dat_o = lsr;
+                $display("LSR:0b%08b",lsr);
+                        end
         `UART_REG_MS   : wb_dat_o = msr;
         `UART_REG_SR   : wb_dat_o = scratch;
         default:  wb_dat_o = 8'b0; // ??
@@ -691,7 +694,7 @@ always @(posedge clk or posedge wb_rst_i)
 
 always @(posedge clk or posedge wb_rst_i)
     if (wb_rst_i) lsr5r <= #1 1;
-    else lsr5r <= #1 (fifo_write) ? 0 :  lsr5r || (lsr5 && ~lsr5_d);
+    else lsr5r <= #1 (fifo_write) ? 0 :  lsr5r || (lsr5 && ~lsr5_d);//lsr上升沿检测和保持
 
 // lsr bit 6 (transmitter empty indicator)
 reg lsr6_d;
