@@ -409,6 +409,7 @@ uart_receiver receiver(clk, wb_rst_i, lcr, rf_pop, serial_in, enable,
 always @(dl or dlab or ier or iir or scratch
             or lcr or lsr or msr or rf_data_out or wb_addr_i or wb_re_i)   // asynchrounous reading
 begin
+$display("wb_addr:0b%03b",wb_addr_i);
     case (wb_addr_i)
         `UART_REG_RB   : wb_dat_o = dlab ? dl[`UART_DL1] : rf_data_out[10:3];
         `UART_REG_IE   : wb_dat_o = dlab ? dl[`UART_DL2] : {4'b0, ier};
