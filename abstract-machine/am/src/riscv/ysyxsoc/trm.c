@@ -16,8 +16,6 @@ static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); /
 
 void putch(char ch) {
   // while( (inb(UART_LSR) & 0x40) == 0);
-  uint8_t thre = (inb(UART_LSR) & 0x40);
-  if(thre==0)
   outb(UART_THR, ch);
 }
 
@@ -35,7 +33,7 @@ void rom_to_sram(){
 
 void uart_init() {
   uint8_t lcr = inb(UART_LCR);
-  outb(UART_LCR,lcr | 0x80);
+  outb(UART_LCR,lcr | 0x80); 
   outb(UART_MSB,0);
   outb(UART_LSB,5);
   outb(UART_LCR,lcr & 0x7F);
