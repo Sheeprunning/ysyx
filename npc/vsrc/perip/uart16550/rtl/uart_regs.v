@@ -413,7 +413,10 @@ begin
         `UART_REG_RB   : wb_dat_o = dlab ? dl[`UART_DL1] : rf_data_out[10:3];
         `UART_REG_IE   : wb_dat_o = dlab ? dl[`UART_DL2] : {4'b0, ier};
         `UART_REG_II   : wb_dat_o = {4'b1100,iir};
-        `UART_REG_LC   : wb_dat_o = lcr;
+        `UART_REG_LC   : begin 
+                wb_dat_o = lcr;
+                $display("LCR:0b%08b",lcr);
+                end
         `UART_REG_LS   : begin 
                 wb_dat_o = lsr;
                 $display("LSR:0b%08b",lsr);
