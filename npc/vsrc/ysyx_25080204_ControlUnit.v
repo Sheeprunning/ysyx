@@ -23,7 +23,7 @@ localparam ALU_ADD = 4'b0000, ALU_SUB = 4'b0001,
         SIZE_B = 3'b00,
         SIZE_H = 3'b01,
         SIZE_W = 3'b10,
-        SIZE_NULL = 3'b11;
+        SIZE_NULL = 3'b111;
 
 always @(*) begin
     case(opcode)
