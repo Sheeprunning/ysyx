@@ -400,7 +400,7 @@ always @(posedge clk or posedge rst) begin
             W_IDLE: begin
                 if(DM_w_en&&will_stall) begin
                     lsu_awvalid_reg <= 1'b1;
-                    lsu_awsize_reg<= 3'b10;
+                    lsu_awsize_reg<= size;
                     lsu_awaddr_reg <= w_r_addr;
                     lsu_wvalid_reg <= 1'b1;
                     lsu_wdata_reg <= wdata_from_reg;
