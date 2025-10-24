@@ -201,7 +201,6 @@ wire        DM_r_en, DM_w_en;
 wire [31:0] w_r_addr;
 wire [31:0] wdata_from_reg;
 wire [3:0]  mem_mask;
-wire [2:0] size;
 wire [31:0] next_pc_for_inst,pc;
 wire        stall;
 wire        load,store;//提前根据指令计算是否stall
@@ -244,7 +243,6 @@ ysyx_25080204_0_CPU CPU(
     .w_r_addr(w_r_addr),
     .wdata(wdata_from_reg),
     .mem_mask(mem_mask),
-    .size(size),
     .a0(a0),
     .next_pc_for_inst(next_pc_for_inst),
     .pc(pc)
@@ -362,7 +360,7 @@ always @(posedge clk or posedge rst) begin
                 if(r_idle_to_r_wait) begin
                     lsu_arvalid_reg <= 1'b1;
                     lsu_araddr_reg <= w_r_addr;
-                    lsu_arsize_reg <= size;
+                    lsu_arsize_reg <= 3'b010;
                     lsu_rready_reg <= 1'b1;
                     r_stall <= 1'b1;
                     r_state <= R_WAIT;
@@ -376,7 +374,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
-//$display("[CLK %0t]LSU handshake with MEM! READ size=%03b addr=0x%08x data=0x%08x ", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
+        //$display("[CLK %0t]LSU handshake with SRAM! READ addr=0x%08x data=0x%08x ", $time,lsu_araddr_reg,lsu_rdata);
                 end
             end
             default:begin end
@@ -400,7 +398,7 @@ always @(posedge clk or posedge rst) begin
             W_IDLE: begin
                 if(DM_w_en&&will_stall) begin
                     lsu_awvalid_reg <= 1'b1;
-                    lsu_awsize_reg<= size;
+                    lsu_awsize_reg<= 3'b010;//四字节传输
                     lsu_awaddr_reg <= w_r_addr;
                     lsu_wvalid_reg <= 1'b1;
                     lsu_wdata_reg <= wdata_from_reg;
@@ -411,7 +409,7 @@ always @(posedge clk or posedge rst) begin
             end
             W_WRITE: begin
               if(lsu_wready&&lsu_wvalid)begin
-$display("\033[0;32m[CLK %0t]LSU handshake with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
+//$display("[CLK %0t]LSU handshake with SRAM! addr=0x%08x  data=0x%08x strb=%04b", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg);
                 lsu_bready_reg <= 1'b1;
                 lsu_awvalid_reg <= 1'b0;
                 lsu_wvalid_reg <= 1'b0;
@@ -463,7 +461,7 @@ always @(posedge clk or posedge rst) begin
             // $display("[CLK %0t]CPU STATE:R_WAIT ", $time);
                 if(inst_arready&&inst_arvalid)inst_arvalid_reg<=1'b0;
                 if(inst_rvalid && inst_rready) begin
-                $display("[CLK %0t]IFU handshake with IM! PC:0x%08x GET inst=0x%08x", $time,inst_araddr_reg,inst_rdata);
+                //$display("[CLK %0t]IFU handshake with IM! PC:0x%08x GET inst=0x%08x", $time,inst_araddr_reg,inst_rdata);
                     inst_reg <= inst_rdata;
                     inst_rresp_reg<=inst_rresp;
                     inst_rready_reg <= 1'b0;

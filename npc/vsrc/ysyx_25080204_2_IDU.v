@@ -15,7 +15,7 @@ module ysyx_25080204_2_IDU(
     output [2:0]RF_data_sel,
     output sext_en,
     output CSR_wen,
-    output [2:0]size,
+    output [1:0]mask,
     output DM_r_en,
     output DM_w_en,
     //judge the bj_en
@@ -55,7 +55,7 @@ ysyx_25080204_ControlUnit CU(
     .DM_w_en(DM_w_en),
     .sext_en(sext_en),
     .CSR_wen(CSR_wen),
-    .size(size)
+    .mask(mask)
 );
 wire beq_taken=(src1==src2);
 wire bne_taken=!beq_taken;

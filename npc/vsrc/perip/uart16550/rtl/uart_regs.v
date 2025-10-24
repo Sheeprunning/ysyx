@@ -382,6 +382,7 @@ reg  [7:0] block_value; // One character length minus stop bit
 wire serial_out;
 
 uart_transmitter transmitter(clk, wb_rst_i, lcr, tf_push, wb_dat_i, enable, serial_out, tstate, tf_count, tx_reset, lsr_mask);
+//会根据tstate对pop进行赋值
 
   // Synchronizing and sampling serial RX input
   uart_sync_flops    i_uart_sync_flops
@@ -413,14 +414,8 @@ begin
         `UART_REG_RB   : wb_dat_o = dlab ? dl[`UART_DL1] : rf_data_out[10:3];
         `UART_REG_IE   : wb_dat_o = dlab ? dl[`UART_DL2] : {4'b0, ier};
         `UART_REG_II   : wb_dat_o = {4'b1100,iir};
-        `UART_REG_LC   : begin 
-                wb_dat_o = lcr;
-                $display("\033[0;31mLCR:%08b\033[0m",lcr);
-                end
-        `UART_REG_LS   : begin 
-                wb_dat_o = lsr;
-                $display("\033[0;31mLSR:%08b\033[0m",lsr);
-                        end
+        `UART_REG_LC   : wb_dat_o = lcr;
+        `UART_REG_LS   : wb_dat_o = lsr;
         `UART_REG_MS   : wb_dat_o = msr;
         `UART_REG_SR   : wb_dat_o = scratch;
         default:  wb_dat_o = 8'b0; // ??
@@ -483,17 +478,6 @@ end
 //   WRITES AND RESETS   //
 //
 // Line Control Register
-//LCR（8位）详解
-/*
-位 [1:0]: 数据位长度 (11 = 8位)
-位 2: 停止位长度 (0 = 1位停止位)
-位 3: 奇偶校验使能 (0 = 禁用)
-位 4: 偶校验选择 (0 = 奇校验， 1 = 偶校验)
-位 5: 固定奇偶位 (用于测试)
-位 6: 置位间隔 (强制TX输出低电平)
-位 7: 除数锁存访问位 (DLAB) (1 = 访问DLL/DLM, 0 = 访问RBR/THR/IER)
-*/
-
 always @(posedge clk or posedge wb_rst_i)
     if (wb_rst_i)
         lcr <= #1 8'b00000011; // 8n1 setting
@@ -611,17 +595,6 @@ end
 
 // Line Status Register
 
-// LSR(详解)
-/*
-位 0: 数据就绪 (DR) - 1 表示接收缓冲区有数据可读。
-位 1: 溢出错误 (OE) - 1 表示新数据覆盖了未读的旧数据（在无FIFO情况下很容易发生）。
-位 2: 奇偶校验错误 (PE)
-位 3: 帧错误 (FE) - 停止位不正确。
-位 4: 断线指示 (BI) - 接收到长时间的低电平。
-位 5: 发送保持寄存器空 (THRE) - 1 表示可以写入下一个要发送的字节。这是发送前必须检查的标志。
-位 6: 发送移位寄存器空 (TEMT)
-位 7: 错误标志
-*/
 // activation conditions
 assign lsr0 = (rf_count==0 && rf_push_pulse);  // data in receiver fifo available set condition
 assign lsr1 = rf_overrun;     // Receiver overrun error
@@ -697,7 +670,7 @@ always @(posedge clk or posedge wb_rst_i)
 
 always @(posedge clk or posedge wb_rst_i)
     if (wb_rst_i) lsr5r <= #1 1;
-    else lsr5r <= #1 (fifo_write) ? 0 :  lsr5r || (lsr5 && ~lsr5_d);//lsr上升沿检测和保持
+    else lsr5r <= #1 (fifo_write) ? 0 :  lsr5r || (lsr5 && ~lsr5_d);
 
 // lsr bit 6 (transmitter empty indicator)
 reg lsr6_d;

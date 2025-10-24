@@ -12,7 +12,6 @@ module ysyx_25080204_0_CPU(
     output [31:0]w_r_addr,
     output reg[31:0]wdata,
     output [3:0]mem_mask,
-    output [2:0]size,
     output [31:0]a0,
     output [31:0]next_pc_for_inst,
     output [31:0]pc
@@ -42,6 +41,7 @@ wire [2:0]RF_data_sel;
 wire bj_en;
 wire sext_en;
 wire CSR_wen;
+wire [1:0]mask;
 
 wire [31:0]A;
 wire [31:0]B;
@@ -88,7 +88,7 @@ ysyx_25080204_2_IDU IDU(
     .DM_w_en(DM_w_en),
     .sext_en(sext_en),
     .CSR_wen(CSR_wen),
-    .size(size),
+    .mask(mask),
 
     .src1(src1),
     .src2(src2),
@@ -174,7 +174,7 @@ wire [3:0] b_mask=(byte_offset==2'b00)?4'b0001:
             (byte_offset==2'b11)?4'b1000:4'b0000;
 wire [3:0] h_mask=(byte_offset==2'b00)?4'b0011:
             (byte_offset==2'b10)?4'b1100:4'b0000;
-assign mem_mask=(size==3'b00)?b_mask:(size==3'b01)?h_mask:(size==3'b10)?4'b1111:4'b0000;
+assign mem_mask=(mask==2'b00)?b_mask:(mask==2'b01)?h_mask:(mask==2'b10)?4'b1111:4'b0000;
 
 assign RF_w_data=(RF_data_sel==3'b000)?result:
                 (RF_data_sel==3'b001)?sext_out_data:
