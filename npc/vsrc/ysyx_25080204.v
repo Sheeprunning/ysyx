@@ -362,7 +362,7 @@ always @(posedge clk or posedge rst) begin
                 if(r_idle_to_r_wait) begin
                     lsu_arvalid_reg <= 1'b1;
                     lsu_araddr_reg <= w_r_addr;
-                    lsu_arsize_reg <= size;
+                    lsu_arsize_reg <= 3'b010;
                     lsu_rready_reg <= 1'b1;
                     r_stall <= 1'b1;
                     r_state <= R_WAIT;
@@ -376,7 +376,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE;
-//$display("[CLK %0t]LSU handshake with MEM! READ size=%03b addr=0x%08x data=0x%08x ", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
+$display("[CLK %0t]LSU handshake with MEM! READ size=%03b addr=0x%08x data=0x%08x ", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
                 end
             end
             default:begin end
@@ -400,7 +400,7 @@ always @(posedge clk or posedge rst) begin
             W_IDLE: begin
                 if(DM_w_en&&will_stall) begin
                     lsu_awvalid_reg <= 1'b1;
-                    lsu_awsize_reg<= 3'b010;
+                    lsu_awsize_reg<= size;
                     lsu_awaddr_reg <= w_r_addr;
                     lsu_wvalid_reg <= 1'b1;
                     lsu_wdata_reg <= wdata_from_reg;
