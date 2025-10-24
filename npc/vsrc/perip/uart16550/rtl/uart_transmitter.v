@@ -261,7 +261,7 @@ always @(posedge clk or posedge wb_rst_i) begin
     s_send_start :    begin
                 tf_pop <= #1 1'b0;
                 if (~|counter)
-                    counter <= #1 5'b01111;
+                    counter <= #1 5'b01111;//15个周期换一次状态
                 else
                 if (counter == 5'b00001)
                 begin
@@ -281,21 +281,22 @@ always @(posedge clk or posedge wb_rst_i) begin
                     if (bit_counter > 3'b0)
                     begin
                         bit_counter <= #1 bit_counter - 1'b1;
+                        //发送的数据的低位放在bit_out进行传输，然后移位！
                         {shift_out[5:0],bit_out  } <= #1 {shift_out[6:1], shift_out[0]};
                         tstate <= #1 s_send_byte;
                     end
                     else   // end of byte
-                    if (~lcr[`UART_LC_PE])
+                    if (~lcr[`UART_LC_PE])//无校验位
                     begin
                         tstate <= #1 s_send_stop;
                     end
                     else
                     begin
                         case ({lcr[`UART_LC_EP],lcr[`UART_LC_SP]})
-                        2'b00:    bit_out <= #1 ~parity_xor;
-                        2'b01:    bit_out <= #1 1'b1;
-                        2'b10:    bit_out <= #1 parity_xor;
-                        2'b11:    bit_out <= #1 1'b0;
+                        2'b00:    bit_out <= #1 ~parity_xor;//奇校验
+                        2'b01:    bit_out <= #1 1'b1;//固定位1校验
+                        2'b10:    bit_out <= #1 parity_xor;//偶校验
+                        2'b11:    bit_out <= #1 1'b0;//固定位0校验
                         endcase
                         tstate <= #1 s_send_parity;
                     end
@@ -316,7 +317,7 @@ always @(posedge clk or posedge wb_rst_i) begin
                 end
                 else
                     counter <= #1 counter - 1'b1;
-                stx_o_tmp <= #1 bit_out;
+                stx_o_tmp <= #1 bit_out;//发送上个周期计算好的校验位
             end
     s_send_stop :  begin
                 if (~|counter)
@@ -346,7 +347,7 @@ always @(posedge clk or posedge wb_rst_i) begin
     tf_pop <= #1 1'b0;  // tf_pop must be 1 cycle width
 end // transmitter logic
 
-assign stx_pad_o = lcr[`UART_LC_BC] ? 1'b0 : stx_o_tmp;    // Break condition
+assign stx_pad_o = lcr[`UART_LC_BC] ? 1'b0 : stx_o_tmp;    // Break condition 非中断就传数据
 
 `ifdef VCD_DUMP_ON
    initial begin
