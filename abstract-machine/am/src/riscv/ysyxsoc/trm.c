@@ -35,7 +35,7 @@ void uart_init() {
   uint8_t lcr = inb(UART_LCR);
   outb(UART_LCR,lcr | 0x80); 
   outb(UART_MSB,0);
-  outb(UART_LSB,100);
+  outb(UART_LSB,10);
   outb(UART_LCR,lcr & 0x7F);
 }
 
