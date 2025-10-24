@@ -513,7 +513,6 @@ always @(posedge clk or posedge wb_rst_i)
         if (dlab)
         begin
             dl[`UART_DL2] <= #1 wb_dat_i;
-            $display("dl2:%08b",wb_dat_i);
         end
         else
             ier <= #1 wb_dat_i[3:0]; // ier uses only 4 lsb
