@@ -375,7 +375,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rresp_reg<=lsu_rresp;
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
-                    r_state <= R_IDLE;
+                    r_state <= R_IDLE; 
 $display("\033[0;34m[CLK %0t]LSU handshake with MEM! READ size=%03b addr=0x%08x data=0x%08x \033[0m", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
                 end
             end
