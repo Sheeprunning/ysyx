@@ -126,7 +126,7 @@ extern "C"
     }
 }
 
-extern "C" void flash_read(int32_t addr, int32_t *data) { cout<<addr-0x30000000<<endl; }
+extern "C" void flash_read(int32_t addr, int32_t *data) { cout<<addr-0x30000000<<endl;*data=addr-0x30000000; }
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
   //printf("read mrom[0x%08x]=0x%08x\n",addr,pmem_read(addr,4));
   *data=pmem_read(addr&0xFFFFFFFC,4); 

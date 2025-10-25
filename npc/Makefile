@@ -27,7 +27,7 @@ VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.cpp")
 CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)
-IMG ?=  ./flash-test.bin
+IMG ?=  ./default.bin
 DIFF ?= $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 ELF ?= ./default.elf
 
@@ -63,7 +63,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation (without NVBoard)..."
-	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) #-b
+	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) -b
 endif
 
 # Include all filelist.mk to merge file lists
