@@ -67,6 +67,7 @@ module flash (
     if (reset) addr <= 24'd0;
     else if (state == addr_t && counter < 8'd23)
       addr <= { addr[22:0], mosi };
+      $display("\033[1;33m addr:0x%08x\033[0m",{ addr[22:0], mosi });
   end
 
   wire [31:0] data_bswap = {rdata[7:0], rdata[15:8], rdata[23:16], rdata[31:24]};
