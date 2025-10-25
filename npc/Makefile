@@ -27,7 +27,7 @@ VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.cpp")
 CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)
-IMG ?=  ./default.bin
+IMG ?=  ./flash-test.bin
 DIFF ?= $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 ELF ?= ./default.elf
 

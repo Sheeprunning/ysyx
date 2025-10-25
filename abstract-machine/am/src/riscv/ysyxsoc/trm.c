@@ -24,7 +24,7 @@ void halt(int code) {
   while (1);
 }
 
-void rom_to_sram(){
+void bootloader(){
   size_t data_size = &_edata - &_sdata;
   size_t bss_size = &_bss_end - &_bss_start;
   memcpy(&_sdata,&_lsdata,data_size);
@@ -40,7 +40,7 @@ void uart_init() {
 }
 
 void _trm_init() {
-  rom_to_sram();
+  bootloader();
   uart_init();
   int ret = main(mainargs);
   halt(ret);

@@ -4,10 +4,10 @@
 // https://www.winbond.com/hq/product/code-storage-flash-memory/serial-nor-flash/?__locale=zh
 
 module flash (
-  input  sck,
-  input  ss,
-  input  mosi,
-  output miso
+  input  sck,//slave clock
+  input  ss,//slave select
+  input  mosi,//master output/slave input
+  output miso//master input/slave output
 );
   wire reset = ss;
 
