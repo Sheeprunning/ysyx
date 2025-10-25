@@ -214,6 +214,7 @@ module spi_top
       ctrl <= #Tp {`SPI_CTRL_BIT_NB{1'b0}};
     else if(spi_ctrl_sel && wb_we_i && !tip)
       begin
+      $display("write ctrl=0b%08b",wb_dat_i);
         if (wb_sel_i[0])
           ctrl[7:0] <= #Tp wb_dat_i[7:0] | {7'b0, ctrl[0]};
         if (wb_sel_i[1])
