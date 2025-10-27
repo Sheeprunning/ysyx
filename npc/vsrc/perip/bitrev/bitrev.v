@@ -15,6 +15,7 @@ module bitrev (
   always@(negedge sck or posedge rst)begin
     if(rst) counter<=0;
     else begin
+    $display("%b",mosi);
       case(state)
         data_i_t: counter<=(counter==3'd7)?0:counter+1;
         data_o_t: counter<=0;
@@ -42,7 +43,6 @@ module bitrev (
   always@(negedge sck)begin
     if(counter==3'd7)begin
       data_o<={mosi,data_i[7:1]};
-      $display("%08b",{mosi,data_i[7:1]});
     end
     else if(state==data_o_t) begin
       data_o<={data_o[6:0],1'b0};
