@@ -11,11 +11,7 @@ module bitrev (
   reg [2:0]counter;
   wire rst=ss;
   assign miso =ss? 1'b1:(state==data_o_t)?data_o[7]:1'b1;
-always@(negedge ss) begin
-  if(!ss) begin  // SS 刚变低
-    $display("SS下降沿: 捕获第一个位=%b, 时间=%t", mosi, $time);
-  end
-end
+
   always@(negedge sck or posedge rst)begin
     if(rst) counter<=0;
     else begin
