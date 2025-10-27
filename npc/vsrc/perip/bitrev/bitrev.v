@@ -40,7 +40,10 @@ module bitrev (
   end
 
   always@(negedge sck)begin
-    if(counter==3'd7)data_o<={mosi,data_i[7:1]};
+    if(counter==3'd7)begin
+      data_o<={mosi,data_i[7:1]};
+      $display("%08b",{mosi,data_i[7:1]});
+    end
     else if(state==data_o_t) begin
       data_o<={data_o[6:0],1'b0};
     end
