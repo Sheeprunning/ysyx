@@ -12,7 +12,7 @@ module bitrev (
   wire rst=ss;
   assign miso =ss? 1'b1:(state==data_o_t)?data_o[7]:1'b1;
 
-  always@(posedge sck or posedge rst)begin
+  always@(negedge sck or posedge rst)begin
     if(rst) counter<=0;
     else begin
       case(state)
@@ -23,7 +23,7 @@ module bitrev (
     end
   end
 
-  always@(posedge sck or posedge rst)begin
+  always@(negedge sck or posedge rst)begin
     if(rst) state<=data_i_t;
     else begin
       case(state)
@@ -39,7 +39,7 @@ module bitrev (
     else if(state==data_i_t) data_i<={mosi,data_i[7:1]};
   end
 
-  always@(posedge sck)begin
+  always@(negedge sck)begin
     if(counter==3'd7)data_o<={mosi,data_i[7:1]};
     else if(state==data_o_t) begin
       data_o<={data_o[6:0],1'b0};
