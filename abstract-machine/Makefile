@@ -119,13 +119,13 @@ ifeq ($(MAKECMDGOALS),archive)
 ### Rule (archive): objects (`*.o`) -> `ARCHIVE.a` (ar)
 $(ARCHIVE): $(OBJS)
 	@echo + AR "->" $(shell realpath $@ --relative-to .)
-	@$(AR) rcs $@ $^
+	@$(AR) rcs $@ $^ #r:替换或添加库(类似于有.o变就更新.a)c:创建库文件(把.o包装成.a)s:创建索引
 else
 # $(1): library name
 define LIB_TEMPLATE =
 $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a: force
 	@$$(MAKE) -s -C $$(AM_HOME)/$(1) archive #跳转到$(1)目录下,在该目录下进行make
-LINKAGE += $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a
+LINKAGE += $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a #把生成的am.a和klib.a放在链接列表
 endef
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)

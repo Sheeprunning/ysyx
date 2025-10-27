@@ -36,7 +36,7 @@ module bitrev (
 
   always@(negedge sck or posedge rst)begin
     if(rst)data_i<=8'b0;
-    else if(state==data_i_t) data_i<={data_i[6:0],mosi};
+    else if(state==data_i_t) data_i<={mosi,data_i[6:0]};
   end
 
   always@(posedge sck)begin
