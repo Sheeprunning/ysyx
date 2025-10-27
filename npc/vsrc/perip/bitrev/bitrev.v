@@ -40,7 +40,7 @@ module bitrev (
   end
 
   always@(posedge sck)begin
-    if(counter==3'd7)data_o<=data_i;
+    if(counter==3'd7)data_o<={mosi,data_i[7:1]};
     else if(state==data_o_t) begin
       data_o<={data_o[6:0],1'b0};
     end
