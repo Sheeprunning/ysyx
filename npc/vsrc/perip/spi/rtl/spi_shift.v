@@ -232,6 +232,8 @@ module spi_shift (clk, rst, latch, byte_sel, len, lsb, go,
     else
       data[rx_bit_pos[`SPI_CHAR_LEN_BITS-1:0]] <= #Tp rx_clk ? s_in : data[rx_bit_pos[`SPI_CHAR_LEN_BITS-1:0]];
   end
-
+always @(posedge clk)begin
+  if(go) $display("txdata:",data);
+end
 endmodule
 
