@@ -12,8 +12,8 @@ module bitrev (
   wire rst=ss;
   assign miso =ss? 1'b1:(state==data_o_t)?data_o[7]:1'b1;
 
-  always@(negedge sck or posedge rst)begin
-  $display("\033[1;32mmosi:%b\033[0m",mosi);
+  always@(posedge sck or posedge rst)begin
+  //$display("\033[1;32mmosi:%b\033[0m",mosi);
     if(rst) counter<=0;
     else begin
       case(state)

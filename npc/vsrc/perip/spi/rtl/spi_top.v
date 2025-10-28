@@ -282,8 +282,5 @@ module spi_top
                    .tip(tip), .last(last_bit),
                    .p_in(wb_dat_i), .p_out(rx),
                    .s_clk(sclk_pad_o), .s_in(miso_pad_i), .s_out(mosi_pad_o));
-always @(tip)begin
-  if(tip) $display("\033[1;31mspi-miso:%b spi-mosi:%b\033[0m",miso_pad_i,mosi_pad_o);
-end
 endmodule
 
