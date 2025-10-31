@@ -16,7 +16,7 @@ module bitrev (
   // miso输出：直接输出output_shift的最高位
   assign miso = data_ready?output_shift[7]:1'b1;
 
-  always @(posedge sck or posedge rst) begin
+  always @(negedge sck or posedge rst) begin
     if (rst) begin
       input_shift <= 8'b0;
       output_shift <= 8'b0;
@@ -45,15 +45,14 @@ module bitrev (
     if (rst) begin
       output_shift <= 8'b0;
     end else begin
-      if (data_ready) begin
-        // 有数据时输出反转后的数据
-        if (bit_cnt == 4'd7) begin
+    if (bit_cnt == 4'd7) begin
           // 第一次输出时加载完整反转数据
-          output_shift <= reversed_data;
-        end else begin
+          output_shift <= {input_shift[0], input_shift[1], input_shift[2], input_shift[3],
+                         input_shift[4], input_shift[5], input_shift[6], mosi};
+        end
+      else if (data_ready) begin
           // 后续输出移位
           output_shift <= {output_shift[6:0], 1'b0};
-        end
       end else begin
         // 无数据时输出0或其他默认值
         output_shift <= 8'b1;
