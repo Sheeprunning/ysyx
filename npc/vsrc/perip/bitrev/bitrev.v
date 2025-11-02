@@ -49,6 +49,8 @@ module bitrev (
           // 第一次输出时加载完整反转数据
           output_shift <= {input_shift[0], input_shift[1], input_shift[2], input_shift[3],
                          input_shift[4], input_shift[5], input_shift[6], mosi};
+          $display("%08b",{input_shift[0], input_shift[1], input_shift[2], input_shift[3],
+                         input_shift[4], input_shift[5], input_shift[6], mosi});
         end
       else if (data_ready) begin
           // 后续输出移位
