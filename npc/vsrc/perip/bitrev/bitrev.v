@@ -27,8 +27,8 @@ module bitrev (
     if(rst) state<=data_i_t;
     else begin
       case(state)
-        data_i_t: state<=(counter==3'd7)?data_o_t:state;
-        data_o_t: state<=(counter==3'd15)?data_i_t:state;
+        data_i_t: state<=(counter==4'd7)?data_o_t:state;
+        data_o_t: state<=(counter==4'd15)?data_i_t:state;
         default: $display("ERROR!");
       endcase
     end
@@ -40,7 +40,7 @@ module bitrev (
   end
 
   always@(negedge sck)begin
-    if(counter==3'd7)begin
+    if(counter==4'd7)begin
       data_o<={mosi,data_i[7:1]};
     end
     else if(state==data_o_t) begin
