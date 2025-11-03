@@ -46,9 +46,9 @@ SECTIONS {
   }>sram
 
   .stack (NOLOAD) :{
-    _stack_top = ALIGN(4);
     . = ORIGIN(sram) + LENGTH(sram);
     _stack_pointer = ALIGN(4);
+    _stack_top = _stack_pointer-0x2000;
   }>sram
   end = .;
   _end = .;
