@@ -511,9 +511,13 @@ assign io_slave_rid = 4'b0;
 
 // resp处理
 always @(*) begin
-    if(io_master_rresp!=2'b00 || io_master_bresp!=2'b00) begin  
+    if(io_master_rresp!=2'b00) begin  
+        $display("[CLK %t]ysyx_25080204.v: Access Fault!araddr=0x%08x", $time,io_master_araddr);
         npc_ebreak_finish();
-        $display("[CLK %0t] Access Fault!", $time);
+    end
+    if(io_master_bresp!=2'b00)begin
+      $display("[CLK %t]ysyx_25080204.v: Access Fault!awaddr=%0x08x", $time,io_master_awaddr);
+      npc_ebreak_finish();
     end
 end
 
