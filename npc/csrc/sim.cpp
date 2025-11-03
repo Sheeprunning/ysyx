@@ -126,12 +126,12 @@ extern "C"
     }
 }
 uint32_t flash[] = {
-    0xb7070010,
-    0x13071004,
-    0x2380e700,
-    0x1307a000,
-    0x2380e700,
-    0x6f000000
+    0x100007b7,
+    0x04100713,
+    0x00e78023,
+    0x00a00713,
+    0x00e78023,
+    0x0000006f
 };
 extern "C" void flash_read(int32_t addr, int32_t *data) { printf("flash:0x%08x\n",addr);*data=flash[addr]; }
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
