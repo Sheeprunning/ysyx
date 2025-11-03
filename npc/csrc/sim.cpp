@@ -125,8 +125,15 @@ extern "C"
       
     }
 }
-
-extern "C" void flash_read(int32_t addr, int32_t *data) { printf("flash:0x%08x\n",addr);*data=addr; }
+uint32_t flash[] = {
+    0xb7070010,
+    0x13071004,
+    0x2380e700,
+    0x1307a000,
+    0x2380e700,
+    0x6f000000
+};
+extern "C" void flash_read(int32_t addr, int32_t *data) { printf("flash:0x%08x\n",addr);*data=flash[addr]; }
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
   //printf("read mrom[0x%08x]=0x%08x\n",addr,pmem_read(addr,4));
   *data=pmem_read(addr&0xFFFFFFFC,4); 
