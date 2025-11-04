@@ -203,6 +203,15 @@ spi_top u0_spi_top (
   .miso_pad_i(spi_miso_t)
 );
 
+always @(*)begin
+  if(in_pready_ack)begin
+    if(in_pwrite_t)begin
+      $display("W addr=0x%08x wdata=0x%08x",in_paddr_t,in_pwdata_t);
+    end
+    else $display("R addr=0x%08x rdata=0x%08x",in_paddr_t,in_prdata);
+  end
+end
+
 `endif // FAST_FLASH
 
 endmodule
