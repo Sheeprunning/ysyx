@@ -79,10 +79,6 @@ module flash (
 
   assign miso = ss ? 1'b1 : ({(state == data_t && counter == 8'd0) ? data_bswap : data}[31]);
 
-  always@(negedge sck)begin
-    if(state == data_t)$display("\033[1;33m miso=%b\033[0m",miso);
-  end
-
 endmodule
 
 import "DPI-C" function void flash_read(input int addr, output int data);
