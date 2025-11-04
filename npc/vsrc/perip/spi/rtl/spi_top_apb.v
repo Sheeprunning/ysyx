@@ -204,12 +204,13 @@ spi_top u0_spi_top (
 );
 
 always @(*)begin
-  if(in_pready_ack)begin
-    if(in_pwrite_t)begin
-      $display("W addr=0x%08x wdata=0x%08x",in_paddr_t,in_pwdata_t);
-    end
-    else $display("R addr=0x%08x rdata=0x%08x",in_paddr_t,in_prdata);
-  end
+  // if(in_pready_ack)begin
+  //   if(in_pwrite_t)begin
+  //     $display("W addr=0x%08x wdata=0x%08x",in_paddr_t,in_pwdata_t);
+  //   end
+  //   else $display("R addr=0x%08x rdata=0x%08x",in_paddr_t,in_prdata);
+  // end
+  if(state==COMMON)$display("\033[1;35mmiso_t=%b\033[0m",spi_miso_t);
 end
 
 `endif // FAST_FLASH
