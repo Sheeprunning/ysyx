@@ -57,7 +57,7 @@ wire in_pready_ack;
 
 wire if_in_flash = (in_paddr>=flash_addr_start) && (in_paddr<=flash_addr_end);
 wire xip=if_in_flash && in_penable;
-wire common=(!if_in_flash) && in_penable;
+wire common=(!if_in_flash) && in_psel;
 wire go_bsy=in_prdata[8];
 
 localparam  IDLE=3'd0,
@@ -171,6 +171,7 @@ always @(*)begin
       in_pready=in_pready_ack;
     end
     default:begin
+      $display("\033[1;31m spi_top_apb.v 进入未知状态\033[0m");
       in_paddr_t=0;
       in_pwdata_t=0;
       in_pstrb_t=0;
