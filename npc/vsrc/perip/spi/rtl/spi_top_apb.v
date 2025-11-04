@@ -58,7 +58,7 @@ wire in_pready_ack;
 wire if_in_flash = (in_paddr>=flash_addr_start) && (in_paddr<=flash_addr_end);
 wire xip=if_in_flash && in_penable;
 wire common=(!if_in_flash) && in_psel;
-wire go_bsy=in_prdata[8];
+wire go_bsy=(in_paddr==32'h10001010&&in_pready_ack)?in_prdata[8]:0;
 
 localparam  IDLE=3'd0,
             XIP_TX=3'd1,   XIP_DIVIDER=3'd2,
@@ -75,7 +75,7 @@ always @(*)begin
     XIP_CTRL:       next_state=in_pready_ack?XIP_WAIT:state;
     XIP_WAIT:       next_state=(in_pready_ack&&!go_bsy)?XIP_RETURN:state;
     XIP_RETURN:     next_state=in_pready_ack?IDLE:state;
-    COMMON:         next_state=in_pready_ack?IDLE:state;
+    COMMON:         next_state=go_bsy?state:in_pready_ack?IDLE:state;
   endcase
 end
 
