@@ -16,7 +16,7 @@ module spi_top_apb #(
   input         in_pwrite,
   input  [31:0] in_pwdata,
   input  [3:0]  in_pstrb,
-  output        in_pready,
+  output reg    in_pready,
   output [31:0] in_prdata,
   output        in_pslverr,
 
@@ -48,24 +48,158 @@ assign in_prdata  = data[31:0];
 
 `else
 
+reg [31:0]in_paddr_t,in_pwdata_t;
+reg in_pwrite_t,in_psel_t,in_penable_t,spi_miso_t;
+reg [3:0]in_pstrb_t;
+reg [2:0]state,next_state;
+
+wire in_pready_ack;
+
+wire if_in_flash = (in_paddr>=flash_addr_start) && (in_paddr<=flash_addr_end);
+wire xip=if_in_flash && in_penable;
+wire common=(!if_in_flash) && in_penable;
+wire go_bsy=in_prdata[8];
+
+localparam  IDLE=3'd0,
+            XIP_TX=3'd1,   XIP_DIVIDER=3'd2,
+            XIP_SS=3'd3,   XIP_CTRL=3'd4,
+            XIP_WAIT=3'd5, XIP_RETRUN=3'd6,
+            COMMON=3'd7;
+
+always @(*)begin
+  case(state)
+    IDLE:           next_state=xip?XIP_TX:common?COMMON:state;
+    XIP_TX:         next_state=in_pready_ack?XIP_DIVIDER:state;
+    XIP_DIVIDER:    next_state=in_pready_ack?XIP_SS:state;
+    XIP_SS:         next_state=in_pready_ack?XIP_CTRL:state;
+    XIP_CTRL:       next_state=in_pready_ack?XIP_WAIT:state;
+    XIP_WAIT:       next_state=(in_pready_ack&&!go_bsy)?XIP_RETRUN:state;
+    XIP_RETRUN:     next_state=in_pready_ack?IDLE:state;
+    COMMON:         next_state=in_pready_ack?IDLE:state;
+  endcase
+end
+
+always @(posedge clock or posedge reset)begin
+  if(reset)begin
+    state<=IDLE;
+  end
+  else begin
+    state<=next_state;
+  end
+end
+
+always @(*)begin
+  case(state)
+    IDLE:begin
+      in_paddr_t=0;
+      in_pwdata_t=0;
+      in_pstrb_t=0;
+      in_pwrite_t=0;
+      in_psel_t=0;
+      in_penable_t=0;
+      spi_miso_t=0;
+      in_pready=0;
+    end
+    XIP_TX:begin
+      in_paddr_t=32'h10001004;//tx1
+      in_pwdata_t=32'h03000000+in_paddr[23:0];
+      in_pstrb_t=4'b1111;
+      in_pwrite_t=1;
+      in_psel_t=1;
+      in_penable_t=1;
+      spi_miso_t=spi_miso;
+      in_pready=0;
+    end
+    XIP_DIVIDER:begin
+      in_paddr_t=32'h10001014;
+      in_pwdata_t=32'd10;
+      in_pstrb_t=4'b1111;
+      in_pwrite_t=1;
+      in_psel_t=1;
+      in_penable_t=1;
+      spi_miso_t=spi_miso;
+      in_pready=0;
+    end
+    XIP_SS:begin
+      in_paddr_t=32'h10001018;
+      in_pwdata_t=32'h1;
+      in_pstrb_t=4'b1111;
+      in_pwrite_t=1;
+      in_psel_t=1;
+      in_penable_t=1;
+      spi_miso_t=spi_miso;
+      in_pready=0;
+    end
+    XIP_CTRL:begin
+      in_paddr_t=32'h10001010;
+      in_pwdata_t=32'b10010101000000;//ass=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=1
+      in_pstrb_t=4'b1111;
+      in_pwrite_t=1;
+      in_psel_t=1;
+      in_penable_t=1;
+      spi_miso_t=spi_miso;
+      in_pready=0;
+    end
+    XIP_WAIT:begin
+      in_paddr_t=32'h10001010;
+      in_pwdata_t=32'h0;
+      in_pstrb_t=4'b1111;
+      in_pwrite_t=0;
+      in_psel_t=1;
+      in_penable_t=1;
+      spi_miso_t=spi_miso;
+      in_pready=0;
+    end
+    XIP_RETRUN:begin
+      in_paddr_t=32'h10000000;
+      in_pwdata_t=32'h0;
+      in_pstrb_t=4'b1111;
+      in_pwrite_t=0;
+      in_psel_t=1;
+      in_penable_t=1;
+      spi_miso_t=spi_miso;
+      in_pready=in_pready_ack;
+    end
+    COMMON:begin
+      in_paddr_t=in_paddr;
+      in_pwdata_t=in_pwdata;
+      in_pstrb_t=in_pstrb;
+      in_pwrite_t=in_pwrite;
+      in_psel_t=in_psel;
+      in_penable_t=in_penable;
+      spi_miso_t=spi_miso;
+      in_pready=in_pready_ack;
+    end
+    default:begin
+      in_paddr_t=0;
+      in_pwdata_t=0;
+      in_pstrb_t=0;
+      in_pwrite_t=0;
+      in_psel_t=0;
+      in_penable_t=0;
+      spi_miso_t=1;
+    end
+  endcase
+end
+
 spi_top u0_spi_top (
   .wb_clk_i(clock),
   .wb_rst_i(reset),
-  .wb_adr_i(in_paddr[4:0]),
-  .wb_dat_i(in_pwdata),
+  .wb_adr_i(in_paddr_t[4:0]),
+  .wb_dat_i(in_pwdata_t),
   .wb_dat_o(in_prdata),
-  .wb_sel_i(in_pstrb),
-  .wb_we_i (in_pwrite),
-  .wb_stb_i(in_psel),
-  .wb_cyc_i(in_penable),
-  .wb_ack_o(in_pready),
+  .wb_sel_i(in_pstrb_t),
+  .wb_we_i (in_pwrite_t),
+  .wb_stb_i(in_psel_t),
+  .wb_cyc_i(in_penable_t),
+  .wb_ack_o(in_pready_ack),
   .wb_err_o(in_pslverr),
   .wb_int_o(spi_irq_out),
 
   .ss_pad_o(spi_ss),
   .sclk_pad_o(spi_sck),
   .mosi_pad_o(spi_mosi),
-  .miso_pad_i(spi_miso)
+  .miso_pad_i(spi_miso_t)
 );
 
 `endif // FAST_FLASH
