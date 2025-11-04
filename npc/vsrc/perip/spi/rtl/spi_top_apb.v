@@ -63,7 +63,7 @@ wire go_bsy=in_prdata[8];
 localparam  IDLE=3'd0,
             XIP_TX=3'd1,   XIP_DIVIDER=3'd2,
             XIP_SS=3'd3,   XIP_CTRL=3'd4,
-            XIP_WAIT=3'd5, XIP_RETRUN=3'd6,
+            XIP_WAIT=3'd5, XIP_RETURN=3'd6,
             COMMON=3'd7;
 
 always @(*)begin
@@ -73,8 +73,8 @@ always @(*)begin
     XIP_DIVIDER:    next_state=in_pready_ack?XIP_SS:state;
     XIP_SS:         next_state=in_pready_ack?XIP_CTRL:state;
     XIP_CTRL:       next_state=in_pready_ack?XIP_WAIT:state;
-    XIP_WAIT:       next_state=(in_pready_ack&&!go_bsy)?XIP_RETRUN:state;
-    XIP_RETRUN:     next_state=in_pready_ack?IDLE:state;
+    XIP_WAIT:       next_state=(in_pready_ack&&!go_bsy)?XIP_RETURN:state;
+    XIP_RETURN:     next_state=in_pready_ack?IDLE:state;
     COMMON:         next_state=in_pready_ack?IDLE:state;
   endcase
 end
@@ -150,7 +150,7 @@ always @(*)begin
       spi_miso_t=spi_miso;
       in_pready=0;
     end
-    XIP_RETRUN:begin
+    XIP_RETURN:begin
       in_paddr_t=32'h10000000;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
