@@ -85,6 +85,8 @@ always @(posedge clock or posedge reset)begin
   end
   else begin
     state<=next_state;
+    if(state==XIP_RETURN&&in_pready_ack)
+    $display("\033[1;%0t 32m return 0x%08x \033[0m",$time ,in_prdata );
   end
 end
 
@@ -159,7 +161,6 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
-      if(in_pready_ack)$display("\033[1;32m return 0x%08x \033[0m",in_prdata );
     end
     COMMON:begin
       in_paddr_t=in_paddr;
