@@ -101,7 +101,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_TX:begin
-    $display("TX!");
       in_paddr_t=32'h10001004;//tx1
       in_pwdata_t=32'h03000000+in_paddr[23:0];
       in_pstrb_t=4'b1111;
@@ -112,7 +111,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_DIVIDER:begin
-    $display("DIVIDER!");
       in_paddr_t=32'h10001014;
       in_pwdata_t=32'd10;
       in_pstrb_t=4'b1111;
@@ -123,7 +121,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_SS:begin
-    $display("SS!");
       in_paddr_t=32'h10001018;
       in_pwdata_t=32'h1;
       in_pstrb_t=4'b1111;
@@ -134,7 +131,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_CTRL:begin
-    $display("CTRL!");
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'b10010101000000;//ass=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=1
       in_pstrb_t=4'b1111;
@@ -145,7 +141,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_WAIT:begin
-    $display("WAIT!");
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
@@ -156,8 +151,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_RETURN:begin
-    $display("RETURN!");
-    if(in_pready_ack)$display("/033[1;32mRETURN 0x%08x/033[0m",in_prdata);
       in_paddr_t=32'h10000000;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
