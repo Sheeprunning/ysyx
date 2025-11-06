@@ -732,7 +732,7 @@ always @(posedge clk or posedge wb_rst_i) begin
     if (wb_rst_i)
         enable <= #1 1'b0;
     else
-        if (|dl & ~(|dlc))     // dl>0 & dlc==0
+        if (|dl & ~(|dlc))     // dl>0 & dlc==0 dlc会在设置了dl之后每周期减一
             enable <= #1 1'b1;
         else
             enable <= #1 1'b0;

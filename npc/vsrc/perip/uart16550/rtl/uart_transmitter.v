@@ -261,7 +261,7 @@ always @(posedge clk or posedge wb_rst_i) begin
     s_send_start :    begin
                 tf_pop <= #1 1'b0;
                 if (~|counter)
-                    counter <= #1 5'b01111;//15个周期换一次状态
+                    counter <= #1 5'b01111;//15个周期换一次状态?
                 else
                 if (counter == 5'b00001)
                 begin

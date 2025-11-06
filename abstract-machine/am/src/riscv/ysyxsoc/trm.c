@@ -5,7 +5,7 @@
 
 extern char _heap_start, _heap_end;
 extern char _sdata, _edata, _bss_start, _bss_end, _lsdata;
-int main(const char *args);
+int main(const char *args);//这是个声明，且函数默认是extern
 
 extern char _pmem_start;
 #define PMEM_SIZE (128 * 1024 * 1024)
