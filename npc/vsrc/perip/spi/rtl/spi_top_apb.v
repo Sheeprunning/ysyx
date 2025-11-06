@@ -145,6 +145,7 @@ always @(*)begin
       in_pready=0;
     end
     XIP_WAIT:begin
+    $display("WAIT!");
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
@@ -155,6 +156,8 @@ always @(*)begin
       in_pready=0;
     end
     XIP_RETURN:begin
+    $display("RETURN!");
+    if(in_pready_ack)$display("/033[1;32mRETURN 0x%08x/033[0m",in_prdata);
       in_paddr_t=32'h10000000;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
