@@ -13,7 +13,7 @@
 #include "disasm.h"
 #include "ftrace.h"
 
-#define CONFIG_MSIZE 0x8000000
+#define CONFIG_MSIZE 0x10000000
 #define CONFIG_MBASE 0x30000000
 
 
