@@ -136,7 +136,7 @@ uint32_t flash[] = {
 extern "C" void flash_read(int32_t addr, int32_t *data) {
   int araddr=FLASH_BASE+(addr&0xFFFFFFFC);
   int rdata=pmem_read(araddr,4);
-  printf("addr=0x%08x data=0x%08x",araddr,rdata); 
+  printf("addr=0x%08x data=0x%08x\n",araddr,rdata); 
   *data=rdata; 
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
