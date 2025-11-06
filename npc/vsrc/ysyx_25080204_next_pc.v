@@ -9,7 +9,7 @@ module ysyx_25080204_next_pc (
 );
 always @(*) begin
     if (rst)begin
-        next_pc=32'h30000000;           
+        next_pc=32'h20000000;           
     end
     else begin
         next_pc=bj_en?bj_addr:csr_jen?csr_j_addr:snpc;

@@ -85,8 +85,6 @@ always @(posedge clock or posedge reset)begin
   end
   else begin
     state<=next_state;
-    if(state==XIP_RETURN&&in_pready_ack)
-    $display("\033[1;32m [TIME:%0t]return 0x%08x \033[0m",$time ,in_prdata );
   end
 end
 
@@ -103,7 +101,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_TX:begin
-    $display("\033[1;35m [TIME:%0t]TX...tx=0x%08x \033[0m",$time,32'h03000000+in_paddr[23:0]);
       in_paddr_t=32'h10001004;//tx1
       in_pwdata_t=32'h03000000+in_paddr[23:0];
       in_pstrb_t=4'b1111;
@@ -134,7 +131,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_CTRL:begin
-    $display("\033[1;35m [TIME:%0t]CTRL \033[0m",$time);
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'b10010101000000;//ass=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=1
       in_pstrb_t=4'b1111;
@@ -145,7 +141,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_WAIT:begin
-    $display("\033[1;35m [TIME:%0t]WAIT \033[0m",$time);
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
@@ -156,7 +151,6 @@ always @(*)begin
       in_pready=0;
     end
     XIP_RETURN:begin
-    $display("\033[1;35m [TIME:%0t]RETURN \033[0m",$time);
       in_paddr_t=32'h10000000;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;

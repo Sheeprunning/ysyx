@@ -11,8 +11,8 @@ AM_SRCS := riscv/ysyxsoc/start.S \
 CFLAGS    += -fdata-sections -ffunction-sections
 CFLAGS    += -I$(AM_HOME)/am/src/riscv/ysyxsoc/include 
 LDSCRIPTS += $(AM_HOME)/scripts/ysyxsoc_linker.ld
-#LDFLAGS   += --defsym=_pmem_start=0x20000000 --defsym=_entry_offset=0x0 ysyxsoc用不到
-LDFLAGS   += --gc-sections -e _start #--gc-sections：清除未使用的垃圾段 -e _start：指定程序入口
+LDFLAGS   += --defsym=_pmem_start=0x20000000 --defsym=_entry_offset=0x0
+LDFLAGS   += --gc-sections -e _start #--gc-sections：清楚未使用的垃圾段 -e _start：指定程序入口
 
 MAINARGS_MAX_LEN = 64
 MAINARGS_PLACEHOLDER = the_insert-arg_rule_in_Makefile_will_insert_mainargs_here
