@@ -51,28 +51,29 @@ assign in_prdata  = data[31:0];
 reg [31:0]in_paddr_t,in_pwdata_t;
 reg in_pwrite_t,in_psel_t,in_penable_t,spi_miso_t;
 reg [3:0]in_pstrb_t;
-reg [2:0]state,next_state;
+reg [3:0]state,next_state;
 
 wire in_pready_ack;
 
 wire if_in_flash = (in_paddr>=flash_addr_start) && (in_paddr<=flash_addr_end);
 wire xip=if_in_flash && in_penable;
 wire common=(!if_in_flash) && in_psel;
-wire go_bsy=(in_paddr==32'h10001010&&in_pready_ack)?in_prdata[8]:0;
+wire go_bsy=(in_paddr_t==32'h10001010&&in_pready_ack)?in_prdata[8]:0;
 
-localparam  IDLE=3'd0,
-            XIP_TX=3'd1,   XIP_DIVIDER=3'd2,
-            XIP_SS=3'd3,   XIP_CTRL=3'd4,
-            XIP_WAIT=3'd5, XIP_RETURN=3'd6,
-            COMMON=3'd7;
+localparam  IDLE=4'd0,
+            XIP_TX=4'd1,   XIP_DIVIDER=4'd2,
+            XIP_SS=4'd3,   XIP_CTRL_CONFIG=4'd4, XIP_CTRL_GO=4'd5,
+            XIP_WAIT=4'd6, XIP_RETURN=4'd7,
+            COMMON=4'd8;
 
 always @(*)begin
   case(state)
     IDLE:           next_state=xip?XIP_TX:common?COMMON:state;
     XIP_TX:         next_state=in_pready_ack?XIP_DIVIDER:state;
     XIP_DIVIDER:    next_state=in_pready_ack?XIP_SS:state;
-    XIP_SS:         next_state=in_pready_ack?XIP_CTRL:state;
-    XIP_CTRL:       next_state=in_pready_ack?XIP_WAIT:state;
+    XIP_SS:         next_state=in_pready_ack?XIP_CTRL_CONFIG:state;
+    XIP_CTRL_CONFIG:next_state=in_pready_ack?XIP_CTRL_GO:state;
+    XIP_CTRL_GO    :next_state=in_pready_ack?XIP_WAIT:state;
     XIP_WAIT:       next_state=(in_pready_ack&&!go_bsy)?XIP_RETURN:state;
     XIP_RETURN:     next_state=in_pready_ack?IDLE:state;
     COMMON:         next_state=go_bsy?state:in_pready_ack?IDLE:state;
@@ -101,6 +102,7 @@ always @(*)begin
       in_pready=0;
     end
     XIP_TX:begin
+    //$display("\033[1;34m [TIME:%0t] [TX] tx=0x%08x\033[0m",$time,32'h03000000+in_paddr[23:0]);
       in_paddr_t=32'h10001004;//tx1
       in_pwdata_t=32'h03000000+in_paddr[23:0];
       in_pstrb_t=4'b1111;
@@ -130,7 +132,17 @@ always @(*)begin
       spi_miso_t=spi_miso;
       in_pready=0;
     end
-    XIP_CTRL:begin
+    XIP_CTRL_CONFIG:begin
+      in_paddr_t=32'h10001010;
+      in_pwdata_t=32'b10010001000000;//ass=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=0
+      in_pstrb_t=4'b1111;
+      in_pwrite_t=1;
+      in_psel_t=1;
+      in_penable_t=1;
+      spi_miso_t=spi_miso;
+      in_pready=0;
+    end
+    XIP_CTRL_GO:begin
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'b10010101000000;//ass=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=1
       in_pstrb_t=4'b1111;
@@ -141,6 +153,7 @@ always @(*)begin
       in_pready=0;
     end
     XIP_WAIT:begin
+    //if(in_pready_ack)$display("\033[1;34m [TIME:%0t] [WAIT] ctrl=0x%08x\033[0m",$time,in_prdata);
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
@@ -159,6 +172,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
+      //if(in_pready)$display("\033[1;33m [TIME:%0t] return 0x%08x\033[0m",$time,in_prdata);
     end
     COMMON:begin
       in_paddr_t=in_paddr;
@@ -171,7 +185,7 @@ always @(*)begin
       in_pready=in_pready_ack;
     end
     default:begin
-      $display("\033[1;31m spi_top_apb.v 进入未知状态\033[0m");
+      //$display("\033[1;31m spi_top_apb.v 进入未知状态\033[0m");
       in_paddr_t=0;
       in_pwdata_t=0;
       in_pstrb_t=0;
