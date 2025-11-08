@@ -8,7 +8,7 @@ module ysyx_25080204_pc (
     
     always @(posedge clk or posedge rst) begin
         if (rst)begin
-            pc<=32'h20000000; 
+            pc<=32'h30000000; 
         end
         else if(!stall)begin
             //$display("[CLK %0t]EXCUTE:pc:0x%08x next_pc:0x%08x", $time,pc,next_pc);

@@ -48,7 +48,7 @@ assign in_prdata  = data[31:0];
 
 `else
 
-reg [31:0]in_paddr_t,in_pwdata_t;
+reg [31:0]in_paddr_t,in_pwdata_t,in_prdata_o;
 reg in_pwrite_t,in_psel_t,in_penable_t,spi_miso_t;
 reg [3:0]in_pstrb_t;
 reg [3:0]state,next_state;
@@ -100,6 +100,7 @@ always @(*)begin
       in_penable_t=0;
       spi_miso_t=0;
       in_pready=0;
+      in_prdata=0;
     end
     XIP_TX:begin
     //$display("\033[1;34m [TIME:%0t] [TX] tx=0x%08x\033[0m",$time,32'h03000000+in_paddr[23:0]);
@@ -111,6 +112,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=0;
+      in_prdata=in_prdata_o;
     end
     XIP_DIVIDER:begin
       in_paddr_t=32'h10001014;
@@ -121,6 +123,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=0;
+      in_prdata=in_prdata_o;
     end
     XIP_SS:begin
       in_paddr_t=32'h10001018;
@@ -131,6 +134,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=0;
+      in_prdata=in_prdata_o;
     end
     XIP_CTRL_CONFIG:begin
       in_paddr_t=32'h10001010;
@@ -141,6 +145,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=0;
+      in_prdata=in_prdata_o;
     end
     XIP_CTRL_GO:begin
       in_paddr_t=32'h10001010;
@@ -151,6 +156,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=0;
+      in_prdata=in_prdata_o;
     end
     XIP_WAIT:begin
     //if(in_pready_ack)$display("\033[1;34m [TIME:%0t] [WAIT] ctrl=0x%08x\033[0m",$time,in_prdata);
@@ -162,6 +168,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=0;
+      in_prdata=in_prdata_o;
     end
     XIP_RETURN:begin
       in_paddr_t=32'h10000000;
@@ -172,6 +179,7 @@ always @(*)begin
       in_penable_t=1;
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
+      in_prdata={in_prdata_o[7:0],in_prdata_o[15:8],in_prdata_o[23:16],in_prdata_o[31:24]};
       //if(in_pready)$display("\033[1;33m [TIME:%0t] return 0x%08x\033[0m",$time,in_prdata);
     end
     COMMON:begin
@@ -183,6 +191,7 @@ always @(*)begin
       in_penable_t=in_penable;
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
+      in_prdata=in_prdata_o;
     end
     default:begin
       //$display("\033[1;31m spi_top_apb.v 进入未知状态\033[0m");
@@ -202,7 +211,7 @@ spi_top u0_spi_top (
   .wb_rst_i(reset),
   .wb_adr_i(in_paddr_t[4:0]),
   .wb_dat_i(in_pwdata_t),
-  .wb_dat_o(in_prdata),
+  .wb_dat_o(in_prdata_o),
   .wb_sel_i(in_pstrb_t),
   .wb_we_i (in_pwrite_t),
   .wb_stb_i(in_psel_t),

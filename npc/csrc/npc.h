@@ -8,6 +8,7 @@
 // #define CONFIG_MTRACE 1
 // #define CONFIG_WATCHPOINT 1
 // #define CONFIG_ITRACE 1
+// #define ITRACE_ONCE 1
 // #define DIFFTEST 1
 
 

@@ -12,7 +12,7 @@ VERILATOR_CFLAGS += -Wno-fatal
 VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/uart16550/rtl 
 VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/spi/rtl
 #刷新缓冲区
-# VERILATOR_CFLAGS += "+verilator+flush"
+VERILATOR_CFLAGS += --autoflush
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
@@ -63,7 +63,7 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation (without NVBoard)..."
-	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) -b
+	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) #-b
 endif
 
 # Include all filelist.mk to merge file lists

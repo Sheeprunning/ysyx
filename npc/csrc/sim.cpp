@@ -12,15 +12,26 @@ TOP_NAME* top;
 CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
+u_int32_t pre_pc;
 
-void print_inst(u_int32_t pc,u_int32_t inst){//只有在打开itrace时运行
+void print_inst(u_int32_t pc_now,u_int32_t inst){//只有在打开itrace时运行
   char logbuf[128];
   char *p=logbuf;
-  p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pc);
+  #ifdef ITRACE_ONCE
+    if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
+      p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pre_pc);
+      p += snprintf(p, 120,"%08x ",inst);
+      disassemble(p , logbuf+sizeof(logbuf)-p , pre_pc , (uint8_t*)&inst,4);
+      printf(COLOR_BLUE "%s\n" COLOR_RESET,logbuf);
+      log_add("itrace.txt",logbuf);
+    }
+  #else
+  p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pc_now);
   p += snprintf(p, 120,"%08x ",inst);
-  disassemble(p , logbuf+sizeof(logbuf)-p , pc , (uint8_t*)&inst,4);
+  disassemble(p , logbuf+sizeof(logbuf)-p , pc_now , (uint8_t*)&inst,4);
   printf(COLOR_BLUE "%s\n" COLOR_RESET,logbuf);
   log_add("itrace.txt",logbuf);
+  #endif
 }
 
 void step_and_dump_wave(){
@@ -48,8 +59,9 @@ void single_cycle() {
     #endif
   }
   step_and_dump_wave();
+  #ifdef DIFFTEST
   update_cpu();
-
+  #endif
   // nvboard_update();
 }
 
@@ -133,7 +145,13 @@ uint32_t flash[] = {
     0x00e78023,
     0x0000006f
 };
-extern "C" void flash_read(int32_t addr, int32_t *data) { printf("flash:0x%08x\n",addr);*data=flash[addr>>2]; }
+#define FLASH_BASE 0x30000000
+extern "C" void flash_read(int32_t addr, int32_t *data) { 
+  uint32_t araddr = FLASH_BASE + (addr&0xFFFFFFFC);
+  uint32_t rdata = pmem_read(araddr,4);
+  // printf("\033[1;33mread flash[0x%08x]=0x%08x\033[0m\n",araddr,rdata);
+  *data=rdata; 
+ }
 extern "C" void mrom_read(int32_t addr, int32_t *data) { 
   //printf("read mrom[0x%08x]=0x%08x\n",addr,pmem_read(addr,4));
   *data=pmem_read(addr&0xFFFFFFFC,4); 
@@ -193,6 +211,7 @@ void trace_and_difftest(u_int32_t pc){
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
+    pre_pc=pc;
     pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
     single_cycle();
     
