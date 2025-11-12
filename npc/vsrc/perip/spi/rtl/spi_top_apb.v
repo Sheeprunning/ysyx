@@ -52,13 +52,14 @@ reg [31:0]in_paddr_t,in_pwdata_t,in_prdata_o;
 reg in_pwrite_t,in_psel_t,in_penable_t,spi_miso_t;
 reg [3:0]in_pstrb_t;
 reg [3:0]state,next_state;
+reg pre_is_xip = 0;//通过记录是不是一直都在读取flash，可以跳过flash中的一些步骤
 
 wire in_pready_ack;
-
 wire if_in_flash = (in_paddr>=flash_addr_start) && (in_paddr<=flash_addr_end);
 wire xip=if_in_flash && in_penable;
 wire common=(!if_in_flash) && in_psel;
 wire go_bsy=(in_paddr_t==32'h10001010&&in_pready_ack)?in_prdata[8]:0;
+
 
 localparam  IDLE=4'd0,
             XIP_TX=4'd1,   XIP_DIVIDER=4'd2,
@@ -69,12 +70,12 @@ localparam  IDLE=4'd0,
 always @(*)begin
   case(state)
     IDLE:           next_state=xip?XIP_TX:common?COMMON:state;
-    XIP_TX:         next_state=in_pready_ack?XIP_DIVIDER:state;
+    XIP_TX:         next_state=(~in_pready_ack)?state:pre_is_xip?XIP_CTRL_GO:XIP_DIVIDER;
     XIP_DIVIDER:    next_state=in_pready_ack?XIP_SS:state;
     XIP_SS:         next_state=in_pready_ack?XIP_CTRL_CONFIG:state;
     XIP_CTRL_CONFIG:next_state=in_pready_ack?XIP_CTRL_GO:state;
     XIP_CTRL_GO    :next_state=in_pready_ack?XIP_WAIT:state;
-    XIP_WAIT:       next_state=(in_pready_ack&&!go_bsy)?XIP_RETURN:state;
+    XIP_WAIT:       next_state=(spi_irq_out)?XIP_RETURN:state;
     XIP_RETURN:     next_state=in_pready_ack?IDLE:state;
     COMMON:         next_state=go_bsy?state:in_pready_ack?IDLE:state;
   endcase
@@ -101,6 +102,7 @@ always @(*)begin
       spi_miso_t=0;
       in_pready=0;
       in_prdata=0;
+      pre_is_xip=0;
     end
     XIP_TX:begin
     //$display("\033[1;34m [TIME:%0t] [TX] tx=0x%08x\033[0m",$time,32'h03000000+in_paddr[23:0]);
@@ -138,7 +140,7 @@ always @(*)begin
     end
     XIP_CTRL_CONFIG:begin
       in_paddr_t=32'h10001010;
-      in_pwdata_t=32'b10010001000000;//ass=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=0
+      in_pwdata_t=32'b11010001000000;//ass=1,ie=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=0
       in_pstrb_t=4'b1111;
       in_pwrite_t=1;
       in_psel_t=1;
@@ -149,7 +151,7 @@ always @(*)begin
     end
     XIP_CTRL_GO:begin
       in_paddr_t=32'h10001010;
-      in_pwdata_t=32'b10010101000000;//ass=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=1
+      in_pwdata_t=32'b11010101000000;//ass=1,ie=1,lsb=0,tx_neg=1,rx_neg=0,charlen=64,go/bsy=1
       in_pstrb_t=4'b1111;
       in_pwrite_t=1;
       in_psel_t=1;
@@ -163,9 +165,9 @@ always @(*)begin
       in_paddr_t=32'h10001010;
       in_pwdata_t=32'h0;
       in_pstrb_t=4'b1111;
-      in_pwrite_t=0;
-      in_psel_t=1;
-      in_penable_t=1;
+      in_pwrite_t=0;//拉低使能，不读取ctrl，降低能耗
+      in_psel_t=0;
+      in_penable_t=0;
       spi_miso_t=spi_miso;
       in_pready=0;
       in_prdata=in_prdata_o;
@@ -180,6 +182,7 @@ always @(*)begin
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
       in_prdata={in_prdata_o[7:0],in_prdata_o[15:8],in_prdata_o[23:16],in_prdata_o[31:24]};
+      pre_is_xip=1;
       //if(in_pready)$display("\033[1;33m [TIME:%0t] return 0x%08x\033[0m",$time,in_prdata);
     end
     COMMON:begin
@@ -192,6 +195,7 @@ always @(*)begin
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
       in_prdata=in_prdata_o;
+      pre_is_xip = 0;
     end
     default:begin
       //$display("\033[1;31m spi_top_apb.v 进入未知状态\033[0m");

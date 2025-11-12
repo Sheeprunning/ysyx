@@ -15,12 +15,15 @@ module ysyx_25080204_CSR(
     output [31:0]next_pc 
 );
 localparam  MSTATUS =32'h300,   MTVEC = 32'h305,
-            MEPC = 32'h341,     MCAUSE = 32'h342;
+            MEPC = 32'h341,     MCAUSE = 32'h342,
+            MVENDORID = 32'hf11,MARCHID = 32'hf12;
 
 localparam MIE=7,MPIE=3;
 
 wire [31:0]csr_wdata ;
 reg [31:0]mstatus,mtvec,mepc,mcause;
+reg [31:0]mvendorid=32'h79737978;
+reg [31:0]marchid=32'h17eb81c;
 reg [31:0]e_cause;//环境调用异常号
 
 assign csr_wdata = (csr_op == 3'b001) ? wdata :        // CSRRW: 直接写寄存器值
@@ -83,7 +86,9 @@ end
 assign rdata =  (raddr==MSTATUS)?mstatus:
                 (raddr==MTVEC)?mtvec:
                 (raddr==MEPC)?mepc:
-                (raddr==MCAUSE)?mcause:32'hdeadddd;
+                (raddr==MCAUSE)?mcause:
+                (raddr==MVENDORID)?mvendorid:
+                (raddr==MARCHID)?marchid:32'hdeadddd;
 
 assign next_pc=en_ecall?mtvec:en_mret?mepc:32'b0;
 

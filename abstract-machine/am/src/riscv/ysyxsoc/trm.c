@@ -14,6 +14,12 @@ extern char _pmem_start;
 Area heap = RANGE(&_heap_start, &_heap_end);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
+static inline uint32_t read_csr(int csr) {
+    uint32_t value;
+    __asm__ volatile ("csrr %0, %1" : "=r"(value) : "i"(csr));
+    return value;
+}
+
 void putch(char ch) {
   while( (inb(UART_LSR) & 0x20) == 0);
   outb(UART_THR, ch);
@@ -39,7 +45,14 @@ void uart_init() {
   outb(UART_LCR,lcr & 0x7F);
 }
 
+void id_read(void) {
+    uint32_t vendor_id = read_csr(0xF11);  // mvendorid
+    uint32_t arch_id = read_csr(0xF12);    // marchid
+    printf("0x%x 0x%x\n", vendor_id,arch_id);
+}
+
 void _trm_init() {
+  // id_read();
   bootloader();
   uart_init();
   int ret = main(mainargs);
