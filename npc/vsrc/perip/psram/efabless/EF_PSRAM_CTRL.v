@@ -83,7 +83,7 @@ module PSRAM_READER (
     always @ (posedge clk or negedge rst_n)
         if(!rst_n)
             sck <= 1'b0;
-        else if(~ce_n)
+        else if(~ce_n)//ce_n(开始读数据选中)，sck1周期翻转一次，也就是普通时钟的2倍
             sck <= ~ sck;
         else if(state == IDLE)
             sck <= 1'b0;
@@ -92,7 +92,7 @@ module PSRAM_READER (
     always @ (posedge clk or negedge rst_n)
         if(!rst_n)
             ce_n <= 1'b1;
-        else if(state == READ)
+        else if(state == READ)//psram开始工作
             ce_n <= 1'b0;
         else
             ce_n <= 1'b1;
@@ -101,7 +101,7 @@ module PSRAM_READER (
         if(!rst_n)
             counter <= 8'b0;
         else if(sck & ~done)
-            counter <= counter + 1'b1;
+            counter <= counter + 1'b1;//可以当做sck每个上升沿计数，从而计算发送了个半字节
         else if(state == IDLE)
             counter <= 8'b0;
 
@@ -110,23 +110,23 @@ module PSRAM_READER (
             saddr <= 24'b0;
         else if((state == IDLE) && rd)
             //saddr <= {addr[23:2], 2'b0};
-            saddr <= {addr[23:0]};
+            saddr <= {addr[23:0]};//对地址进行锁存
 
     // Sample with the negedge of sck
-    wire[1:0] byte_index = {counter[7:1] - 8'd10}[1:0];
+    wire[1:0] byte_index = {counter[7:1] - 8'd10}[1:0];//以counter=20开始，每个data_index保持2次，获取2次4位
     always @ (posedge clk)
         if(counter >= 20 && counter <= FINAL_COUNT)
             if(sck)
-                data[byte_index] <= {data[byte_index][3:0], din}; // Optimize!
+                data[byte_index] <= {data[byte_index][3:0], din}; // Optimize!移位，将新4位拼接
 
-    assign dout     =   (counter < 8)   ?   {3'b0, CMD_EBH[7 - counter]}:
-                        (counter == 8)  ?   saddr[23:20]        :
+    assign dout     =   (counter < 8)   ?   {3'b0, CMD_EBH[7 - counter]}://分阶段发送，前8个周期发送命令
+                        (counter == 8)  ?   saddr[23:20]        ://开始发送24位地址
                         (counter == 9)  ?   saddr[19:16]        :
                         (counter == 10) ?   saddr[15:12]        :
                         (counter == 11) ?   saddr[11:8]         :
                         (counter == 12) ?   saddr[7:4]          :
                         (counter == 13) ?   saddr[3:0]          :
-                        4'h0;
+                        4'h0;//开始接收
 
     assign douten   = (counter < 14);
 
@@ -135,9 +135,13 @@ module PSRAM_READER (
     generate
         genvar i;
         for(i=0; i<4; i=i+1)
-            assign line[i*8+7: i*8] = data[i];
+            assign line[i*8+7: i*8] = data[i];//把data拼接成32位的line 可以看出来是小段序（data[0]先传输，放在小端）
     endgenerate
-
+    // always@(posedge clk)begin
+    // if(counter >= 20 && counter <= FINAL_COUNT)
+    //             if(sck)$display("\033[1;36m%02d data:0x%x\033[0m",counter-20,din);
+    // if(done)$display("\033[1;35mline:0x%08x\033[0m",line);
+    // end
 
 endmodule
 
