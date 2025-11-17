@@ -39,8 +39,9 @@ module EF_PSRAM_CTRL_wb (
     output  wire [3:0]      douten
 );
 
-    localparam  ST_IDLE = 1'b0,
-                ST_WAIT = 1'b1;
+    localparam  ST_IDLE = 2'b0,
+                ST_WAIT = 2'b1,
+                ST_QPI  = 2'd2; 
 
     wire        mr_sck;
     wire        mr_ce_n;
@@ -69,15 +70,20 @@ module EF_PSRAM_CTRL_wb (
     //wire[3:0]   wb_byte_sel     =   sel_i & {4{wb_we}};
 
     // The FSM
-    reg         state, nstate;
+    reg    [1:0]   state, nstate;
     always @ (posedge clk_i or posedge rst_i)
         if(rst_i)
-            state <= ST_IDLE;
+            state <= ST_QPI;
         else
             state <= nstate;
 
     always @* begin
         case(state)
+            ST_QPI  :
+                if(mr_done)
+                    nstate = ST_IDLE;
+                else
+                    nstate = ST_QPI;
             ST_IDLE :
                 if(wb_valid)
                     nstate = ST_WAIT;
@@ -91,6 +97,7 @@ module EF_PSRAM_CTRL_wb (
                     nstate = ST_WAIT;
         endcase
     end
+
 
     wire [2:0]  size =  (sel_i == 4'b0001) ? 1 :
                         (sel_i == 4'b0010) ? 1 :
@@ -127,7 +134,7 @@ module EF_PSRAM_CTRL_wb (
                         2'b00;
                       */
 
-    assign mr_rd    = ( (state==ST_IDLE ) & wb_re );
+    assign mr_rd    = ( (state==ST_IDLE ) & wb_re ||  (state==ST_QPI));
     assign mw_wr    = ( (state==ST_IDLE ) & wb_we );
 
     PSRAM_READER MR (

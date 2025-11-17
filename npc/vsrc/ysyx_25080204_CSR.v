@@ -16,7 +16,8 @@ module ysyx_25080204_CSR(
 );
 localparam  MSTATUS =32'h300,   MTVEC = 32'h305,
             MEPC = 32'h341,     MCAUSE = 32'h342,
-            MVENDORID = 32'hf11,MARCHID = 32'hf12;
+            MVENDORID = {{20{1'b1}},12'hf11},
+            MARCHID = {{20{1'b1}},12'hf12};
 
 localparam MIE=7,MPIE=3;
 

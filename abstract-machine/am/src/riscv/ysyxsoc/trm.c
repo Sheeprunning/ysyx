@@ -46,15 +46,15 @@ void uart_init() {
 }
 
 void id_read(void) {
-    uint32_t vendor_id = read_csr(0xF11);  // mvendorid
-    uint32_t arch_id = read_csr(0xF12);    // marchid
+    uint32_t vendor_id = read_csr(0xf11);  // mvendorid
+    uint32_t arch_id = read_csr(0xf12);    // marchid
     printf("0x%x 0x%x\n", vendor_id,arch_id);
 }
 
 void _trm_init() {
-  // id_read();
   bootloader();
   uart_init();
+  //id_read();
   int ret = main(mainargs);
   halt(ret);
 }
