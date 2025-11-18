@@ -78,7 +78,7 @@ always @(posedge sck) begin
     if (state == CMD && counter == 5'd7) begin
     // $display("cmd:%xh",{cmd[6:0],dio[0]});
         if (!qpi && {cmd[6:0],dio[0]} == 8'h35) begin
-            $display("\033[1;32mEnter QPI mode\033[0m");
+            // $display("\033[1;32mEnter QPI mode\033[0m");
             qpi <= 1'b1;
         end else if (qpi && cmd == 8'hF5) begin
             qpi <= 1'b0;
@@ -91,8 +91,8 @@ end
     if(rst)addr<=0;
     else if(state==ADDR)begin 
       addr<={addr[19:0],dio};
-      if(counter==5'd5)
-      $display("cmd:%xh",cmd);
+      // if(counter==5'd5)
+      // $display("cmd:%xh",cmd);
     end
   end
 
@@ -103,7 +103,7 @@ end
     if(rst)wdata<=0;
     else if(state==WRITE)begin 
       sram[waddr]<={sram[waddr][3:0],dio};
-      $display("WRITE----sram[%08x]=%04x",waddr,dio);
+      // $display("WRITE----sram[%08x]=%04x",waddr,dio);
     end
   end
 
@@ -135,7 +135,7 @@ end
     else if(state==READ)begin
       rdata[byte_index_r]<={rdata[byte_index_r][3:0],4'b0};
       dio_out<=rdata[byte_index_r][7:4];
-      $display("\033[1;33mrdata[0x%08x]=0x%x\033[0m",addr,rdata[byte_index_r][7:4]);
+      // $display("\033[1;33mrdata[0x%08x]=0x%x\033[0m",addr,rdata[byte_index_r][7:4]);
     end
   end 
 

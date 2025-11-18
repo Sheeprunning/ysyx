@@ -3,20 +3,31 @@ ENTRY(_start)
 MEMORY {
   /* mrom(rx) : ORIGIN = 0x20000000, LENGTH = 4K */
   flash(rx) : ORIGIN = 0x30000000, LENGTH = 256M
+  /* psram(rwx): ORIGIN = 0x80000000, LENGTH = 4M */
   sram(rwx) : ORIGIN = 0x0f000000, LENGTH = 8K
 }
 SECTIONS {
   . = ORIGIN(flash);
-  .text : {
+  .boot : {
     *(entry)
-    *(.text*)
-  } > flash AT> flash
-  etext = .;
-  _etext = .;
+    
+  } >flash AT > flash
 
+  . = ORIGIN(sram);
+  .text : {
+    _stext = .;
+    *(.text*)
+    _etext = .;
+  } > sram AT> flash
+  _lstext = LOADADDR(.text);
+  etext = .;
+  
   .rodata : {
+    _srodata = .;
     *(.rodata*)
-  }
+    _erodata = .;
+  } > sram AT > flash
+  _lsrodata = LOADADDR(.rodata);
 
   .data : {
     _sdata = .;
@@ -34,8 +45,6 @@ SECTIONS {
     *(.scommon)
     _bss_end = .;
   }>sram
-  /* _data_size =ABSOLUTE(_edata - _sdata);
-  _bss_size = ABSOLUTE(_bss_end - _bss_start); */
 
   .heap (NOLOAD) :{
     . = ALIGN(4);
@@ -45,9 +54,10 @@ SECTIONS {
   }>sram
 
   .stack (NOLOAD) :{
-    _stack_top = ALIGN(4);
-    . = ORIGIN(sram) + LENGTH(sram);
-    _stack_pointer = ALIGN(4);
+    . = ALIGN(4);
+    _stack_top = .;
+    _stack_pointer = ORIGIN(sram) + LENGTH(sram);
+    . = _stack_pointer;
   }>sram
   end = .;
   _end = .;

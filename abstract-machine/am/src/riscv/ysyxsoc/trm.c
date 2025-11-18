@@ -4,7 +4,9 @@
 #include <klib.h>
 
 extern char _heap_start, _heap_end;
-extern char _sdata, _edata, _bss_start, _bss_end, _lsdata;
+extern char _sdata, _edata,  _lsdata , _bss_start, _bss_end;
+extern char _stext, _etext, _lstext;
+extern char _srodata, _erodata, _lsrodata;
 int main(const char *args);
 
 extern char _pmem_start;
@@ -29,12 +31,36 @@ void halt(int code) {
   ysyxsoc_trap(code);
   while (1);
 }
+#define BOOT_SECTION __attribute__((section("entry")))
 
-void bootloader(){
+BOOT_SECTION void *bootset(void *s, int c, size_t n) {
+  char *p=s;
+  for(int i=0;i<n;i++){
+    *p=c;
+    p++;
+  }
+  return s;
+}
+
+BOOT_SECTION void *bootcpy(void *out, const void *in, size_t n) {
+  unsigned char *d = out;
+  const unsigned char *s = in;
+  while(n--) {
+    *d++ = *s++;
+  }
+  return out;
+}
+
+BOOT_SECTION void _bootloader(){
   size_t data_size = &_edata - &_sdata;
+  size_t rodata_size = &_erodata - &_srodata;
+  size_t text_size = &_etext - &_stext;
   size_t bss_size = &_bss_end - &_bss_start;
-  memcpy(&_sdata,&_lsdata,data_size);
-  memset(&_bss_start,0,bss_size);
+  bootcpy(&_sdata,&_lsdata,data_size);
+  bootcpy(&_srodata,&_lsrodata,rodata_size);
+  bootcpy(&_stext,&_lstext,text_size);
+  bootset(&_bss_start,0,bss_size);
+  return ;
 }
 
 void uart_init() {
@@ -52,7 +78,6 @@ void id_read(void) {
 }
 
 void _trm_init() {
-  bootloader();
   uart_init();
   //id_read();
   int ret = main(mainargs);

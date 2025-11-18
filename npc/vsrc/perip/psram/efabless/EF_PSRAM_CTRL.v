@@ -150,12 +150,12 @@ module PSRAM_READER (
         for(i=0; i<4; i=i+1)
             assign line[i*8+7: i*8] = data[i];//把data拼接成32位的line 可以看出来是小段序（data[0]先传输，放在小端）
     endgenerate
-    always@(posedge clk)begin
-    if(counter >= (20-`OFFSET) && counter <= FINAL_COUNT)
-                if(sck)$display("\033[1;36m%02d data:0x%x\033[0m",counter-14,din);
+    // always@(posedge clk)begin
+    // if(counter >= (20-`OFFSET) && counter <= FINAL_COUNT)
+    //             if(sck)$display("\033[1;36m%02d data:0x%x\033[0m",counter-14,din);
     //if(done)$display("\033[1;35mline:0x%08x\033[0m",line);
     // if(state==QPI&&sck)$display("\033[1;34mdout:0x%02x\033[0m",dout);
-    end
+    // end
 
 endmodule
 
