@@ -3,6 +3,7 @@
 #include <ysyxsoc.h>
 #include <klib.h>
 
+extern char _sboot, _eboot, _lsboot;
 extern char _heap_start, _heap_end;
 extern char _sdata, _edata,  _lsdata , _bss_start, _bss_end;
 extern char _stext, _etext, _lstext;
@@ -31,7 +32,18 @@ void halt(int code) {
   ysyxsoc_trap(code);
   while (1);
 }
-#define BOOT_SECTION __attribute__((section("entry")))
+#define ENTRY_SECTION __attribute__((section("entry")))
+ENTRY_SECTION void fsbl_bootloader(){
+  size_t boot_size = &_eboot - &_sboot;
+  char *dest = &_sboot;
+  const char *src = &_lsboot;
+  
+  for(size_t i = 0; i < boot_size; i++) {
+    dest[i] = src[i];
+  }
+}
+
+#define BOOT_SECTION __attribute__((section("boot")))
 
 BOOT_SECTION void *bootset(void *s, int c, size_t n) {
   char *p=s;
@@ -78,6 +90,7 @@ void id_read(void) {
 }
 
 void _trm_init() {
+  _bootloader();
   uart_init();
   //id_read();
   int ret = main(mainargs);
