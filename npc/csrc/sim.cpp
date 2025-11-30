@@ -13,6 +13,9 @@ CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
 u_int32_t pre_pc;
+uint64_t g_timer = 0;
+uint64_t g_cycle = 0;
+uint64_t g_inst  = 0;
 
 void print_inst(u_int32_t pc_now,u_int32_t inst){//只有在打开itrace时运行
   char logbuf[128];
@@ -190,11 +193,14 @@ int isa_reg_str2val(const char *s, bool *success){
 }
 
 void trace_and_difftest(u_int32_t pc){
-  #ifdef DIFFTEST
+  
     if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
+      g_inst++;
+      #ifdef DIFFTEST
       difftest_step(pc, cpu.pc);
+      #endif
     }
-  #endif
+  
   #ifdef CONFIG_WATCHPOINT
   bool success=true;
   int change;
@@ -209,12 +215,21 @@ void trace_and_difftest(u_int32_t pc){
 #endif
 }
 
+static void statistic() {
+  PRINTF_COLOR(COLOR_CYAN,"host time spent = %ld  us \n", g_timer);
+  PRINTF_COLOR(COLOR_CYAN,"total cycle     = %ld \n" , g_cycle);
+  PRINTF_COLOR(COLOR_CYAN,"total inst      = %ld \n" , g_inst);
+  PRINTF_COLOR(COLOR_BLUE,"IPC = %ld \n" , g_inst / g_cycle);
+  if (g_timer > 0) PRINTF_COLOR(COLOR_BLUE, "simulation frequency = %ld cycle/s\n", g_cycle * 1000000 / g_timer);
+  else PRINTF_COLOR(COLOR_RED,"Finish running in less than 1 us and can not calculate the simulation frequency\n");
+}
+
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
     pre_pc=pc;
     pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
     single_cycle();
-    
+    g_cycle++;
     trace_and_difftest(cpu.pc);//删除了decoder的部分
           
        
@@ -230,8 +245,12 @@ void cpu_exec(uint32_t n){
       return;
     default: npc_state.state = NPC_RUNNING;
   }
-
+  uint64_t timer_start = get_time();
   execute(n);
+
+  uint64_t timer_end = get_time();
+  g_timer += timer_end - timer_start;
+
   switch (npc_state.state) {
     case NPC_RUNNING: npc_state.state = NPC_STOP; break;
 
@@ -242,7 +261,7 @@ void cpu_exec(uint32_t n){
          ANSI_FMT("HIT BAD TRAP", COLOR_RED)))
      << " at pc = 0x" << hex << npc_state.halt_pc << dec<<endl;
       // fall through
-    //case NPC_QUIT: statistic();
+    case NPC_QUIT: statistic();
   }
 }
 

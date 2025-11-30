@@ -21,6 +21,10 @@
 #define COLOR_CYAN    "\033[1;36m"
 #define COLOR_RESET   "\033[0m"
 #define ANSI_FMT(str, color) color str COLOR_RESET
+#define PRINTF_COLOR(color, format, ...) do { \
+    printf("%s" format "%s", color, ##__VA_ARGS__, COLOR_RESET); \
+} while(0)
+
 
 #define DEVICE_BASE 0xa0000000
 #define MMIO_BASE 0xa0000000

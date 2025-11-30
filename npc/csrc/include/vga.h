@@ -2,7 +2,7 @@
 #define _VGA_H_
 
 #include <SDL2/SDL.h>
-#include "time.h"
+#include "timer.h"
 #include "npc.h"
 
 

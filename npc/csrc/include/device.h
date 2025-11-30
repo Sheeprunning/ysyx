@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 #include "npc.h"
-#include "time.h"
+#include "timer.h"
 #include "vga.h"
 #endif

@@ -338,7 +338,7 @@ end
 localparam DELAY_W = 4;
 
 reg [DELAY_W-1:0] delay_q;
-reg [DELAY_W-1:0] delay_r;
+reg [DELAY_W-1:0] delay_r;//由于delay_r是在组合逻辑中赋值，所以需要delay_q锁存，避免 组合逻辑反馈环路
 
 /* verilator lint_off WIDTH */
 
@@ -557,8 +557,8 @@ begin
         addr_q        <= addr_row_w;
         bank_q        <= addr_bank_w;
 
-        active_row_q[addr_bank_w]  <= addr_row_w;
-        row_open_q[addr_bank_w]    <= 1'b1;
+        active_row_q[addr_bank_w]  <= addr_row_w;//记录每个bank有效的row
+        row_open_q[addr_bank_w]    <= 1'b1;//设置为该bank为打开
     end
     //-----------------------------------------
     // STATE_PRECHARGE

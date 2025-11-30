@@ -75,6 +75,7 @@ $(CSRCS):$(LIBCAPSTONE)
 # rules for verilator
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
+CXXFLAGS += -I$(abspath ./csrc/include)
 LDFLAGS += -lreadline -lhistory -lncurses
 CXXFLAGS += -fsanitize=address
 LDFLAGS += -fsanitize=address
