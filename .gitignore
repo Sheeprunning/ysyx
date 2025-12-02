@@ -6,8 +6,8 @@
 !/nanos-lite/*
 !/navy-apps/*
 !/npc/*
-!/am-kernels/*
-!/ysyxSoC/*  
+!/am-kernels
+!/ysyxSoC 
 !Makefile
 !README.md
 !.gitignore
