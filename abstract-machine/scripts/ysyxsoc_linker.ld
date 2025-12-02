@@ -56,7 +56,7 @@ SECTIONS {
   .heap (NOLOAD) :{
     /* . = ALIGN(4); */
     _heap_start = .;
-    . = . + 0x8000;
+    . = . + 0x10000;
     _heap_end = .;
   }>psram
 

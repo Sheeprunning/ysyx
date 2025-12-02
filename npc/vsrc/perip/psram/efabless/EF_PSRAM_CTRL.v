@@ -41,7 +41,7 @@
 `timescale              1ns/1ps
 `default_nettype        none
 `define OFFSET 6
-
+/* verilator lint_off DECLFILENAME */
 module PSRAM_READER (
     input   wire            clk,
     input   wire            rst_n,
@@ -252,3 +252,4 @@ module PSRAM_WRITER (
 
 
 endmodule
+/* verilator lint_on DECLFILENAME */

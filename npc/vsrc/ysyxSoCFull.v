@@ -17,6 +17,7 @@
     `define ASSERT_VERBOSE_COND_ 1
   `endif // ASSERT_VERBOSE_COND
 `endif // not def ASSERT_VERBOSE_COND_
+/* verilator lint_off DECLFILENAME */
 module AXI4Xbar(	// home/sheeprunning/ysyx-workbench/ysyxSoC/rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   input         clock,	// home/sheeprunning/ysyx-workbench/ysyxSoC/rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
                 reset,	// home/sheeprunning/ysyx-workbench/ysyxSoC/rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -1461,7 +1462,7 @@ module CPU(	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/CPU.scala:33:9
   input  [1:0]  auto_master_out_rresp,	// home/sheeprunning/ysyx-workbench/ysyxSoC/rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_master_out_rlast	// home/sheeprunning/ysyx-workbench/ysyxSoC/rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
 );
-
+/* verilator lint_off PINCONNECTEMPTY */
   ysyx_25080204 cpu (	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/CPU.scala:38:21
     .clock                   (clock),
     .reset                   (reset),
@@ -5390,7 +5391,8 @@ module ysyxSoCTop(	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/Top.scala:13:
     .externalPins_uart_tx    (/* unused */)
   );	// home/sheeprunning/ysyx-workbench/ysyxSoC/src/Top.scala:18:20
 endmodule
-
+/* verilator lint_on PINCONNECTEMPTY */
+/* verilator lint_on DECLFILENAME */
 
 // ----- 8< ----- FILE "./MROMHelper.v" ----- 8< -----
 

@@ -82,7 +82,7 @@ module flash (
 endmodule
 
 import "DPI-C" function void flash_read(input int addr, output int data);
-
+/* verilator lint_off DECLFILENAME */
 module flash_cmd(
   input             clock,
   input             valid,
@@ -99,3 +99,4 @@ module flash_cmd(
       end
   end
 endmodule
+/* verilator lint_on DECLFILENAME */

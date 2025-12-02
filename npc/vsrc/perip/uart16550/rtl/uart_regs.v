@@ -231,7 +231,7 @@
 
 `define UART_DL1 7:0
 `define UART_DL2 15:8
-
+/* verilator lint_off DEFPARAM */
 module uart_regs (clk,
     wb_rst_i, wb_addr_i, wb_dat_i, wb_dat_o, wb_we_i, wb_re_i,
 
@@ -923,3 +923,4 @@ end
 `endif
 
 endmodule
+/* verilator lint_on DEFPARAM */
