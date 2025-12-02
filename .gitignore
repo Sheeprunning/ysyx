@@ -7,7 +7,7 @@
 !/navy-apps/*
 !/npc/*
 !/am-kernels/*
-!/ysyxsoc/*  
+!/ysyxSoC/*  
 !Makefile
 !README.md
 !.gitignore
