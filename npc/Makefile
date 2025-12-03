@@ -9,8 +9,8 @@ VERILATOR_CFLAGS += -MMD --build -cc  --trace --Wall\
 #将警告视为非致命错误
 VERILATOR_CFLAGS += -Wno-fatal
 #设置include路径
-VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/uart16550/rtl 
-VERILATOR_CFLAGS += -I$(YSYXSOC_HOME)/perip/spi/rtl
+VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/uart16550/rtl 
+VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/spi/rtl
 #刷新缓冲区
 VERILATOR_CFLAGS += --autoflush
 BUILD_DIR = ./build
