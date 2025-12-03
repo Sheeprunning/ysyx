@@ -11,12 +11,6 @@ module sdram(
   inout [15:0] dq
 );
 
-  // 4个Bank:4 * 8192行 * 512列 * 16位
-  reg [15:0] bank0 [0:8191][0:511];
-  reg [15:0] bank1 [0:8191][0:511];
-  reg [15:0] bank2 [0:8191][0:511];
-  reg [15:0] bank3 [0:8191][0:511];
-
   reg [1:0] latch_bank;
   reg [12:0]latch_row;
   reg [8:0] latch_col;
@@ -39,16 +33,8 @@ module sdram(
   wire [3:0]command={cs,ras,cas,we};
   wire [2:0]CAS_Lantency=mode_reg[6:4];
   wire [2:0]Burst_Length=mode_reg[2:0];
-  wire [14:0] full_addr = {ba, a};
+  wire [24:0] full_addr = {latch_bank , latch_row ,latch_col,1'b0};
 
-  reg [15:0] current_bank [0:8191][0:511];
-
-  always@(*)begin
-    current_bank = 
-        (latch_bank == 2'b00) ? bank0 :
-        (latch_bank == 2'b01) ? bank1 :
-        (latch_bank == 2'b10) ? bank2 : bank3;
-  end
   
   
   //LOAD MODE
@@ -122,12 +108,22 @@ module sdram(
       if (write_en && burst_counter<Burst_Length)
         burst_counter <= burst_counter+1;
   end
-  
+  import "DPI-C" function void sdram_read(input int addr,output int rdata);
+  import "DPI-C" function void sdram_write(input int addr,input int wdata);
+
+  reg [31:0]rdata;
   always @(posedge clk) begin
     if (cke && read_en && row_open[latch_bank]) begin
       case (counter)//固定传输长度为2
-        3'd2: dq_out <= current_bank[active_row[latch_bank]][latch_col];      
-        3'd3: dq_out <= current_bank[active_row[latch_bank]][latch_col+1];  
+        3'd2: begin
+          sdram_read(full_addr,rdata);
+          dq_out <= rdata[15:0];   
+        end    
+        3'd3: begin
+          sdram_read(full_addr,rdata);
+          dq_out <= rdata[31:0];  
+        end
+        
         default: dq_out <= 16'b0;
       endcase
     end else begin
@@ -160,15 +156,15 @@ module sdram(
   always @(posedge clk)begin
     if(cke && command == WRITE)begin
       if (!dqm[0]) 
-      current_bank[active_row[ba]][a][7:0] <= dq[7:0];
+      sdram_write(full_addr,dq[7:0]);
       if (!dqm[1]) 
-      current_bank[active_row[ba]][a][15:8] <= dq[15:8];
+      sdram_write(full_addr+1,dq[15:8]);
     end
     else if (write_en && burst_counter<Burst_Length)begin
       if (!dqm[0]) 
-      current_bank[active_row[latch_bank]][latch_bank+burst_counter][7:0] <= dq[7:0];
+      sdram_write(full_addr+2,dq[7:0]);
       if (!dqm[1]) 
-      current_bank[active_row[latch_bank]][latch_col+burst_counter][15:8] <= dq[15:8];
+      sdram_write(full_addr+3,dq[15:8]);
     end
   end
 
