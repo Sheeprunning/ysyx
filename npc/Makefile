@@ -53,12 +53,26 @@ sim: $(BIN)
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation with NVBoard..."
 	@$(BIN) -i $(IMG) -f $(ELF) 
+
+run: $(BIN)
+	@echo "=== doing git_commit ...==="
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@echo "=== finish git_commit! ==="
+	@echo "Running simulation with NVBoard..."
+	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) -b
 #don't run nvboard
 else
 $(SRC_AUTO_BIND): | $(BUILD_DIR)
 	@echo "Skipping pin binding (BIND_PINS=0)"
 	touch $@  
 sim: $(BIN)
+	@echo "=== doing git_commit ...==="
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	@echo "=== finish git_commit! ==="
+	@echo "Running simulation (without NVBoard)..."
+	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF)
+
+run: $(BIN)
 	@echo "=== doing git_commit ...==="
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
