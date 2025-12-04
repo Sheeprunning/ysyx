@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-#include "sdram_test.h"
+#include <sdram_test.h>
 
 #define SDRAM_BASE 0xA0000000
 

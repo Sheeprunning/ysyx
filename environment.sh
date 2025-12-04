@@ -8,3 +8,5 @@ NPC_HOME="$CURRENT_DIR/npc"
 export NPC_HOME
 NEMU_HOME="$CURRENT_DIR/nemu"
 export NEMU_HOME
+AK_HOME="$CURRENT_DIR/am-kernals"
+export AK_HOME

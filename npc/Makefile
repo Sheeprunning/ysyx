@@ -104,8 +104,6 @@ $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	
 all: default
 
-run: $(BIN)
-	@$^ -i $(IMG) -f $(ELF)
 
 clean:
 	rm -rf $(BUILD_DIR)

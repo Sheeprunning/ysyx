@@ -462,7 +462,7 @@ always @(posedge clk or posedge rst) begin
             // $display("[CLK %0t]CPU STATE:R_WAIT ", $time);
                 if(inst_arready&&inst_arvalid)inst_arvalid_reg<=1'b0;
                 if(inst_rvalid && inst_rready) begin
-$display("\033[1;36m[CLK %0t]IFU handshake with IM! PC:0x%08x GET inst=0x%08x\033[0m", $time,inst_araddr_reg,inst_rdata);
+// $display("\033[1;36m[CLK %0t]IFU handshake with IM! PC:0x%08x GET inst=0x%08x\033[0m", $time,inst_araddr_reg,inst_rdata);
                     inst_reg <= inst_rdata;
                     inst_rresp_reg<=inst_rresp;
                     inst_rready_reg <= 1'b0;

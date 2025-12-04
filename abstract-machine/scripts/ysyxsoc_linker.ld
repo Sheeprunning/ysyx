@@ -13,6 +13,14 @@ SECTIONS {
   } >flash AT > flash
 
   . = ORIGIN(sram);
+
+  .copy : {
+    _scopy = .;
+    *(copy)
+    _ecopy = .;
+  } > sram AT> flash
+  _lscopy = LOADADDR(.copy);
+
   .boot : {
     _sboot = .;
     *(boot)
