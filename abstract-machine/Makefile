@@ -63,6 +63,7 @@ LINKAGE   = $(OBJS)  # library archives are added by LIB_TEMPLATE below
 ## 3. General Compilation Flags
 
 ### (Cross) compilers, e.g., mips-linux-gnu-g++
+#在例如riscv.mk中定义
 AS        = $(CROSS_COMPILE)gcc
 CC        = $(CROSS_COMPILE)gcc
 CXX       = $(CROSS_COMPILE)g++

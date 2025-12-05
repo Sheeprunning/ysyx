@@ -1,0 +1,9 @@
+top=pri_encode83
+
+# VGA_CLK is set to clk in this example
+
+x (SW7,SW6,SW5,SW4,SW3,SW2,SW1,SW0)
+en (SW8)
+f (LD4)
+y (LD1,LD0)
+seg (SEG0G, SEG0F, SEG0E, SEG0D, SEG0C, SEG0B, SEG0A)
