@@ -519,6 +519,7 @@ begin
         if (refresh_timer_q == 50)
         begin
             // Assert CKE after 100uS
+            $display("[%0t]已经置1-------------------------------",$time);
             cke_q <= 1'b1;
         end
         // PRECHARGE
@@ -601,7 +602,6 @@ begin
         command_q   <= CMD_READ;
         addr_q      <= addr_col_w;
         bank_q      <= addr_bank_w;
-
         // Disable auto precharge (auto close of row)
         addr_q[AUTO_PRECHARGE]  <= 1'b0;
 

@@ -160,13 +160,14 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
   *data=pmem_read(addr&0xFFFFFFFC,4); 
 }
 
-extern "C" void sdram_read(int32_t addr, int32_t *data) { 
-  printf("read sdram[0x%08x]=0x%08x\n",addr,addr);
-  *data=addr; 
+extern "C" void sdram_read(int32_t addr, int32_t *data) {
+  uint32_t rdata=pmem_read(addr+0xa0000000,4);
+  printf("read sdram[0x%08x]=0x%08x\n",addr,rdata);
+  *data=rdata; 
 }
 
-extern "C" void sdram_write(int32_t addr, int32_t data) { 
-  // printf("write sdram[0x%08x]=0x%08x\n",addr,addr);
+extern "C" void sdram_write(uint32_t addr, uint8_t data) { 
+  printf("write sdram[0x%08x]=0x%08x\n",addr,data);
   pmem_write(addr+0xa0000000,1,data); 
 }
 

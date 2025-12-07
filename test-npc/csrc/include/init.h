@@ -14,7 +14,7 @@
 #include "ftrace.h"
 
 #define CONFIG_MSIZE 0xa0000000
-#define CONFIG_MBASE 0x30000000
+#define CONFIG_MBASE 0x20000000
 
 
 extern uint8_t *pmem;
