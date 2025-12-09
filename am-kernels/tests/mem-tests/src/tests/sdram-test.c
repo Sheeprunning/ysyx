@@ -4,7 +4,7 @@
 
 #define SDRAM_BASE 0xA0000000
 
-#define num_words 4096
+#define num_words 16
 
 void sdram_test_8bit() {
     volatile uint8_t *addr8 = (volatile uint8_t *)SDRAM_BASE;

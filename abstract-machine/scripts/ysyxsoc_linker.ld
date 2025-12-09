@@ -61,20 +61,30 @@ SECTIONS {
     _bss_end = .;
   }>psram
 
+.stack (NOLOAD) :{
+    . = ALIGN(0x4);
+    _stack_top = .;
+    . = ORIGIN(sram) + LENGTH(sram);
+    _stack_pointer = .;
+  }>sram
+
+/* .stack (NOLOAD) :{
+    . = ALIGN(0x1000);
+    _stack_top = .;
+    . = . + 0x8000;
+    _stack_pointer = .;
+  }>psram */
+
+  end = .;
+  _end = .;
+
   .heap (NOLOAD) :{
-    /* . = ALIGN(4); */
+    . = ALIGN(0x4);
     _heap_start = .;
-    . = . + 0x10000;
+    . = ORIGIN(psram) + LENGTH(psram);
     _heap_end = .;
   }>psram
 
-  .stack (NOLOAD) :{
-    /* . = ALIGN(4); */
-    _stack_top = .;
-    _stack_pointer = ORIGIN(sram) + LENGTH(sram);
-    . = _stack_pointer;
-  }>sram
-  end = .;
-  _end = .;
+  
   
 }

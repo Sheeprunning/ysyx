@@ -1,7 +1,7 @@
 #include "sim.h"
 
-// #include <nvboard.h>
-// void nvboard_bind_all_pins(TOP_NAME* dut);
+#include <nvboard.h>
+void nvboard_bind_all_pins(TOP_NAME* dut);
 
 using namespace std;
 
@@ -53,7 +53,7 @@ void update_cpu(){
 void single_cycle() {
   top->clock = 0; 
   step_and_dump_wave();
-  // nvboard_update();
+  nvboard_update();
   top->clock = 1; 
   if(top->reset!=1){
     #ifdef CONFIG_ITRACE
@@ -65,7 +65,7 @@ void single_cycle() {
   #ifdef DIFFTEST
   update_cpu();
   #endif
-  // nvboard_update();
+  nvboard_update();
 }
 
  void reset(int n=10) {
@@ -81,10 +81,13 @@ void sim_init(){
   contextp->traceEverOn(true);
   top->trace(tfp, 99);
   tfp->open("wave.vcd");
+  nvboard_bind_all_pins(top);
+  nvboard_init();
   reset();
 }
 
 void sim_exit(){
+  nvboard_quit();
   tfp->close();
   delete top;
   delete tfp;
@@ -160,13 +163,14 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
   *data=pmem_read(addr&0xFFFFFFFC,4); 
 }
 
-extern "C" void sdram_read(int32_t addr, int32_t *data) { 
-  printf("read sdram[0x%08x]=0x%08x\n",addr,addr);
-  *data=addr; 
+extern "C" void sdram_read(int32_t addr, int32_t *data) {
+  uint32_t rdata=pmem_read(addr+0xa0000000,4);
+  //printf("read sdram[0x%08x]=0x%08x\n",addr,rdata);
+  *data=rdata; 
 }
 
-extern "C" void sdram_write(int32_t addr, int32_t data) { 
-  // printf("write sdram[0x%08x]=0x%08x\n",addr,addr);
+extern "C" void sdram_write(uint32_t addr, uint8_t data) { 
+  //printf("write sdram[0x%08x]=0x%08x\n",addr,data);
   pmem_write(addr+0xa0000000,1,data); 
 }
 
@@ -277,8 +281,6 @@ void cpu_exec(uint32_t n){
 
 int sim(int argc, char *argv[]) {
     init_main(argc,argv);
-    // nvboard_bind_all_pins(top);
-    // nvboard_init();
     sdb_mainloop();
     sim_exit();
     return 0; 

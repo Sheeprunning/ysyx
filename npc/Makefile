@@ -38,14 +38,14 @@ SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 ifeq ($(findstring r,$(filter-out --%,$(MAKEFLAGS))),r)
   RUN_NVBOARD = 1
 else
-  RUN_NVBOARD ?= 0
+  RUN_NVBOARD ?= 1
 endif
 
 #run nvboard
 ifeq ($(RUN_NVBOARD), 1)
 # rules for NVBoard
 $(SRC_AUTO_BIND): $(NXDC_FILES) | $(BUILD_DIR)
-	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $< $@
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 sim: $(BIN)
 	@echo "=== doing git_commit ...==="

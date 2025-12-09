@@ -107,6 +107,7 @@ void id_read(void) {
 void _trm_init() {
   _bootloader();
   uart_init();
+  printf("finish init!");
   //id_read();
   int ret = main(mainargs);
   halt(ret);
