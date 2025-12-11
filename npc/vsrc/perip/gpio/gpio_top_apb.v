@@ -62,7 +62,7 @@ module gpio_top_apb(
     end
     else begin
       if(req_accept && is_led)begin
-        $display("LED:%08b",in_pwdata[15:0]);
+        $display("LED:%016b",in_pwdata[15:0]);
         if (in_pstrb[0]) gpio_out[7:0]   <= in_pwdata[7:0];
         if (in_pstrb[1]) gpio_out[15:8]  <= in_pwdata[15:8];
       end
@@ -75,8 +75,9 @@ module gpio_top_apb(
     end
     else begin
       if(req_accept && is_dig)begin
-        if (in_pstrb[0]) in_prdata[7:0]   <= gpio_in[7:0];
-        if (in_pstrb[1]) in_prdata[15:8]  <= gpio_in[15:8];
+      $display("dig:%016b",gpio_in[15:0]);
+        in_prdata[7:0]   <= gpio_in[7:0];
+        in_prdata[15:8]  <= gpio_in[15:8];
       end
     end
   end

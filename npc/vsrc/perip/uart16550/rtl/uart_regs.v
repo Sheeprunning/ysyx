@@ -721,8 +721,12 @@ begin
     if (wb_rst_i)
         dlc <= #1 0;
     else
-        if (start_dlc | ~ (|dlc))
-            dlc <= #1 dl - 1;               // preset counter
+        if (start_dlc | ~ (|dlc))begin
+        if(start_dlc)$display("dl:%16b",dl);
+        
+          dlc <= #1 dl - 1;               // preset counter
+        end
+            
         else
             dlc <= #1 dlc - 1;              // decrement counter
 end
