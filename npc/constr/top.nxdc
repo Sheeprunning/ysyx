@@ -17,4 +17,4 @@ externalPins_gpio_seg_7 (SEG7G, SEG7F, SEG7E, SEG7D, SEG7C, SEG7B, SEG7A)
 
 
 externalPins_uart_tx (UART_TX)
-#externalPins_uart_rx (UART_RX)
+externalPins_uart_rx (UART_RX)
