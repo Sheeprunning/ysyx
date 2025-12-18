@@ -28,12 +28,12 @@ SECTIONS {
   } > sram AT> flash
   _lsboot = LOADADDR(.boot);
 
-  . = ORIGIN(psram);
+  . = ORIGIN(sdram);
   .text : {
     _stext = .;
     *(.text*)
     _etext = .;
-  } > psram AT> flash
+  } > sdram AT> flash
   _lstext = LOADADDR(.text);
   etext = .;
   
@@ -41,14 +41,14 @@ SECTIONS {
     _srodata = .;
     *(.rodata*)
     _erodata = .;
-  } > psram AT > flash
+  } > sdram AT > flash
   _lsrodata = LOADADDR(.rodata);
 
   .data : {
     _sdata = .;
     *(.data*)
     _edata = .;
-  } > psram AT> flash
+  } > sdram AT> flash
   _lsdata = LOADADDR(.data);
 
   _data = .;
@@ -59,7 +59,7 @@ SECTIONS {
     *(.sbss*)
     *(.scommon)
     _bss_end = .;
-  }>psram
+  }>sdram
 
 .stack (NOLOAD) :{
     . = ALIGN(0x4);
@@ -83,7 +83,7 @@ SECTIONS {
     _heap_start = .;
     . = ORIGIN(psram) + LENGTH(psram);
     _heap_end = .;
-  }>psram
+  }>sdram
 
   
   
