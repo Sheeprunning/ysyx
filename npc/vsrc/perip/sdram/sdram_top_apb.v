@@ -31,9 +31,9 @@ module sdram_top_apb (
   typedef enum [1:0] { ST_IDLE, ST_WAIT_ACCEPT, ST_WAIT_ACK } state_t;
   reg [1:0] state;
   wire req_accept;
-always @(posedge clock) begin
-  if(!sdram_dout_en&&sdram_dq!=0)$display("sdram_top.v:35 dq=%08x",sdram_dq);
-end
+// always @(posedge clock) begin
+//   if(!sdram_dout_en&&sdram_dq!=0)$display("sdram_top.v:35 dq=%08x",sdram_dq);
+// end
   always @(posedge clock) begin
     if (reset) state <= ST_IDLE;
     else

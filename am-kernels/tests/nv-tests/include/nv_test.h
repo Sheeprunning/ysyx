@@ -7,4 +7,5 @@
 #define SEG_ADDR  (GPIO_BASE + 0x8)
 
 void gpio_test();
+void vga_test();
 #endif

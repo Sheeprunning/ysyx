@@ -1,5 +1,5 @@
 #include "mem_test.h"
 int main() {
-    psram_test();
+    sdram_test();
     return 0;
 }

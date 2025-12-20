@@ -88,7 +88,9 @@ void pmem_write(u_int32_t addr, int len, u_int32_t data) {
   }
   char log[128];
   sprintf(log,"W 0x%08x %d 0x%08x",addr,len,data);
+  #ifdef CONFIG_MTRACE
   log_add("mtrace.txt",log);
+  #endif
   host_write(guest_to_host(addr), len, data);
 }
 
@@ -103,7 +105,7 @@ int init_mem() {
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
   fseek(fp, 0, SEEK_SET);
-  int ret = fread(guest_to_host(CONFIG_MBASE), 1, size, fp);
+  int ret = fread(guest_to_host(CONFIG_PC_RESET_OFFSET), 1, size, fp);
   if(size==0){
     memcpy(pmem,img,sizeof(img));
     size=16;

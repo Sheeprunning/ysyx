@@ -1,5 +1,5 @@
 #include "nv_test.h"
 int main() {
-    gpio_test();
+    vga_test();
     return 0;
 }

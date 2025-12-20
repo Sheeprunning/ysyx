@@ -13,8 +13,9 @@
 #include "disasm.h"
 #include "ftrace.h"
 
-#define CONFIG_MSIZE 0xa0000000
-#define CONFIG_MBASE 0x30000000
+#define CONFIG_MSIZE 0xd0000000
+#define CONFIG_PC_RESET_OFFSET 0x30000000
+#define CONFIG_MBASE 0x00000000
 
 
 extern uint8_t *pmem;

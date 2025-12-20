@@ -186,6 +186,18 @@ extern "C" void sdram_write(uint32_t addr, uint8_t data) {
   pmem_write(addr+0xa0000000,1,data); 
 }
 
+extern "C" void vga_read(uint32_t addr, uint32_t *data) {
+  uint32_t raddr=addr+0x21000000;
+  uint32_t rdata=pmem_read(raddr,4);
+  // printf("read sdram[0x%08x]=0x%08x\n",raddr,rdata);
+  *data=rdata; 
+}
+
+extern "C" void vga_write(uint32_t addr, uint32_t data) { 
+  // printf("\033[1;32mwrite vga[0x%08x]=0x%08x\033[0m\n",addr,data);
+  pmem_write(addr,4,data); 
+}
+
 void call_show_reg() {
     // svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
     // svSetScope(scope);
