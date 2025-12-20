@@ -6,7 +6,6 @@ module psram(
 );
 
   reg qpi=0;
-  reg[7:0]sram[4194304];//4MB
   reg dio_en;//dio输出使能
   reg [2:0]state,next_state;
   reg [4:0]counter;
@@ -17,10 +16,7 @@ module psram(
   reg [3:0]dio_out;
 
   wire rst=ce_n;
-  wire [7:0]byte_0=sram[addr],
-            byte_1=sram[addr+1],
-            byte_2=sram[addr+2],
-            byte_3=sram[addr+3];
+
   wire [4:0]cmd_cnt=qpi?5'd1:5'd7,
             addr_cnt=qpi?5'd7:5'd13,
             wait_cnt=qpi?5'd13:5'd19,

@@ -163,8 +163,9 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 }
 
 extern "C" void psram_read(int32_t addr, int32_t *data) {
-  uint32_t rdata=pmem_read(addr+0x80000000,4);
-  //printf("read psram[0x%08x]=0x%08x\n",addr,rdata);
+  uint32_t raddr=addr+0x80000000;
+  uint32_t rdata=pmem_read(raddr,4);
+  // printf("read psram[0x%08x]=0x%08x\n",raddr,rdata);
   *data=rdata; 
 }
 
@@ -174,13 +175,14 @@ extern "C" void psram_write(uint32_t addr, uint8_t data) {
 }
 
 extern "C" void sdram_read(int32_t addr, int32_t *data) {
-  uint32_t rdata=pmem_read(addr+0xa0000000,4);
-  //printf("read sdram[0x%08x]=0x%08x\n",addr,rdata);
+  uint32_t raddr=addr+0xa0000000;
+  uint32_t rdata=pmem_read(raddr,4);
+  // printf("read sdram[0x%08x]=0x%08x\n",raddr,rdata);
   *data=rdata; 
 }
 
 extern "C" void sdram_write(uint32_t addr, uint8_t data) { 
-  //printf("write sdram[0x%08x]=0x%08x\n",addr,data);
+  // printf("write sdram[0x%08x]=0x%08x\n",addr,data);
   pmem_write(addr+0xa0000000,1,data); 
 }
 

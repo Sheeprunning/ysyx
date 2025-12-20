@@ -20,18 +20,20 @@ module sdram_top_apb (
   output        sdram_we,
   output [12:0] sdram_a,
   output [ 1:0] sdram_ba,
-  output [ 1:0] sdram_dqm,
-  inout  [15:0] sdram_dq
+  output [ 3:0] sdram_dqm,//modify
+  inout  [31:0] sdram_dq//modify
 );
 
   wire sdram_dout_en;
-  wire [15:0] sdram_dout;
-  assign sdram_dq = sdram_dout_en ? sdram_dout : 16'bz;
+  wire [31:0] sdram_dout;//modify
+  assign sdram_dq = sdram_dout_en ? sdram_dout : 32'bz;//modify
 
   typedef enum [1:0] { ST_IDLE, ST_WAIT_ACCEPT, ST_WAIT_ACK } state_t;
   reg [1:0] state;
   wire req_accept;
-
+always @(posedge clock) begin
+  if(!sdram_dout_en&&sdram_dq!=0)$display("sdram_top.v:35 dq=%08x",sdram_dq);
+end
   always @(posedge clock) begin
     if (reset) state <= ST_IDLE;
     else

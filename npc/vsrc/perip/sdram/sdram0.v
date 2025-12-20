@@ -1,4 +1,4 @@
-module sdram(
+module sdram0(
   input        clk,
   input        cke,
   input        cs,
@@ -31,7 +31,7 @@ module sdram(
   
   wire [3:0]command={cs,ras,cas,we};
   wire [2:0]CAS_Lantency=mode_reg[6:4];//010
-  wire [2:0]Burst_Length=mode_reg[2:0];//001
+  wire [2:0]Burst_Length=mode_reg[2:0];//000
   wire [24:0] full_addr = {latch_bank , latch_row ,latch_col,1'b0};
 
   
@@ -117,15 +117,16 @@ always @(posedge clk) begin
   reg [31:0]rdata;
   always @(posedge clk) begin
     if (cke && read_en && row_open[latch_bank]) begin
-      case (read_counter)//固定传输长度为2
+      case (read_counter)//固定传输长度为1
         3'd0: begin
           sdram_read(full_addr,rdata);
+          // $display("sdram0 send the data:%04x",rdata[15:0]);
           dq_out <= rdata[15:0];   
         end    
-        3'd1: begin
+        /* 3'd1: begin
           sdram_read(full_addr,rdata);
           dq_out <= rdata[31:16];  
-        end
+        end */
         
         default: dq_out <= 16'b0;
       endcase
@@ -144,21 +145,20 @@ always @(posedge clk) begin
       if(!write_en)begin
         latch_bank<=ba;
         latch_col<=a[8:0]; 
-        write_en<=1'b1;
         write_counter<=3'b1;
-      end else write_counter<=write_counter+1;
-    end 
+        if(Burst_Length!=0)write_en<=1'b1;//突发传输长度不为0才进入突发传输状态
+      end  
     else begin
-      if(write_en) begin  // 仅在写使能时计数
-            write_counter <= write_counter + 1;
-            if(write_counter >= Burst_Length) begin  // 结合CL和突发长度关闭
-              write_en <= 1'b0;
-              write_counter <= 3'b0;
-            end
+        // 仅在写使能时计数
+        write_counter <= write_counter + 1;
+        if(write_counter >= Burst_Length) begin  // 结合CL和突发长度关闭
+          write_en <= 1'b0;
+          write_counter <= 3'b0;
         end
+      end
     end
   end
-  end
+end
 
   always @(posedge clk) begin
       if(cke && command == WRITE)  
