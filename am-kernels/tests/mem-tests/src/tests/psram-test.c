@@ -2,12 +2,12 @@
 #include <mem_test.h>
 #include <amtest.h>
 
-#define SDRAM_BASE 0xA0000000
+#define PSRAM_BASE 0x80000000
 
 #define num_words 16
 
-void sdram_test_8bit() {
-    volatile uint8_t *addr8 = (volatile uint8_t *)SDRAM_BASE;
+void psram_test_8bit() {
+    volatile uint8_t *addr8 = (volatile uint8_t *)PSRAM_BASE;
     for (int i = 0; i < num_words; i++) {
         addr8[i] = (uint8_t)(i & 0xFF);
     }
@@ -17,8 +17,8 @@ void sdram_test_8bit() {
         }
     }
 }
-void sdram_test_16bit() {
-    volatile uint16_t *addr16 = (volatile uint16_t *)SDRAM_BASE;
+void psram_test_16bit() {
+    volatile uint16_t *addr16 = (volatile uint16_t *)PSRAM_BASE;
     for (int i = 0; i < num_words; i+=2) {
         addr16[i] = (uint16_t)(i & 0xFFFF);
     }
@@ -29,8 +29,8 @@ void sdram_test_16bit() {
         }
     }
 }
-void sdram_test_32bit() {
-    volatile uint32_t *addr32 = (volatile uint32_t *)SDRAM_BASE;
+void psram_test_32bit() {
+    volatile uint32_t *addr32 = (volatile uint32_t *)PSRAM_BASE;
     for (int i = 0; i < num_words; i+=4) {
         addr32[i] = (uint32_t)(i & 0xFFFFFFFF);
     }
@@ -41,9 +41,9 @@ void sdram_test_32bit() {
         }
     }
 }
-void sdram_test(){
-    sdram_test_8bit();
-    sdram_test_16bit();
-    sdram_test_32bit();
+void psram_test(){
+    psram_test_8bit();
+    psram_test_16bit();
+    psram_test_32bit();
 }
 

@@ -30,7 +30,8 @@ module psram(
   localparam CMD=3'd0,ADDR=3'd1,WAIT=3'd2,READ=3'd3,WRITE=3'd4,ERROR=3'd5;
 
   assign dio = dio_en ? dio_out : 4'bz;
-
+import "DPI-C" function void psram_read(input int addr,output int rdata);
+import "DPI-C" function void psram_write(input int addr,input int wdata);
 //state转移
   always@(*)begin
     case(state)
@@ -97,12 +98,14 @@ end
   end
 
 //获取wdata(根据ce_n传输)
+  reg [7:0] buf_write;
   wire[1:0] byte_index_w = {counter -( 5'd14 - `OFFSET)}[2:1];
   wire [23:0] waddr=addr+byte_index_w;
   always@(posedge sck or posedge rst)begin
     if(rst)wdata<=0;
     else if(state==WRITE)begin 
-      sram[waddr]<={sram[waddr][3:0],dio};
+      buf_write<={buf_write[3:0],dio};
+      psram_write(waddr,{buf_write[3:0],dio});
       // $display("WRITE----sram[%08x]=%04x",waddr,dio);
     end
   end
@@ -117,7 +120,7 @@ end
 
 //数据输出
   wire[1:0] byte_index_r = {counter-(5'd20 - `OFFSET)}[2:1];//EF_PSRAM_CTRL.v的写法不太好理解
-
+  reg [31:0]buf_read;
   always@(negedge sck or posedge rst)begin
     if(rst)begin
       dio_out<=0;
@@ -127,10 +130,11 @@ end
       rdata[3]<=0;
     end
     else if(counter==5'd19-`OFFSET)begin
-      rdata[0]<=byte_0;
-      rdata[1]<=byte_1;
-      rdata[2]<=byte_2;
-      rdata[3]<=byte_3;
+      psram_read(addr,buf_read);
+      rdata[0]<=buf_read[7:0];
+      rdata[1]<=buf_read[15:8];
+      rdata[2]<=buf_read[23:16];
+      rdata[3]<=buf_read[31:24];
     end
     else if(state==READ)begin
       rdata[byte_index_r]<={rdata[byte_index_r][3:0],4'b0};

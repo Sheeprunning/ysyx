@@ -5,6 +5,7 @@ MEMORY {
   flash(rx) : ORIGIN = 0x30000000, LENGTH = 256M
   psram(rwx): ORIGIN = 0x80000000, LENGTH = 4M
   sram(rwx) : ORIGIN = 0x0f000000, LENGTH = 8K
+  sdram(rwx) : ORIGIN = 0xa0000000, LENGTH = 0x20000000
 }
 SECTIONS {
   . = ORIGIN(flash);
@@ -81,10 +82,9 @@ SECTIONS {
   .heap (NOLOAD) :{
     . = ALIGN(0x4);
     _heap_start = .;
-    . = ORIGIN(psram) + LENGTH(psram);
+    . = ORIGIN(sdram) + LENGTH(sdram);
     _heap_end = .;
   }>sdram
 
-  
-  
+
 }
