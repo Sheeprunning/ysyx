@@ -41,7 +41,7 @@ module ysyx_25080204_Xbar(
 
     input [31:0]arb_wdata,
     input arb_wvalid,
-    input [1:0]arb_wstrb,
+    input [3:0]arb_wstrb,
     output xbar_wready,
 
     output [1:0]xbar_bresp,
@@ -56,7 +56,7 @@ module ysyx_25080204_Xbar(
 
     output [31:0]io_master_wdata,
     output io_master_wvalid,
-    output [1:0]io_master_wstrb,
+    output [3:0]io_master_wstrb,
     input  io_master_wready,
 
     input  [1:0]io_master_bresp,
@@ -72,7 +72,7 @@ module ysyx_25080204_Xbar(
 
     output [31:0]clint_wdata,
     output clint_wvalid,
-    output [1:0]clint_wstrb,
+    output [3:0]clint_wstrb,
     input  clint_wready,
 
     input  [1:0]clint_bresp,

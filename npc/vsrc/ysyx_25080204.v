@@ -160,7 +160,7 @@ wire [31:0] arb_awaddr;
 wire [2:0]  arb_awsize;
 wire        arb_awvalid;
 wire [31:0] arb_wdata;
-wire [1:0]  arb_wstrb;
+wire [3:0]  arb_wstrb;
 wire        arb_wvalid;
 wire        arb_bready;
 
@@ -195,7 +195,7 @@ wire        clint_awvalid;
 wire        clint_awready;
 wire [31:0] clint_wdata;
 wire        clint_wvalid;
-wire [1:0]  clint_wstrb;
+wire [3:0]  clint_wstrb;
 wire        clint_wready;
 wire [1:0]  clint_bresp;
 wire        clint_bvalid;
@@ -498,7 +498,7 @@ always @(posedge clk or posedge rst) begin
             end
             W_WRITE: begin
               if(lsu_wready&&lsu_wvalid)begin
-$display("\033[0;32m[CLK %0t]LSU handshake write with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
+// $display("\033[0;32m[CLK %0t]LSU handshake write with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
                 lsu_bready_reg <= 1'b1;
                 lsu_awvalid_reg <= 1'b0;
                 lsu_wvalid_reg <= 1'b0;

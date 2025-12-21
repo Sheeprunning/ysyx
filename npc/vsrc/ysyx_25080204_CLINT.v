@@ -16,7 +16,7 @@ module ysyx_25080204_CLINT(
     output reg awready,
 
     input [31:0]wdata,
-    input [1:0]wstrb,
+    input [3:0]wstrb,
     input wvalid,
     output reg wready,
 
