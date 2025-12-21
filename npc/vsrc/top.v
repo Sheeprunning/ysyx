@@ -241,7 +241,6 @@
 
 //     .xbar_rdata(xbar_rdata),
 //     .xbar_rresp(xbar_rresp),
-//     .arb_wvalid(arb_wvalid),
 
 //     .xbar_rvalid(xbar_rvalid),
 //     .arb_rready(arb_rready),
@@ -264,6 +263,7 @@
 //     .xbar_awready(xbar_awready),
 
 //     .arb_wdata(arb_wdata),
+//     .arb_wvalid(arb_wvalid),
 //     .arb_wstrb(arb_wstrb),
 //     .xbar_wready(xbar_wready),
 

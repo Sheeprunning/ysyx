@@ -2,6 +2,7 @@
 #include <dlfcn.h>
 #include <capstone/capstone.h>
 #include <cassert>
+#include <stdio.h>
 
 static size_t (*cs_disasm_dl)(csh handle, const uint8_t *code,
     size_t code_size, uint64_t address, size_t count, cs_insn **insn);
@@ -42,6 +43,14 @@ void init_disasm() {
 void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
 	cs_insn *insn;
 	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
+  if(count!=1){
+    printf("pc:%08lx inst:",pc);
+    for(int i=3;i>=0;i--){
+      printf("%02x",code[i]);
+    }
+    printf("\n");
+  }
+    
   assert(count == 1);
   int ret = snprintf(str, size, "%s", insn->mnemonic);
   if (insn->op_str[0] != '\0') {

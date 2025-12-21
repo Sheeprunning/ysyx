@@ -46,8 +46,8 @@ end
 
 //读通道
 reg [1:0]c_state;
-wire r_low=(araddr==32'ha0000048);
-wire r_high=(araddr==32'ha000004c);
+wire r_low= (araddr==32'h02000000);
+wire r_high=(araddr==32'h02000004);
 wire [31:0]mtime=r_low?mtime_low:r_high?mtime_high:0;
 always @(posedge clk or posedge rst)begin
   if(rst)begin

@@ -1,6 +1,7 @@
 module ysyx_25080204_Xbar(
     //Arbiter读接口
     input [31:0]arb_araddr,
+    input [2:0] arb_arsize,
     input arb_arvalid,
     output xbar_arready,
 
@@ -9,28 +10,21 @@ module ysyx_25080204_Xbar(
     output xbar_rvalid,
     input  arb_rready,
 
-    //SRAM读接口
-    output [31:0]sram_araddr,
-    output sram_arvalid,
-    input sram_arready,
+    //IO_MASTER读接口
+    output [31:0]io_master_araddr,
+    output [2:0] io_master_arsize,
+    output io_master_arvalid,
+    input io_master_arready,
 
-    input [31:0]sram_rdata,
-    input [1:0]sram_rresp,
-    input sram_rvalid,
-    output sram_rready,
+    input [31:0]io_master_rdata,
+    input [1:0]io_master_rresp,
+    input io_master_rvalid,
+    output io_master_rready,
 
-    //UART读接口
-    output [31:0]uart_araddr,
-    output uart_arvalid,
-    input uart_arready,
-
-    input [31:0]uart_rdata,
-    input [1:0]uart_rresp,
-    input uart_rvalid,
-    output uart_rready,
 
     //CLINT读接口
     output [31:0]clint_araddr,
+    output [2:0] clint_arsize,
     output clint_arvalid,
     input clint_arready,
 
@@ -41,6 +35,7 @@ module ysyx_25080204_Xbar(
 
     //Arbiter写接口
     input [31:0]arb_awaddr,
+    input [2:0]arb_awsize,
     input arb_awvalid,
     output xbar_awready,
 
@@ -53,36 +48,25 @@ module ysyx_25080204_Xbar(
     output xbar_bvalid,
     input  arb_bready,
 
-    //SRAM写接口
-    output [31:0]sram_awaddr,
-    output sram_awvalid,
-    input  sram_awready,
+    //IO_MASTER写接口
+    output [31:0]io_master_awaddr,
+    output [2:0] io_master_awsize,
+    output io_master_awvalid,
+    input  io_master_awready,
 
-    output [31:0]sram_wdata,
-    output sram_wvalid,
-    output [1:0]sram_wstrb,
-    input  sram_wready,
+    output [31:0]io_master_wdata,
+    output io_master_wvalid,
+    output [1:0]io_master_wstrb,
+    input  io_master_wready,
 
-    input  [1:0]sram_bresp,
-    input  sram_bvalid,
-    output sram_bready,
+    input  [1:0]io_master_bresp,
+    input  io_master_bvalid,
+    output io_master_bready,
 
-    //UART写接口
-    output [31:0]uart_awaddr,
-    output uart_awvalid,
-    input  uart_awready,
-
-    output [31:0]uart_wdata,
-    output uart_wvalid,
-    output [1:0]uart_wstrb,
-    input  uart_wready,
-
-    input  [1:0]uart_bresp,
-    input  uart_bvalid,
-    output uart_bready,
 
     //CLINT写接口
     output [31:0]clint_awaddr,
+    output [2:0] clint_awsize,
     output clint_awvalid,
     input  clint_awready,
 
@@ -96,71 +80,59 @@ module ysyx_25080204_Xbar(
     output clint_bready
 );
 //读分配
-wire read_sram_valid=(arb_araddr>=32'h80000000&&arb_araddr<32'h87ffffff);
-wire read_uart_valid=(arb_araddr==32'ha00003f8);
-wire read_clint_valid=(arb_araddr==32'ha0000048||arb_araddr==32'ha000004c);
+wire read_clint_valid=(arb_araddr[31:16]==16'h0200);
+wire read_io_master_valid=!read_clint_valid;
 
-assign  sram_araddr=read_sram_valid?arb_araddr:0;
-assign  sram_arvalid=read_sram_valid?arb_arvalid:0;
-assign  sram_rready=read_sram_valid?arb_rready:0;
+assign  io_master_araddr=read_io_master_valid?arb_araddr:0;
+assign  io_master_arsize=read_io_master_valid?arb_arsize:0;
+assign  io_master_arvalid=read_io_master_valid?arb_arvalid:0;
+assign  io_master_rready=read_io_master_valid?arb_rready:0;
 
-assign uart_araddr  = read_uart_valid ? arb_araddr : 0;
-assign uart_arvalid = read_uart_valid ? arb_arvalid : 0;
-assign uart_rready  = read_uart_valid ? arb_rready : 0;
 
 assign  clint_araddr=read_clint_valid?arb_araddr:0;
+assign  clint_arsize=read_clint_valid?arb_arsize:0;
 assign  clint_arvalid=read_clint_valid?arb_arvalid:0;
 assign  clint_rready=read_clint_valid?arb_rready:0;
 
-assign  xbar_arready = read_sram_valid?sram_arready:
-                        read_uart_valid?uart_arready:
+assign  xbar_arready = read_io_master_valid?io_master_arready:
                         read_clint_valid?clint_arready:0;
-assign  xbar_rdata=read_sram_valid?sram_rdata:
-                    read_uart_valid?uart_rdata:
+assign  xbar_rdata=read_io_master_valid?io_master_rdata:
                     read_clint_valid?clint_rdata:0;
-assign  xbar_rresp=read_sram_valid?sram_rresp:
-                    read_uart_valid?uart_rresp:
+assign  xbar_rresp=read_io_master_valid?io_master_rresp:
                     read_clint_valid?clint_rresp:2'b11;//不在所有接口地址内，rresp设置为11
-assign  xbar_rvalid=read_sram_valid?sram_rvalid:
-                    read_uart_valid?uart_rvalid:
+assign  xbar_rvalid=read_io_master_valid?io_master_rvalid:
                     read_clint_valid?clint_rvalid:0;
 //写分配
-wire write_sram_valid=(arb_awaddr>=32'h80000000&&arb_awaddr<32'h87ffffff);
-wire write_uart_valid=(arb_awaddr==32'ha00003f8);
-wire write_clint_valid=(arb_awaddr==32'ha0000048||arb_awaddr==32'ha000004c);
+wire write_clint_valid=(arb_awaddr[31:16]==16'h0200);
+wire write_io_master_valid=!write_clint_valid;
 
-assign sram_awaddr=write_sram_valid?arb_awaddr:0;
-assign sram_awvalid=write_sram_valid?arb_awvalid:0;
-assign sram_wdata=write_sram_valid?arb_wdata:0;
-assign sram_wvalid=write_sram_valid?arb_wvalid:0;
-assign sram_wstrb=write_sram_valid?arb_wstrb:0;
-assign sram_bready=write_sram_valid?arb_bready:0;
+assign io_master_awaddr=write_io_master_valid?arb_awaddr:0;
+assign io_master_awsize=write_io_master_valid?arb_awsize:0;
+assign io_master_awvalid=write_io_master_valid?arb_awvalid:0;
+assign io_master_wdata=write_io_master_valid?arb_wdata:0;
+assign io_master_wvalid=write_io_master_valid?arb_wvalid:0;
+assign io_master_wstrb=write_io_master_valid?arb_wstrb:0;
+assign io_master_bready=write_io_master_valid?arb_bready:0;
 
-assign uart_awaddr=write_uart_valid?arb_awaddr:0;
-assign uart_awvalid=write_uart_valid?arb_awvalid:0;
-assign uart_wdata=write_uart_valid?arb_wdata:0;
-assign uart_wvalid=write_uart_valid?arb_wvalid:0;
-assign uart_wstrb=write_uart_valid?arb_wstrb:0;
-assign uart_bready=write_uart_valid?arb_bready:0;
 
 assign clint_awaddr=write_clint_valid?arb_awaddr:0;
+assign clint_awsize=write_clint_valid?arb_awsize:0;
 assign clint_awvalid=write_clint_valid?arb_awvalid:0;
 assign clint_wdata=write_clint_valid?arb_wdata:0;
 assign clint_wvalid=write_clint_valid?arb_wvalid:0;
 assign clint_wstrb=write_clint_valid?arb_wstrb:0;
 assign clint_bready=write_clint_valid?arb_bready:0;
 
-assign xbar_awready=write_sram_valid?sram_awready:
-                    write_uart_valid?uart_awready:
+assign xbar_awready=write_io_master_valid?io_master_awready:
                     write_clint_valid?clint_awready:0;
-assign xbar_wready=write_sram_valid?sram_wready:
-                    write_uart_valid?uart_wready:
+assign xbar_wready=write_io_master_valid?io_master_wready:
                     write_clint_valid?clint_wready:0;
-assign xbar_bresp=write_sram_valid?sram_bresp:
-                    write_uart_valid?uart_bresp:
+assign xbar_bresp=write_io_master_valid?io_master_bresp:
                     write_clint_valid?clint_bresp:2'b11;
-assign xbar_bvalid=write_sram_valid?sram_bvalid:
-                    write_uart_valid?uart_bvalid:
+assign xbar_bvalid=write_io_master_valid?io_master_bvalid:
                     write_clint_valid?clint_bvalid:1'b0;
 
+// always @(*) begin
+//     if(read_clint_valid)$display("error!write to rtc!");
+// end
 endmodule
