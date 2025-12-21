@@ -47,9 +47,10 @@ void bootset(void *s, int c, size_t n) {
 
 COPY_SECTION __attribute__((noinline)) 
 void bootcpy(void *out, const void *in, size_t n) {
-  unsigned char *d = out;
-  const unsigned char *s = in;
-  while(n--) {
+  uint32_t *d = (uint32_t*)out;
+  const uint32_t *s = (uint32_t*)in;
+  size_t size = n>>2;
+  while(size--) {
     *d++ = *s++;
   }
 }
@@ -57,9 +58,9 @@ void bootcpy(void *out, const void *in, size_t n) {
 #define ENTRY_SECTION __attribute__((section("entry")))
 
 ENTRY_SECTION void copy_bootloader(){
-  size_t copy_size = &_ecopy - &_scopy;
-  char *dest = &_scopy;
-  const char *src = &_lscopy;
+  size_t copy_size = (&_ecopy - &_scopy)>>2;
+  uint32_t *dest = (uint32_t *)&_scopy;
+  const uint32_t *src = (uint32_t *)&_lscopy;
   
   for(size_t i = 0; i < copy_size; i++) {
     dest[i] = src[i];
@@ -107,7 +108,7 @@ void id_read(void) {
 void _trm_init() {
   _bootloader();
   uart_init();
-  printf("finish init!\n");
+  // printf("finish init!\n");
   //id_read();
   int ret = main(mainargs);
   halt(ret);

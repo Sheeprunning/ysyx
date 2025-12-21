@@ -3,9 +3,9 @@
 
 void __am_timer_init();
 
-void __am_timer_rtc(AM_TIMER_RTC_T *);
-void __am_timer_uptime(AM_TIMER_UPTIME_T *);
-void __am_input_keybrd(AM_INPUT_KEYBRD_T *);
+void __am_timer_rtc(AM_TIMER_RTC_T *rtc);
+void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime);
+void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd);
 void __am_uart_rx(AM_UART_RX_T *rx);
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg);
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl);
@@ -13,7 +13,7 @@ void __am_gpu_status(AM_GPU_STATUS_T *status);
 
 static void __am_timer_config(AM_TIMER_CONFIG_T *cfg) { cfg->present = true; cfg->has_rtc = true; }
 static void __am_input_config(AM_INPUT_CONFIG_T *cfg) { cfg->present = true;  }
-static void __am_uart_config(AM_INPUT_CONFIG_T *cfg) { cfg->present = false;  }
+static void __am_uart_config(AM_INPUT_CONFIG_T *cfg) { cfg->present = true;  }
 
 typedef void (*handler_t)(void *buf);
 static void *lut[128] = {
