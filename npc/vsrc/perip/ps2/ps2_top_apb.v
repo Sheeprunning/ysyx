@@ -1,3 +1,4 @@
+/* verilator lint_off UNUSEDSIGNAL */
 module ps2_top_apb(
   input         clock,
   input         reset,
@@ -15,7 +16,7 @@ module ps2_top_apb(
   input         ps2_clk,
   input         ps2_data
 );
-
+/* verilator lint_on UNUSEDSIGNAL */
 // internal signal, for test
   reg [9:0] buffer;        // ps2_data bits
   reg [7:0] fifo[7:0];     // data fifo
@@ -67,6 +68,8 @@ module ps2_top_apb(
           end
       end
   end
-  assign in_prdata[7:0] = fifo[r_ptr]; //always set output data
+  assign in_prdata/* [7:0] */ = {24'b0,fifo[r_ptr]}; //always set output data
+  assign in_pslverr=0;
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */

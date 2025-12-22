@@ -1,3 +1,6 @@
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
+/* verilator lint_off WIDTHCONCAT */
 module sdram0(
   input        clk,
   input        cke,
@@ -23,10 +26,14 @@ module sdram0(
   reg dq_o_en,read_en,write_en;
   reg [14:0] addr;
 
-  localparam  NOP   =  4'b0111,  ACTIVE=  4'b0011,
-              READ  =  4'b0101,  WRITE =  4'b0100,
-              BURST_TERMINATE =  4'b0110,  PRECHARGE =  4'b0010,
-              AUTO_REFRESH =4'b0001,   LOAD_MODE =  4'b0000;
+  localparam  NOP   =  4'b0111,  
+              ACTIVE=  4'b0011,
+              READ  =  4'b0101,  
+              WRITE =  4'b0100,
+              BURST_TERMINATE =  4'b0110,  
+              PRECHARGE =  4'b0010,
+              AUTO_REFRESH =4'b0001,   
+              LOAD_MODE =  4'b0000;
 
   
   wire [3:0]command={cs,ras,cas,we};
@@ -113,13 +120,14 @@ always @(posedge clk) begin
 
   import "DPI-C" function void sdram_read(input int addr,output int rdata);
   import "DPI-C" function void sdram_write(input int addr,input int wdata);
-
+/* verilator lint_off UNUSEDSIGNAL */
   reg [31:0]rdata;
+  /* verilator lint_on UNUSEDSIGNAL */
   always @(posedge clk) begin
     if (cke && read_en && row_open[latch_bank]) begin
       case (read_counter)//固定传输长度为1
         3'd0: begin
-          sdram_read(full_addr,rdata);
+          sdram_read({7'b0,full_addr},rdata);
           // $display("sdram0 send the data:%04x",rdata[15:0]);
           dq_out <= rdata[15:0];   
         end    
@@ -167,25 +175,29 @@ end
         burst_counter_w <= burst_counter_w+1;
       end
   end
-
+/* verilator lint_off WIDTHEXPAND */
   always @(posedge clk)begin
     if(cke)begin
       if(command == WRITE)begin
         if (!dqm[0]) 
-        sdram_write({ba,latch_row,a[8:0],1'b0},dq[7:0]);
+        sdram_write({7'b0,ba,latch_row,a[8:0],1'b0},dq[7:0]);
         if (!dqm[1]) 
-        sdram_write({ba,latch_row,a[8:0],1'b1},dq[15:8]);
+        sdram_write({7'b0,ba,latch_row,a[8:0],1'b1},dq[15:8]);
       end
       else if (write_en && burst_counter_w<Burst_Length)begin
         if (!dqm[0]) 
-        sdram_write(full_addr+2,dq[7:0]);
+        sdram_write({7'b0,full_addr+2},dq[7:0]);
         if (!dqm[1]) 
-        sdram_write(full_addr+3,dq[15:8]);
+        sdram_write({7'b0,full_addr+3},dq[15:8]);
       end
     end
   end
-
+/* verilator lint_on WIDTHEXPAND */
 
   assign dq = dq_o_en?dq_out:16'bz;
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */
+/* verilator lint_on WIDTHCONCAT */
+

@@ -1,3 +1,5 @@
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
 module sdram_top_apb (
   input         clock,
   input         reset,
@@ -80,3 +82,6 @@ module sdram_top_apb (
   );
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */
+

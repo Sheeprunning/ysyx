@@ -7,7 +7,9 @@ VERILATOR_CFLAGS += -MMD --build -cc  --trace --Wall\
                  -O3 --x-assign fast --x-initial fast --noassert\
 				 --timescale "1ns/1ns" --no-timing
 #将警告视为非致命错误
-VERILATOR_CFLAGS += -Wno-fatal
+#VERILATOR_CFLAGS += -Wno-fatal
+#忽略#延迟时序的警告
+VERILATOR_CFLAGS += -Wno-ASSIGNDLY
 #设置include路径
 VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/uart16550/rtl 
 VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/spi/rtl

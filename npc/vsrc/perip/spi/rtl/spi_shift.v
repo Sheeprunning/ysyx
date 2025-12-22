@@ -39,6 +39,7 @@
 //////////////////////////////////////////////////////////////////////
 
 `include "spi_defines.v"
+/* verilator lint_off UNUSEDSIGNAL */
 
 module spi_shift (clk, rst, latch, byte_sel, len, lsb, go,
                   pos_edge, neg_edge, rx_negedge, tx_negedge,
@@ -233,4 +234,4 @@ module spi_shift (clk, rst, latch, byte_sel, len, lsb, go,
       data[rx_bit_pos[`SPI_CHAR_LEN_BITS-1:0]] <= #Tp rx_clk ? s_in : data[rx_bit_pos[`SPI_CHAR_LEN_BITS-1:0]];
   end
 endmodule
-
+/* verilator lint_on UNUSEDSIGNAL */

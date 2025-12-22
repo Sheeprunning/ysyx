@@ -1,4 +1,7 @@
 `define  OFFSET 6 
+/* verilator lint_off WIDTHEXPAND */
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off WIDTHCONCAT */
 module psram(
   input sck,
   input ce_n,
@@ -12,7 +15,6 @@ module psram(
   reg [7:0]cmd;
   reg [23:0]addr;
   reg [7:0]rdata [3:0];
-  reg [31:0]wdata;
   reg [3:0]dio_out;
 
   wire rst=ce_n;
@@ -39,7 +41,7 @@ import "DPI-C" function void psram_write(input int addr,input int wdata);
       READ:next_state=(counter==read_cnt)?CMD:state;
       WRITE:next_state=(counter==write_cnt)?CMD:state;
       default: begin
-          next_state <= state;
+          next_state = state;
           $fwrite(32'h80000002, "Assertion failed: Unsupported command `%xh`, only support `E8h` read and `38h` write command\n", cmd);
           $fatal;
         end
@@ -98,7 +100,7 @@ end
   wire[1:0] byte_index_w = {counter -( 5'd14 - `OFFSET)}[2:1];
   wire [23:0] waddr=addr+byte_index_w;
   always@(posedge sck or posedge rst)begin
-    if(rst)wdata<=0;
+    if(rst)buf_write<=8'b0;
     else if(state==WRITE)begin 
       buf_write<={buf_write[3:0],dio};
       psram_write(waddr,{buf_write[3:0],dio});
@@ -140,3 +142,6 @@ end
   end 
 
 endmodule
+/* verilator lint_on WIDTHEXPAND */
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on WIDTHCONCAT */

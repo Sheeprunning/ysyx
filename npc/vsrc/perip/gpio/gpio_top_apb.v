@@ -1,3 +1,4 @@
+/* verilator lint_off UNUSEDSIGNAL */
 module gpio_top_apb(
   input         clock,
   input         reset,
@@ -111,7 +112,7 @@ module gpio_top_apb(
       for(i=0;i<8;i=i+1) begin : seg_gen
         bcd7seg s(
             .b(bcd_data[i]),
-            .h(seg[i])
+            .h(seg[i][6:0])
         );
       end
   endgenerate
@@ -126,3 +127,4 @@ module gpio_top_apb(
   assign gpio_seg_7 = seg[7];
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */

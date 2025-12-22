@@ -2,7 +2,7 @@
 
 // Refer to the data sheet for the flash instructions at
 // https://www.winbond.com/hq/product/code-storage-flash-memory/serial-nor-flash/?__locale=zh
-
+/* verilator lint_off UNUSEDSIGNAL */
 module flash (
   input  sck,//slave clock
   input  ss,//slave select
@@ -100,3 +100,4 @@ module flash_cmd(
   end
 endmodule
 /* verilator lint_on DECLFILENAME */
+/* verilator lint_on UNUSEDSIGNAL */

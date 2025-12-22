@@ -31,7 +31,8 @@
 //-----------------------------------------------------------------
 //                          Generated File
 //-----------------------------------------------------------------
-
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
 module sdram_axi_core
 (
     // Inputs
@@ -663,13 +664,13 @@ else
 
 // Buffer upper 16-bits of write data so write command can be accepted
 // in WRITE0. Also buffer lower 16-bits of read data.
-always @ (posedge clk_i or posedge rst_i)
+/* always @ (posedge clk_i or posedge rst_i)
 if (rst_i)
     data_buffer_q <= 16'b0;
 else if (state_q == STATE_WRITE0)
     data_buffer_q <= ram_write_data_w[31:16];
 else if (rd_q[SDRAM_READ_LATENCY+1])
-    data_buffer_q <= sample_data_q;
+    data_buffer_q <= sample_data_q; */
 
 // Read data output
 assign ram_read_data_w = sample_data_q/* {sample_data_q, data_buffer_q} */;
@@ -716,6 +717,7 @@ assign sdram_dqm_o  = dqm_q;
 assign sdram_ba_o   = bank_q;
 assign sdram_addr_o = addr_q;
 
+
 //-----------------------------------------------------------------
 // Simulation only
 //-----------------------------------------------------------------
@@ -742,3 +744,5 @@ end
 
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */

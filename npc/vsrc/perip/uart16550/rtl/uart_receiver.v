@@ -197,7 +197,8 @@
 // synopsys translate_on
 
 `include "uart_defines.v"
-
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
 module uart_receiver (clk, wb_rst_i, lcr, rf_pop, srx_pad_i, enable,
 	counter_t, rf_count, rf_data_out, rf_error_bit, rf_overrun, rx_reset, lsr_mask, rstate, rf_push_pulse);
 
@@ -481,5 +482,7 @@ begin
 		if (enable && counter_t != 10'b0)  // we don't want to underflow
 			counter_t <= #1 counter_t - 1;		
 end
-	
+
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */

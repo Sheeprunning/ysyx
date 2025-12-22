@@ -1,3 +1,4 @@
+/* verilator lint_off UNUSEDSIGNAL */
 module vga_top_apb(
   input         clock,
   input         reset,
@@ -33,6 +34,11 @@ module vga_top_apb(
   always @(posedge reset or posedge clock) begin
     if (reset != 1'b1&&is_write)
         vga_write(in_paddr,in_pwdata);
+  end
+
+  always @(posedge reset or posedge clock) begin
+    if (reset != 1'b1&&is_read)
+        vga_read(in_paddr,in_prdata);
   end
 
 //640x480分辨率下的VGA参数设置
@@ -79,11 +85,11 @@ module vga_top_apb(
       end
 
   
-  wire [18:0] v_times_512 = {v_addr[8:0], 9'b0};  // v_addr * 512
-  wire [18:0] v_times_128 = {v_addr[8:0], 7'b0};  // v_addr * 128  
-  wire [18:0] pixel_addr = h_addr + v_times_512 + v_times_128;
+  wire [18:0] v_times_512 = {v_addr, 9'b0};  // v_addr * 512
+  wire [18:0] v_times_128 = {2'b0,v_addr, 7'b0};  // v_addr * 128  
+  wire [18:0] pixel_addr = {9'b0,h_addr} + v_times_512 + v_times_128;
   always @(posedge clock) begin
-    vga_read({pixel_addr,2'b0},vga_rdata);
+    vga_read({11'b0,pixel_addr,2'b0},vga_rdata);
   end
 
   //生成同步信号
@@ -102,3 +108,4 @@ module vga_top_apb(
   assign vga_b = vga_rdata[7:0];
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */

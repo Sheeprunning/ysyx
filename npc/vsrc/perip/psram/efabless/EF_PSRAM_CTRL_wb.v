@@ -16,7 +16,7 @@
 
 `timescale              1ns/1ps
 `default_nettype        none
-
+/* verilator lint_off UNUSEDSIGNAL */
 // Using EBH Command
 module EF_PSRAM_CTRL_wb (
     // WB bus Interface
@@ -76,7 +76,7 @@ module EF_PSRAM_CTRL_wb (
             state <= ST_QPI;
         else
             state <= nstate;
-
+/* verilator lint_off CASEINCOMPLETE */
     always @* begin
         case(state)
             ST_QPI  :
@@ -97,7 +97,7 @@ module EF_PSRAM_CTRL_wb (
                     nstate = ST_WAIT;
         endcase
     end
-
+/* verilator lint_on CASEINCOMPLETE */
 
     wire [2:0]  size =  (sel_i == 4'b0001) ? 1 :
                         (sel_i == 4'b0010) ? 1 :
@@ -177,3 +177,4 @@ module EF_PSRAM_CTRL_wb (
     assign mr_din = din;
     assign ack_o = wb_we ? mw_done :mr_done ;
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */

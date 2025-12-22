@@ -1,7 +1,7 @@
 module ysyx_25080204(
     input clock,
     input reset,
-    input io_interrupt,
+    
     
     // AXI4 Master Write Address Channel
     input        io_master_awready,
@@ -39,6 +39,7 @@ module ysyx_25080204(
     
     
     /* verilator lint_off UNUSEDSIGNAL */
+    input io_interrupt,
     output [7:0]  io_master_awlen,
     output [1:0]  io_master_awburst,
 
@@ -186,6 +187,7 @@ reg [1:0]  lsu_rresp_reg;
 reg [1:0]  inst_rresp_reg;
 reg [1:0]  bresp_reg;
 reg [1:0]  lsu_bresp_reg;
+reg check;
 
 wire        Zero, Overflow, CF;
 wire [31:0] a0;
@@ -339,8 +341,10 @@ ysyx_25080204_Arbiter arbiter (
 );
 
 //Xbar
+/* verilator lint_off PINCONNECTEMPTY */
 ysyx_25080204_Xbar xbar (
     .arb_araddr(arb_araddr),
+    .arb_arsize(arb_arsize),
     .arb_arvalid(arb_arvalid),
     .xbar_arready(xbar_arready),
     .xbar_rdata(xbar_rdata),
@@ -349,6 +353,7 @@ ysyx_25080204_Xbar xbar (
     .arb_rready(arb_rready),
     
     .arb_awaddr(arb_awaddr),
+    .arb_awsize(arb_awsize),
     .arb_awvalid(arb_awvalid),
     .xbar_awready(xbar_awready),
     .arb_wdata(arb_wdata),
@@ -401,7 +406,7 @@ ysyx_25080204_Xbar xbar (
     .clint_bvalid(clint_bvalid),
     .clint_bready (clint_bready)
 );
-
+/* verilator lint_on PINCONNECTEMPTY */
 // CLINT
 ysyx_25080204_CLINT CLINT (
     .clk(clk),
@@ -570,7 +575,6 @@ always @(posedge clk or posedge rst) begin
     else will_stall<=load||store;
 end
 // stall信号组合逻辑
-reg check;
 always @(posedge clk or posedge rst) begin
     check<=~stall;
 end

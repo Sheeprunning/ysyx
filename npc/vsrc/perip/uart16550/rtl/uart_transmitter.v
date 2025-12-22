@@ -154,6 +154,8 @@
 
 `include "uart_defines.v"
 
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
 module uart_transmitter (clk, wb_rst_i, lcr, tf_push, wb_dat_i, enable,
                          stx_pad_o, tstate, tf_count, tx_reset, lsr_mask);
 
@@ -359,3 +361,5 @@ assign stx_pad_o = lcr[`UART_LC_BC] ? 1'b0 : stx_o_tmp;    // Break condition Èù
 `endif
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */

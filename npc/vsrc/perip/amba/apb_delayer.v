@@ -1,3 +1,4 @@
+/* verilator lint_off UNUSEDSIGNAL */
 module apb_delayer(
   input         clock,
   input         reset,
@@ -36,3 +37,4 @@ module apb_delayer(
   assign in_pslverr  = out_pslverr;
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
