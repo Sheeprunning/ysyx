@@ -46,12 +46,22 @@ void bootset(void *s, int c, size_t n) {
 }
 
 COPY_SECTION __attribute__((noinline)) 
-void bootcpy(void *out, const void *in, size_t n) {
+void bootcpy_inst(void *out, const void *in, size_t n) {
   uint32_t *d = (uint32_t*)out;
   const uint32_t *s = (uint32_t*)in;
   size_t size = n>>2;
   while(size--) {
     *d++ = *s++;
+  }
+  
+}
+
+COPY_SECTION __attribute__((noinline)) 
+void bootcpy_data(void *out, const void *in, size_t n) {
+  uint8_t *d = (uint8_t*)out;
+  const uint8_t *s = (const uint8_t*)in;
+  while(n--) {
+      *d++ = *s++;
   }
 }
 
@@ -73,7 +83,7 @@ ENTRY_SECTION void fsbl_bootloader(){
   char *dest = &_sboot;
   const char *src = &_lsboot;
   
-  bootcpy(dest,src,boot_size);
+  bootcpy_inst(dest,src,boot_size);
 }
 
 
@@ -84,9 +94,9 @@ BOOT_SECTION void _bootloader(){
   size_t rodata_size = &_erodata - &_srodata;
   size_t text_size = &_etext - &_stext;
   size_t bss_size = &_bss_end - &_bss_start;
-  bootcpy(&_sdata,&_lsdata,data_size);
-  bootcpy(&_srodata,&_lsrodata,rodata_size);
-  bootcpy(&_stext,&_lstext,text_size);
+  bootcpy_data(&_sdata,&_lsdata,data_size);
+  bootcpy_data(&_srodata,&_lsrodata,rodata_size);
+  bootcpy_inst(&_stext,&_lstext,text_size);
   bootset(&_bss_start,0,bss_size);
   return ;
 }
@@ -108,7 +118,7 @@ void id_read(void) {
 void _trm_init() {
   _bootloader();
   uart_init();
-  // printf("finish init!\n");
+  printf("finish init!\n");
   //id_read();
   int ret = main(mainargs);
   halt(ret);
