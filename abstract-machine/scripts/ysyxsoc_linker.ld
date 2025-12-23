@@ -16,6 +16,7 @@ SECTIONS {
   . = ORIGIN(sram);
 
   .copy : {
+    . = ALIGN(4);
     _scopy = .;
     *(copy)
     _ecopy = .;
@@ -23,6 +24,7 @@ SECTIONS {
   _lscopy = LOADADDR(.copy);
 
   .boot : {
+    . = ALIGN(4);
     _sboot = .;
     *(boot)
     _eboot = .;
@@ -31,6 +33,7 @@ SECTIONS {
 
   . = ORIGIN(sdram);
   .text : {
+    . = ALIGN(4);
     _stext = .;
     *(.text*)
     _etext = .;
@@ -38,23 +41,26 @@ SECTIONS {
   _lstext = LOADADDR(.text);
   etext = .;
   
-  .rodata : {
+  .rodata : AT(ALIGN(LOADADDR(.text) + SIZEOF(.text), 4)) {
+    . = ALIGN(4);
     _srodata = .;
     *(.rodata*)
     _erodata = .;
-  } > sdram AT > flash
+  } > sdram 
   _lsrodata = LOADADDR(.rodata);
 
-  .data : {
+  .data : AT(ALIGN(LOADADDR(.rodata) + SIZEOF(.rodata), 4)){
+    . = ALIGN(4);
     _sdata = .;
     *(.data*)
     _edata = .;
-  } > sdram AT> flash
+  } > sdram 
   _lsdata = LOADADDR(.data);
 
   _data = .;
 
   .bss (NOLOAD) : {
+    . = ALIGN(4);
     _bss_start = .;
     *(.bss*)
     *(.sbss*)
