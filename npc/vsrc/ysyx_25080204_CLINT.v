@@ -61,6 +61,7 @@ always @(posedge clk or posedge rst)begin
     case(c_state)
         C_READY:begin
             if(arready&&arvalid)begin//读地址握手成功
+            // $display("\033[0;34m[CLK %0t]CLINT handshake read with XBAR! READ addr=0x%08x data=0x%08x \033[0m", $time,araddr,mtime);
                 arready<=1'b0;//取消读就绪
                 rresp<=2'b00;
                 rdata<=mtime;

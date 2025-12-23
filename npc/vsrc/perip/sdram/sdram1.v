@@ -182,9 +182,9 @@ end
       if(command == WRITE)begin
         // $display("\033[1;35mWRITE sdram1 data=%04x dqm=%02b\033[0m",dqm,dq);
         if (!dqm[0]) 
-        sdram_write({7'b0,latch_row,ba,a[8:1],2'b10},dq[7:0]);
+        sdram_write({7'b0,active_row[ba],ba,a[8:1],2'b10},dq[7:0]);
         if (!dqm[1]) 
-        sdram_write({7'b0,latch_row,ba,a[8:1],2'b11},dq[15:8]);
+        sdram_write({7'b0,active_row[ba],ba,a[8:1],2'b11},dq[15:8]);
       end
       // else if (write_en && burst_counter_w<Burst_Length)begin
       //   if (!dqm[0]) 

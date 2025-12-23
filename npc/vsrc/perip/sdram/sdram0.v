@@ -180,16 +180,16 @@ end
     if(cke)begin
       if(command == WRITE)begin
         if (!dqm[0]) 
-        sdram_write({7'b0,latch_row,ba,a[8:0],1'b0},dq[7:0]);
+        sdram_write({7'b0,active_row[ba],ba,a[8:0],1'b0},dq[7:0]);
         if (!dqm[1]) 
-        sdram_write({7'b0,latch_row,ba,a[8:0],1'b1},dq[15:8]);
+        sdram_write({7'b0,active_row[ba],ba,a[8:0],1'b1},dq[15:8]);
       end
-      else if (write_en && burst_counter_w<Burst_Length)begin
-        if (!dqm[0]) 
-        sdram_write({7'b0,full_addr+2},dq[7:0]);
-        if (!dqm[1]) 
-        sdram_write({7'b0,full_addr+3},dq[15:8]);
-      end
+      // else if (write_en && burst_counter_w<Burst_Length)begin
+      //   if (!dqm[0]) 
+      //   sdram_write({7'b0,full_addr+2},dq[7:0]);
+      //   if (!dqm[1]) 
+      //   sdram_write({7'b0,full_addr+3},dq[15:8]);
+      // end
     end
   end
 /* verilator lint_on WIDTHEXPAND */

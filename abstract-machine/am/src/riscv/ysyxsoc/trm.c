@@ -99,8 +99,8 @@ BOOT_SECTION void _bootloader(){
   size_t data_size = &_edata - &_sdata;
   //size_t bss_size = &_bss_end - &_bss_start;
   bootcpy(&_stext,&_lstext,text_size);
-  bootcpy(&_sdata,&_lsdata,data_size);
   bootcpy(&_srodata,&_lsrodata,rodata_size);
+  bootcpy(&_sdata,&_lsdata,data_size);
   //bootset(&_bss_start,0,bss_size);
   return ;
 }

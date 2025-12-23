@@ -1,10 +1,13 @@
 #include <am.h>
 #include <ysyxsoc.h>
+#include <stdio.h>
 void __am_timer_init() {
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
+  printf("getting time ....\n");
   uptime->us =(2<<8)* (((uint64_t) inl(RTC_ADDR+4) << 32)|inl(RTC_ADDR));
+  printf("time(us):%d\n",uptime->us);
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {

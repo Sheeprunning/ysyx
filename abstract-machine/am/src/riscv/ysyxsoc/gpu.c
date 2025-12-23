@@ -23,7 +23,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-  uint32_t screen_w = 640;
+  uint32_t screen_w = 320;
   uint32_t screen_h = 480;
   uint32_t *pixels=(uint32_t*)ctl->pixels;
   int x=ctl->x;

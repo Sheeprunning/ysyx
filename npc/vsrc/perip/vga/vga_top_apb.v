@@ -32,8 +32,11 @@ module vga_top_apb(
   assign in_pslverr = 1'b0;
 
   always @(posedge reset or posedge clock) begin
-    if (reset != 1'b1&&is_write)
-        vga_write(in_paddr,in_pwdata);
+    if (reset != 1'b1&&is_write)begin
+      vga_write(in_paddr,in_pwdata);
+      // $display("write vga[%08x]=0x%08x",in_paddr,in_pwdata);
+    end
+        
   end
 
   always @(posedge reset or posedge clock) begin
