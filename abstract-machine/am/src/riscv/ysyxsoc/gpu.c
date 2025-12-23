@@ -13,7 +13,7 @@ void __am_gpu_init() {
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
-  int width=640;
+  int width=320;
   int height=480;
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
