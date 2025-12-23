@@ -189,7 +189,7 @@ extern "C" void sdram_write(uint32_t addr, uint8_t data) {
 extern "C" void vga_read(uint32_t addr, uint32_t *data) {
   uint32_t raddr=addr+0x21000000;
   uint32_t rdata=pmem_read(raddr,4);
-  // printf("read sdram[0x%08x]=0x%08x\n",raddr,rdata);
+  // printf("read vga[0x%08x]=0x%08x\n",raddr,rdata);
   *data=rdata; 
 }
 

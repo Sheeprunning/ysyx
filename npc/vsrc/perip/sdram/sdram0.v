@@ -39,7 +39,7 @@ module sdram0(
   wire [3:0]command={cs,ras,cas,we};
   wire [2:0]CAS_Lantency=mode_reg[6:4];//010
   wire [2:0]Burst_Length=mode_reg[2:0];//000
-  wire [24:0] full_addr = {latch_bank , latch_row ,latch_col,1'b0};
+  wire [24:0] full_addr = {active_row[latch_bank] ,latch_bank ,latch_col,1'b0};
 
   
   
@@ -180,9 +180,9 @@ end
     if(cke)begin
       if(command == WRITE)begin
         if (!dqm[0]) 
-        sdram_write({7'b0,ba,latch_row,a[8:0],1'b0},dq[7:0]);
+        sdram_write({7'b0,latch_row,ba,a[8:0],1'b0},dq[7:0]);
         if (!dqm[1]) 
-        sdram_write({7'b0,ba,latch_row,a[8:0],1'b1},dq[15:8]);
+        sdram_write({7'b0,latch_row,ba,a[8:0],1'b1},dq[15:8]);
       end
       else if (write_en && burst_counter_w<Burst_Length)begin
         if (!dqm[0]) 

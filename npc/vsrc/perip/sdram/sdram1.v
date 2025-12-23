@@ -39,7 +39,7 @@ module sdram1(
   wire [3:0]command={cs,ras,cas,we};
   wire [2:0]CAS_Lantency=mode_reg[6:4];//010
   wire [2:0]Burst_Length=mode_reg[2:0];//000
-  wire [24:0] full_addr = {latch_bank , latch_row ,latch_col,1'b0};
+  wire [24:0] full_addr = {active_row[latch_bank] ,latch_bank ,latch_col,1'b0};
 
   
   
@@ -128,7 +128,8 @@ always @(posedge clk) begin
       case (read_counter)//固定传输长度为1
         3'd0: begin
           sdram_read({7'b0,full_addr},rdata);
-          // $display("sdram1 send the data:%04x",rdata[31:16]);
+          // $display("sdram1 send the data[%08x]:%04x",full_addr,rdata[31:16]);
+          // $display("row:%x bank:%x col:%x",latch_row,latch_bank,{latch_col,1'b0});
           dq_out <= rdata[31:16];   
         end    
         /* 3'd1: begin
@@ -181,9 +182,9 @@ end
       if(command == WRITE)begin
         // $display("\033[1;35mWRITE sdram1 data=%04x dqm=%02b\033[0m",dqm,dq);
         if (!dqm[0]) 
-        sdram_write({7'b0,ba,latch_row,a[8:1],2'b10},dq[7:0]);
+        sdram_write({7'b0,latch_row,ba,a[8:1],2'b10},dq[7:0]);
         if (!dqm[1]) 
-        sdram_write({7'b0,ba,latch_row,a[8:1],2'b11},dq[15:8]);
+        sdram_write({7'b0,latch_row,ba,a[8:1],2'b11},dq[15:8]);
       end
       // else if (write_en && burst_counter_w<Burst_Length)begin
       //   if (!dqm[0]) 

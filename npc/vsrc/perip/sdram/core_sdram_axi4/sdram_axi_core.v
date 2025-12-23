@@ -557,6 +557,7 @@ begin
         command_q     <= CMD_ACTIVE;
         addr_q        <= addr_row_w;
         bank_q        <= addr_bank_w;
+        // $display("sdram ADDR:0x%08x",ram_addr_w);
 
         active_row_q[addr_bank_w]  <= addr_row_w;//记录每个bank有效的row
         row_open_q[addr_bank_w]    <= 1'b1;//设置为该bank为打开
