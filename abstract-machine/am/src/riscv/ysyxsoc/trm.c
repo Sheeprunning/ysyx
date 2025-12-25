@@ -122,7 +122,8 @@ void id_read(void) {
 void _trm_init() {
   _bootloader();
   uart_init();
-  printf("finish init!\n");
+  printf("heap: [0x%08x, 0x%08x]\n",(uintptr_t)heap.start,(uintptr_t)heap.end);
+  printf("data: [0x%08x, 0x%08x]\n",(uintptr_t)&_sdata,(uintptr_t)&_edata);
   //id_read();
   int ret = main(mainargs);
   halt(ret);

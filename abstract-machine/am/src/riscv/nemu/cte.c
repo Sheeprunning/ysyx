@@ -6,7 +6,7 @@
 
 static Context* (*user_handler)(Event, Context*) = NULL;
 
-Context* __am_irq_handle(Context *c) {
+Context* __am_irq_handle(Context *c) {//在__am_asm_trap调用，传入的是当前的上下文，接下来将切换至返回的上下文
   //printf("mcause:0x%08x mstatus:0x%08x mepc:0x%08x\n",c->mcause,c->mstatus,c->mepc);
   if (user_handler) {
     Event ev = {0};

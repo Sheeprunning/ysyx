@@ -45,6 +45,7 @@ SECTIONS {
     . = ALIGN(4);
     _srodata = .;
     *(.rodata*)
+    *(.srodata*)
     _erodata = .;
   } > sdram 
   _lsrodata = LOADADDR(.rodata);
@@ -52,7 +53,9 @@ SECTIONS {
   .data : AT(ALIGN(LOADADDR(.rodata) + SIZEOF(.rodata), 4)){
     . = ALIGN(4);
     _sdata = .;
-    *(.data*)
+    *(*.data*)
+    *(*.sdata*)
+    *(*.edata*)
     _edata = .;
   } > sdram 
   _lsdata = LOADADDR(.data);
