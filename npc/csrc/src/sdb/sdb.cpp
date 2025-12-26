@@ -1,4 +1,13 @@
-#include "sdb.h"
+#include <sdb.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <common.h>
+#include <sim.h>
+#include <mem.h>
+#include <expr.h>
+#include <sim.h>
+#include <npc.h>
+#include <watchpoint.h>
 
 static int is_batch_mode = false;
 

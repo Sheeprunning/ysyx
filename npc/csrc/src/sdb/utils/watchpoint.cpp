@@ -1,4 +1,6 @@
-#include "watchpoint.h"
+#include <watchpoint.h>
+#include <expr.h>
+#include <sdb.h>
 #define NR_WP 32
 
 static WP wp_pool[NR_WP] = {};

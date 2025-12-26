@@ -1,4 +1,8 @@
-#include "dut.h"
+#include <dut.h>
+#include <dlfcn.h>
+#include <mem.h>
+#include <npc.h>
+#include <common.h>
 
 #define DIFFTEST_TO_REF 1
 #define DIFFTEST_TO_DUT 0
@@ -52,8 +56,9 @@ void init_difftest(char *ref_so_file, long img_size, int port) {
   assert(ref_difftest_init);
 
   ref_difftest_init(port);
-  ref_difftest_memcpy(CONFIG_MBASE, guest_to_host(CONFIG_MBASE), img_size, DIFFTEST_TO_REF);
-  ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);printf("pc:%0#x\n",cpu.pc);
+  ref_difftest_memcpy(CONFIG_MBASE+CONFIG_PC_RESET_OFFSET, guest_to_host(CONFIG_MBASE+CONFIG_PC_RESET_OFFSET), img_size, DIFFTEST_TO_REF);
+  ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+  PRINTF_COLOR(COLOR_CYAN,"reset the nemu pc:0x%08x\n",cpu.pc);
 }
 
 void print_dut_and_ref(CPU_state *ref_r,int p){
@@ -64,12 +69,12 @@ void print_dut_and_ref(CPU_state *ref_r,int p){
     printf("|x[%2d]  |%7s|%12x|%12x|\n", i, regs[i], cpu.gpr[i], ref_r->gpr[i]);
   }
 
-    printf("|   dnpc|   dnpc|%12x|%12x|\n",cpu.pc, ref_r->pc);
+    printf("|   pc|   pc|%12x|%12x|\n",cpu.pre_pc, ref_r->pre_pc);
   printf("---------------------------------------------\n");
 }
 
 bool isa_difftest_checkregs(CPU_state *ref_r, u_int32_t pc) {
-  if(ref_r->pc!=cpu.pc){
+  if(ref_r->pre_pc!=cpu.pre_pc){
     print_dut_and_ref(ref_r,-1);
     return false;
   }
@@ -87,8 +92,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, u_int32_t pc) {
 static void checkregs(CPU_state *ref, u_int32_t pc) {
   if (!isa_difftest_checkregs(ref, pc)) {
     npc_state.state = NPC_ABORT;
-    npc_state.halt_pc = pc;
-    
+    npc_state.halt_pc = pc;  
   }
 }
 

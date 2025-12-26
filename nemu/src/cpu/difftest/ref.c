@@ -32,13 +32,14 @@ __EXPORT void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction)
 __EXPORT void difftest_regcpy(void *dut, bool direction) {
   CPU_state *Dut=(CPU_state *)dut;
   if(direction==DIFFTEST_TO_REF){
-    
+    cpu.pre_pc=Dut->pre_pc;
     cpu.pc=Dut->pc;
     for(int i=0;i<MUXDEF(CONFIG_RVE, 16, 32);i++){
       cpu.gpr[i]=Dut->gpr[i];
     }
   }else if(direction==DIFFTEST_TO_DUT){
     Dut->pc=cpu.pc;
+    Dut->pre_pc=cpu.pre_pc;
     for(int i=0;i<MUXDEF(CONFIG_RVE, 16, 32);i++){
       Dut->gpr[i]=cpu.gpr[i];
     }

@@ -1,16 +1,8 @@
 #ifndef _EXPR_H_
 #define _EXPR_H_
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
-#include <stdio.h>
-#include <regex.h>
-#include "init.h"
-#include "sim.h"
-#include <stdbool.h>
-#include <stdint.h>
+#include <common.h>
 
 // 初始化正则表达式
 void init_regex();

@@ -1,4 +1,12 @@
-#include "sim.h"
+#include <common.h>
+#include <sim.h>
+#include <npc.h>
+#include <timer.h>
+#include <disasm.h>
+#include <log.h>
+#include <mem.h>
+#include <dut.h>
+#include <queue>
 
 #include <nvboard.h>
 void nvboard_bind_all_pins(TOP_NAME* dut);
@@ -12,7 +20,6 @@ TOP_NAME* top;
 CPU_state cpu;
 NPCState npc_state;
 u_int32_t pc;
-u_int32_t pre_pc;
 uint64_t g_timer = 0;
 uint64_t g_cycle = 0;
 uint64_t g_inst  = 0;
@@ -22,9 +29,9 @@ void print_inst(u_int32_t pc_now,u_int32_t inst){//只有在打开itrace时运�
   char *p=logbuf;
   #ifdef ITRACE_ONCE
     if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
-      p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pre_pc);
+      p += snprintf(p, sizeof(logbuf), FMT_WORD ":", cpu.pre_pc);
       p += snprintf(p, 120,"%08x ",inst);
-      disassemble(p , logbuf+sizeof(logbuf)-p , pre_pc , (uint8_t*)&inst,4);
+      disassemble(p , logbuf+sizeof(logbuf)-p , cpu.pre_pc , (uint8_t*)&inst,4);
       printf(COLOR_BLUE "%s\n" COLOR_RESET,logbuf);
       log_add("itrace.txt",logbuf);
     }
@@ -47,6 +54,7 @@ void update_cpu(){
   for(int i=0;i<32;i++){
     cpu.gpr[i]=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i];
   }
+  cpu.pre_pc=cpu.pc;
   cpu.pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
 }
 
@@ -62,7 +70,7 @@ void single_cycle() {
     #endif
   }
   step_and_dump_wave();
-  #ifdef DIFFTEST
+  #ifdef CONFIG_DIFFTEST
   update_cpu();
   #endif
   nvboard_update();
@@ -94,23 +102,6 @@ void sim_exit(){
   delete contextp;
   cout<<"仿真结束！\n";
 }
-
-
-
-
-
-const char *regs[] = {
-  "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-  "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
-};
-const char *regs2[] = {
-  "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7",
-  "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15",
-  "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23",
-  "x24", "x25", "x26", "x27", "x28", "x29", "x30", "x31"
-};
 
 extern "C" 
 {
@@ -174,7 +165,7 @@ extern "C" void psram_write(uint32_t addr, uint8_t data) {
   pmem_write(addr+0x80000000,1,data); 
 }
 
-extern "C" void sdram_read(int32_t addr, int32_t *data) {
+extern "C" void sdram_read(uint32_t addr, int32_t *data) {
   uint32_t raddr=addr+0xa0000000;
   uint32_t rdata=pmem_read(raddr,4);
   // printf("read sdram[0x%08x]=0x%08x\n",raddr,rdata);
@@ -234,7 +225,7 @@ void trace_and_difftest(u_int32_t pc){
   
     if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
       g_inst++;
-      #ifdef DIFFTEST
+      #ifdef CONFIG_DIFFTEST
       difftest_step(pc, cpu.pc);
       #endif
     }
@@ -264,11 +255,10 @@ static void statistic() {
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
-    pre_pc=pc;
     pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
     single_cycle();
     g_cycle++;
-    trace_and_difftest(cpu.pc);//删除了decoder的部分
+    trace_and_difftest(cpu.pc);
           
        
     if (npc_state.state != NPC_RUNNING) break;
@@ -301,11 +291,4 @@ void cpu_exec(uint32_t n){
       // fall through
     case NPC_QUIT: statistic();
   }
-}
-
-int sim(int argc, char *argv[]) {
-    init_main(argc,argv);
-    sdb_mainloop();
-    sim_exit();
-    return 0; 
 }

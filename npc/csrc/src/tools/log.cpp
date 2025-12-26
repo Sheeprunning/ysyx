@@ -1,4 +1,5 @@
-#include "log.h"
+#include <log.h>
+#include <common.h>
 
 const char* logname[]={"itrace.txt","ftrace.txt","mtrace.txt"};
 

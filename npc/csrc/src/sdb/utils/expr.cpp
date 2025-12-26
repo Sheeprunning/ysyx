@@ -14,7 +14,10 @@
 ***************************************************************************************/
 
 
-#include "expr.h"
+#include <expr.h>
+#include <regex.h>
+#include <mem.h>
+#include <sim.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ,

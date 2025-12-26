@@ -64,6 +64,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
   isa_exec_once(s);
+  cpu.pre_pc=cpu.pc;
   cpu.pc = s->dnpc;
   //通过输出nemu当前执行的指令来对比是否正确读入bin
   // printf("0x%08x 0x%08x\n",s->pc,s->isa.inst);

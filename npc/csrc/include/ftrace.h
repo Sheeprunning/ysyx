@@ -1,13 +1,11 @@
 #ifndef FTRACE_H
 #define FTRACE_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <common.h>
 #include <elf.h>
-#include <string.h>
-#include "npc.h"
-#include "sim.h"
-#include "log.h"
+#include <npc.h>
+#include <sim.h>
+#include <log.h>
 
 typedef struct 
 {
