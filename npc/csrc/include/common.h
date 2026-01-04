@@ -7,7 +7,7 @@
 // #define CONFIG_ITRACE 1
 // #define ITRACE_ONCE 1
 // #define CONFIG_DIFFTEST 1
-#define CONFIG_BREAKPOINT 1
+// #define CONFIG_BREAKPOINT 1
 
 
 #include <stdint.h>

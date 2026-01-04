@@ -26,8 +26,9 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   // }
   cpu.csr.mcause=NO;
   cpu.csr.mepc=epc;
-  cpu.csr.mstatus = (cpu.csr.mstatus & ~(1 << 7)) | ((cpu.csr.mstatus >> 3 & 1) << 7); // MPIE = MIE
+  cpu.csr.mstatus = ((cpu.csr.mstatus & ~(1 << 7))) | ((cpu.csr.mstatus >> 3 & 1) << 7); // MPIE = MIE
   cpu.csr.mstatus &= ~(1 << 3);  // MIE = 0
+  cpu.csr.mstatus = ((cpu.csr.mstatus & ~(3 << 11)) | (cpu.priv << 11));
   #ifdef CONFIG_ETRACE
   add_etrace(NO,epc);
   #endif

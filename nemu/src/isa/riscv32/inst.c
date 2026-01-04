@@ -18,6 +18,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
+#include <isa.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
@@ -27,7 +28,8 @@
 #define MTVEC   0x305
 #define MEPC    0x341
 #define MCAUSE  0x342
-
+#define MVENDORID 0xffffff11
+#define MARCHID 0xffffff12
 #define MEIE 11
 
 enum {
@@ -69,6 +71,8 @@ static word_t csr_read(uint32_t csr){
     case MCAUSE: return cpu.csr.mcause;
     case MSTATUS: return cpu.csr.mstatus;
     case MEPC: return cpu.csr.mepc;
+    case MARCHID: return 0x17eb81c;
+    case MVENDORID: return 0x79737978;
     default: panic("unsupported read on csr = 0x%x", csr);
   }
 }
@@ -79,6 +83,8 @@ static void csr_write(uint32_t csr,word_t data){
     case MCAUSE:  cpu.csr.mcause = data;  break;
     case MSTATUS: cpu.csr.mstatus = data; break;
     case MEPC:    cpu.csr.mepc =data; break;
+    case MARCHID: break;
+    case MVENDORID: break;
     default: panic("unsupported write on csr = 0x%x", csr);
   }
 }
@@ -130,7 +136,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 001 ????? 1110011", csrrw  , I, R(rd) = csr_read(imm);
   csr_write(imm,src1););//当rs1=x0，可以视为只读，相当与csr=src1
   INSTPAT("??????? ????? ????? 010 ????? 1110011", csrrs  , I, word_t t=csr_read(imm);
-  csr_write(imm,t|src1); R(rd) = t);//当rs1=x0，可以视为只读，相当与rd=csr
+  csr_write(imm,(t|src1)); R(rd) = t);//当rs1=x0，可以视为只读，相当与rd=csr
 
   INSTPAT("0000000 ????? ????? 001 ????? 0010011", slli   , I, R(rd) = src1 << (imm&31));
   INSTPAT("0000000 ????? ????? 101 ????? 0010011", srli   , I, R(rd) = src1 >> (imm&31));

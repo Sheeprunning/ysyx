@@ -14,7 +14,7 @@ LDFLAGS   += --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS   += --gc-sections -e _start
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 # NEMUFLAGS += -b
-NEMUFLAGS += -f $(IMAGE).elf
+NEMUFLAGS += -f $(IMAGE).elf -b
 
 #将mainargs硬编码直接在二进制文件中替换
 MAINARGS_MAX_LEN = 64
