@@ -2,12 +2,12 @@
 #include <sim.h>
 #include <npc.h>
 #include <timer.h>
+#include <device.h>
 #include <disasm.h>
 #include <log.h>
 #include <mem.h>
 #include <dut.h>
-#include <queue>
-
+#include <breakpoint.h>
 #include <nvboard.h>
 void nvboard_bind_all_pins(TOP_NAME* dut);
 
@@ -19,10 +19,13 @@ VerilatedContext* contextp = NULL;
 TOP_NAME* top;
 CPU_state cpu;
 NPCState npc_state;
-u_int32_t pc;
+
+uint32_t inst_fi;//执行完成的指令
 uint64_t g_timer = 0;
 uint64_t g_cycle = 0;
 uint64_t g_inst  = 0;
+
+bool exc_inst=0;
 
 void print_inst(u_int32_t pc_now,u_int32_t inst){//只有在打开itrace时运行
   char logbuf[128];
@@ -59,20 +62,20 @@ void update_cpu(){
 }
 
 void single_cycle() {
+  inst_fi=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg;
   top->clock = 0; 
   step_and_dump_wave();
   nvboard_update();
-  top->clock = 1; 
-  if(top->reset!=1){
+  if(top->reset!=1){//所有非阻塞赋值会在第二个eval赋值，这里我们可以当做是下降沿赋值，下降沿赋值后相应的inst也会立马更新
     #ifdef CONFIG_ITRACE
     print_inst(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc,\
       top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg);     
     #endif
   }
+  
+  top->clock = 1; 
   step_and_dump_wave();
-  #ifdef CONFIG_DIFFTEST
   update_cpu();
-  #endif
   nvboard_update();
 }
 
@@ -109,7 +112,8 @@ extern "C"
         VL_PRINTF("[DPI-C] EBREAK triggered, stopping simulation.\n");
         Verilated::gotFinish(true);
         cout << "-----Result Check:-----" << endl;
-        set_npc_state(NPC_END,pc,top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[10]);
+        set_npc_state(NPC_END,top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc,\
+          top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[10]);
     }
     void show_reg(); 
     int get_reg();
@@ -226,6 +230,7 @@ void trace_and_difftest(u_int32_t pc){
     if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
       g_inst++;
       #ifdef CONFIG_DIFFTEST
+      check_load_range(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg);
       difftest_step(pc, cpu.pc);
       #endif
     }
@@ -237,11 +242,17 @@ void trace_and_difftest(u_int32_t pc){
   if(wp){
     printf("--NO-- --EXP-- --VALUE--\n");
     printf("%-8d %-7s %-#8x->%#x\n",wp->NO,wp->wp_exp,wp->value,change);
-    printf("Watchpoint change!Procedure stop!");
+    printf("Watchpoint change!Procedure stop!\n");
     set_npc_state(NPC_STOP, pc , -1);
     wp->value=change;
   }
-#endif
+  #endif
+  #ifdef CONFIG_BREAKPOINT
+    if(compare_bp(cpu.pc)){
+      printf("pc is equal to Break point!Procedure stop!\n");
+      set_npc_state(NPC_STOP, pc , -1);
+    }
+  #endif
 }
 
 static void statistic() {
@@ -255,12 +266,10 @@ static void statistic() {
 
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
-    pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
     single_cycle();
     g_cycle++;
     trace_and_difftest(cpu.pc);
           
-       
     if (npc_state.state != NPC_RUNNING) break;
   }
 }
@@ -291,4 +300,22 @@ void cpu_exec(uint32_t n){
       // fall through
     case NPC_QUIT: statistic();
   }
+}
+
+void exec_inst(int n){
+  switch (npc_state.state) {
+    case NPC_END: case NPC_ABORT: case NPC_QUIT:
+      printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+      return;
+    default: npc_state.state = NPC_RUNNING;
+  }
+  while (n!=0)
+    {
+      execute(1);
+      if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
+        print_inst(cpu.pre_pc,inst_fi); 
+          n--;
+      }
+      if (npc_state.state != NPC_RUNNING) break;
+    }
 }

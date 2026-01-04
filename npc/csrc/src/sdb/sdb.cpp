@@ -8,6 +8,7 @@
 #include <sim.h>
 #include <npc.h>
 #include <watchpoint.h>
+#include <breakpoint.h>
 
 static int is_batch_mode = false;
 
@@ -43,6 +44,21 @@ static int cmd_p(char *args) {
   int data=expr(args,&success);
   if(success)printf("%#010x %d\n",data,data);
   return success;
+}
+
+static int cmd_n(char *args){
+  int i=1;
+  if(!args) {
+    exec_inst(1);
+  }
+  else{
+    if(sscanf(args,"%d",&i)==1) 
+        exec_inst(i);
+    else{
+        printf("The format of si is wrong!Please read the mannual or try again!\n");
+    }
+  }
+  return 0;
 }
 
 static int cmd_si(char *args){
@@ -98,6 +114,11 @@ static int cmd_w(char *args){
   return 0;
 }
 
+static int cmd_bp(char *args){
+  add_bp(args);
+  return 0;
+}
+
 static int cmd_d(char *args){
   int No=0;
   if(sscanf(args,"%d",&No)==1){
@@ -124,6 +145,8 @@ static struct {
   {"info", "Show the status of register or watchpoint", cmd_info},
   {"x", "Show the the data of memory ", cmd_x},
   {"p", "Caculate a expression", cmd_p},
+  {"n", "Excute until next instruction", cmd_n},
+  {"bp", "break point at pc", cmd_bp},
   {"w", "Set a watchpoint", cmd_w},
   {"d", "Delete the watchpoint", cmd_d}
 };

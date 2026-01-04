@@ -36,5 +36,6 @@ int isa_reg_str2val(const char *s, bool *success);
 
 
 int sim(int argc, char *argv[]);
+void exec_inst(int n);
 
 #endif 

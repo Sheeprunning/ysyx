@@ -7,6 +7,7 @@
 #include <ftrace.h>
 #include <mem.h>
 #include <dut.h>
+#include <device.h>
 
 using namespace std;
 
@@ -61,6 +62,7 @@ void init_main(int argc, char *argv[]) {
 #ifdef CONFIG_DIFFTEST
     PRINTF_COLOR(COLOR_GREEN, "✓ 差分测试已启用\n");
     init_difftest(diff_so_file, img_size, difftest_port);
+    init_devices();
     PRINTF_COLOR(COLOR_BLUE, "差分测试文件初始化中...");
     printf(ANSI_FMT("✓ 成功\n",COLOR_GREEN));
 #else
@@ -84,6 +86,7 @@ void init_main(int argc, char *argv[]) {
         PRINTF_COLOR(COLOR_YELLOW, "⚠ 已开启ftrace但未指定elf文件\n");
     }
 #endif
+
     
     PRINTF_COLOR(COLOR_GREEN, "所有初始化完成！\n");
 }

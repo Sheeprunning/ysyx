@@ -28,8 +28,8 @@ reg [31:0]marchid=32'h17eb81c;
 reg [31:0]e_cause;//环境调用异常号
 
 assign csr_wdata = (csr_op == 3'b001) ? wdata :        // CSRRW: 直接写寄存器值
-                   (csr_op == 3'b010) ? (rdata | waddr) : // CSRRS: 置位操作
-                   (csr_op == 3'b011) ? (rdata & ~waddr) : // CSRRC: 清零操作
+                   (csr_op == 3'b010) ? (rdata | wdata) : // CSRRS: 置位操作
+                   (csr_op == 3'b011) ? (rdata & ~wdata) : // CSRRC: 清零操作
                    32'hdeaddddd;  
 
 always@(*)begin
