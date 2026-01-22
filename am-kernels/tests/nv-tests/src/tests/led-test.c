@@ -6,11 +6,14 @@
 
 void led_test(){
     uint16_t x = 1;
+    // uint32_t i =1;
     while(1){
-        *(uint16_t*)GPIO_BASE = x;
+        // *(volatile uint32_t*)SEG_ADDR=i++;
+        *(volatile uint16_t*)GPIO_BASE = x;
         uint16_t msb = (x >> 15) & 0x1;
         // 左移1位，再将最高位补到最低位
         x = (x << 1) | msb;
+	for(int t=0;t<2000000;t++){}
     }
 }
 

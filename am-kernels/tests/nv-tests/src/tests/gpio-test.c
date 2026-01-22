@@ -22,7 +22,7 @@ void gpio_test(){
         *(volatile uint16_t*)GPIO_BASE = x;
         uint16_t msb = (x >> 15) & 0x1;
         x = (x << 1) | msb;
-        for(int i =0 ;i<1000;i++);
+        for(int i =0 ;i<100000;i++);
     }
     
     

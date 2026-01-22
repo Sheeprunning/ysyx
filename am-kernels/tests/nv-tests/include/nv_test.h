@@ -8,4 +8,5 @@
 
 void gpio_test();
 void vga_test();
+void led_test();
 #endif

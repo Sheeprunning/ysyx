@@ -62,16 +62,18 @@ void update_cpu(){
 }
 
 void single_cycle() {
+  #ifdef CONFIG_BREAKPOINT
   inst_fi=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg;
+  #endif
   top->clock = 0; 
   step_and_dump_wave();
   nvboard_update();
+  #ifdef CONFIG_ITRACE
   if(top->reset!=1){//所有非阻塞赋值会在第二个eval赋值，这里我们可以当做是下降沿赋值，下降沿赋值后相应的inst也会立马更新
-    #ifdef CONFIG_ITRACE
     print_inst(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc,\
       top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg);     
-    #endif
-  }
+  } 
+  #endif
   
   top->clock = 1; 
   step_and_dump_wave();
@@ -226,7 +228,7 @@ int isa_reg_str2val(const char *s, bool *success){
 }
 
 void trace_and_difftest(u_int32_t pc){
-  
+  g_cycle++;
     if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
       g_inst++;
       #ifdef CONFIG_DIFFTEST
@@ -267,7 +269,7 @@ static void statistic() {
 void execute(uint32_t n){
   for(int i=0;i<n;i++){
     single_cycle();
-    g_cycle++;
+    
     trace_and_difftest(cpu.pc);
           
     if (npc_state.state != NPC_RUNNING) break;

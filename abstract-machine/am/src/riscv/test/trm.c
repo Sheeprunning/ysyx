@@ -39,15 +39,8 @@ void uart_init() {
   outb(UART_LCR,lcr & 0x7F);
 }
 
-void id_read(void) {
-    uint32_t vendor_id = read_csr(0xf11);  // mvendorid
-    uint32_t arch_id = read_csr(0xf12);    // marchid
-    printf("0x%x 0x%x\n", vendor_id,arch_id);
-}
-
 void _trm_init() {
-  // uart_init();
-  //id_read();
+  uart_init();
   int ret = main(mainargs);
   halt(ret);
 }
