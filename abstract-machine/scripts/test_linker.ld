@@ -1,8 +1,8 @@
 ENTRY(_start)
 /* PHDRS { text PT_LOAD; data PT_LOAD; } */
 MEMORY {
-  rom(rx) : ORIGIN = 0x20000000, LENGTH = 32M
-  sram(rwx) : ORIGIN = 0xf000000, LENGTH = 16M
+  rom(rx) : ORIGIN = 0x20000000, LENGTH = 4k
+  sram(rwx) : ORIGIN = 0xf000000, LENGTH = 4k
 }
 SECTIONS {
   . = ORIGIN(rom);

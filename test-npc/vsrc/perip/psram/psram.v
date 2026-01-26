@@ -1,4 +1,7 @@
 `define  OFFSET 6 
+/* verilator lint_off WIDTHEXPAND */
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off WIDTHCONCAT */
 module psram(
   input sck,
   input ce_n,
@@ -6,21 +9,16 @@ module psram(
 );
 
   reg qpi=0;
-  reg[7:0]sram[4194304];//4MB
   reg dio_en;//dio输出使能
   reg [2:0]state,next_state;
   reg [4:0]counter;
   reg [7:0]cmd;
   reg [23:0]addr;
   reg [7:0]rdata [3:0];
-  reg [31:0]wdata;
   reg [3:0]dio_out;
 
   wire rst=ce_n;
-  wire [7:0]byte_0=sram[addr],
-            byte_1=sram[addr+1],
-            byte_2=sram[addr+2],
-            byte_3=sram[addr+3];
+
   wire [4:0]cmd_cnt=qpi?5'd1:5'd7,
             addr_cnt=qpi?5'd7:5'd13,
             wait_cnt=qpi?5'd13:5'd19,
@@ -30,7 +28,8 @@ module psram(
   localparam CMD=3'd0,ADDR=3'd1,WAIT=3'd2,READ=3'd3,WRITE=3'd4,ERROR=3'd5;
 
   assign dio = dio_en ? dio_out : 4'bz;
-
+import "DPI-C" function void psram_read(input int addr,output int rdata);
+import "DPI-C" function void psram_write(input int addr,input int wdata);
 //state转移
   always@(*)begin
     case(state)
@@ -42,7 +41,7 @@ module psram(
       READ:next_state=(counter==read_cnt)?CMD:state;
       WRITE:next_state=(counter==write_cnt)?CMD:state;
       default: begin
-          next_state <= state;
+          next_state = state;
           $fwrite(32'h80000002, "Assertion failed: Unsupported command `%xh`, only support `E8h` read and `38h` write command\n", cmd);
           $fatal;
         end
@@ -97,12 +96,14 @@ end
   end
 
 //获取wdata(根据ce_n传输)
+  reg [7:0] buf_write;
   wire[1:0] byte_index_w = {counter -( 5'd14 - `OFFSET)}[2:1];
   wire [23:0] waddr=addr+byte_index_w;
   always@(posedge sck or posedge rst)begin
-    if(rst)wdata<=0;
+    if(rst)buf_write<=8'b0;
     else if(state==WRITE)begin 
-      sram[waddr]<={sram[waddr][3:0],dio};
+      buf_write<={buf_write[3:0],dio};
+      psram_write(waddr,{buf_write[3:0],dio});
       // $display("WRITE----sram[%08x]=%04x",waddr,dio);
     end
   end
@@ -117,7 +118,7 @@ end
 
 //数据输出
   wire[1:0] byte_index_r = {counter-(5'd20 - `OFFSET)}[2:1];//EF_PSRAM_CTRL.v的写法不太好理解
-
+  reg [31:0]buf_read;
   always@(negedge sck or posedge rst)begin
     if(rst)begin
       dio_out<=0;
@@ -127,10 +128,11 @@ end
       rdata[3]<=0;
     end
     else if(counter==5'd19-`OFFSET)begin
-      rdata[0]<=byte_0;
-      rdata[1]<=byte_1;
-      rdata[2]<=byte_2;
-      rdata[3]<=byte_3;
+      psram_read(addr,buf_read);
+      rdata[0]<=buf_read[7:0];
+      rdata[1]<=buf_read[15:8];
+      rdata[2]<=buf_read[23:16];
+      rdata[3]<=buf_read[31:24];
     end
     else if(state==READ)begin
       rdata[byte_index_r]<={rdata[byte_index_r][3:0],4'b0};
@@ -140,3 +142,6 @@ end
   end 
 
 endmodule
+/* verilator lint_on WIDTHEXPAND */
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on WIDTHCONCAT */

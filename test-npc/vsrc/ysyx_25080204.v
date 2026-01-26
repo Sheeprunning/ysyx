@@ -1,7 +1,7 @@
 module ysyx_25080204(
     input clock,
     input reset,
-    input io_interrupt,
+    
     
     // AXI4 Master Write Address Channel
     input        io_master_awready,
@@ -39,6 +39,7 @@ module ysyx_25080204(
     
     
     /* verilator lint_off UNUSEDSIGNAL */
+    input io_interrupt,
     output [7:0]  io_master_awlen,
     output [1:0]  io_master_awburst,
 
@@ -150,6 +151,31 @@ wire [31:0] inst_rdata;
 wire [1:0]  inst_rresp;
 wire        inst_rvalid;
 
+//arb信号
+wire [31:0] arb_araddr; 
+wire [2:0]  arb_arsize;
+wire        arb_arvalid; 
+wire        arb_rready;
+
+wire [31:0] arb_awaddr;
+wire [2:0]  arb_awsize;
+wire        arb_awvalid;
+wire [31:0] arb_wdata;
+wire [3:0]  arb_wstrb;
+wire        arb_wvalid;
+wire        arb_bready;
+
+// Xbar信号
+wire        xbar_arready;
+wire [31:0] xbar_rdata;
+wire [1:0]  xbar_rresp;
+wire        xbar_rvalid;
+
+wire        xbar_awready;
+wire        xbar_wready;
+wire [1:0]  xbar_bresp;
+wire        xbar_bvalid;
+
 /* verilator lint_off UNUSEDSIGNAL */
 wire        lsu_arready;
 wire        inst_arready;
@@ -161,20 +187,21 @@ reg [1:0]  lsu_rresp_reg;
 reg [1:0]  inst_rresp_reg;
 reg [1:0]  bresp_reg;
 reg [1:0]  lsu_bresp_reg;
+reg check;
 
 wire        Zero, Overflow, CF;
 wire [31:0] a0;
 
-// wire [31:0] clint_awaddr;
-// wire        clint_awvalid;
-// wire        clint_awready;
-// wire [31:0] clint_wdata;
-// wire        clint_wvalid;
-// wire [1:0]  clint_wstrb;
-// wire        clint_wready;
-// wire [1:0]  clint_bresp;
-// wire        clint_bvalid;
-// wire        clint_bready;
+wire [31:0] clint_awaddr;
+wire        clint_awvalid;
+wire        clint_awready;
+wire [31:0] clint_wdata;
+wire        clint_wvalid;
+wire [3:0]  clint_wstrb;
+wire        clint_wready;
+wire [1:0]  clint_bresp;
+wire        clint_bvalid;
+wire        clint_bready;
 /* verilator lint_on UNUSEDSIGNAL */
 
 assign rdata_from_dm = rdata_from_dm_reg;
@@ -208,13 +235,13 @@ wire        load,store;//提前根据指令计算是否stall
 
 
 //CLINT信号
-// wire [31:0] clint_araddr;
-// wire        clint_arvalid;
-// wire        clint_arready;
-// wire [31:0] clint_rdata;
-// wire [1:0]  clint_rresp;
-// wire        clint_rvalid;
-// wire        clint_rready;
+wire [31:0] clint_araddr;
+wire        clint_arvalid;
+wire        clint_arready;
+wire [31:0] clint_rdata;
+wire [1:0]  clint_rresp;
+wire        clint_rvalid;
+wire        clint_rready;
 
 
 reg r_stall, w_stall, inst_stall ,will_stall;
@@ -272,18 +299,17 @@ ysyx_25080204_Arbiter arbiter (
     .lsu_rdata(lsu_rdata),
     .lsu_rresp(lsu_rresp),
     .lsu_rready(lsu_rready),
-    
-    .arb_araddr(io_master_araddr),
-    .arb_arsize(io_master_arsize),
-    .arb_arvalid(io_master_arvalid),
-    .xbar_arready(io_master_arready),
 
-    .xbar_rdata(io_master_rdata),
-    .xbar_rresp(io_master_rresp),
-    .arb_wvalid(io_master_wvalid),
+    .arb_araddr(arb_araddr),
+    .arb_arsize(arb_arsize),
+    .arb_arvalid(arb_arvalid),
+    .xbar_arready(xbar_arready),
 
-    .xbar_rvalid(io_master_rvalid),
-    .arb_rready(io_master_rready),
+    .xbar_rdata(xbar_rdata),
+    .xbar_rresp(xbar_rresp),
+
+    .xbar_rvalid(xbar_rvalid),
+    .arb_rready(arb_rready),
 
     .lsu_awaddr(lsu_awaddr),
     .lsu_awsize(lsu_awsize),
@@ -299,49 +325,115 @@ ysyx_25080204_Arbiter arbiter (
     .lsu_bvalid(lsu_bvalid),
     .lsu_bready(lsu_bready),
 
-    .arb_awaddr(io_master_awaddr),
-    .arb_awsize(io_master_awsize),
-    .arb_awvalid(io_master_awvalid),
-    .xbar_awready(io_master_awready),
+    .arb_awaddr(arb_awaddr),
+    .arb_awsize(arb_awsize),
+    .arb_awvalid(arb_awvalid),
+    .xbar_awready(xbar_awready),
 
-    .arb_wdata(io_master_wdata),
-    .arb_wstrb(io_master_wstrb),
-    .xbar_wready(io_master_wready),
+    .arb_wdata(arb_wdata),
+    .arb_wvalid(arb_wvalid),
+    .arb_wstrb(arb_wstrb),
+    .xbar_wready(xbar_wready),
 
-    .xbar_bresp(io_master_bresp),
-    .xbar_bvalid(io_master_bvalid),
-    .arb_bready(io_master_bready)
+    .xbar_bresp(xbar_bresp),
+    .xbar_bvalid(xbar_bvalid),
+    .arb_bready(arb_bready)
 );
 
+//Xbar
+/* verilator lint_off PINCONNECTEMPTY */
+ysyx_25080204_Xbar xbar (
+    .arb_araddr(arb_araddr),
+    .arb_arsize(arb_arsize),
+    .arb_arvalid(arb_arvalid),
+    .xbar_arready(xbar_arready),
+    .xbar_rdata(xbar_rdata),
+    .xbar_rresp(xbar_rresp),
+    .xbar_rvalid(xbar_rvalid),
+    .arb_rready(arb_rready),
+    
+    .arb_awaddr(arb_awaddr),
+    .arb_awsize(arb_awsize),
+    .arb_awvalid(arb_awvalid),
+    .xbar_awready(xbar_awready),
+    .arb_wdata(arb_wdata),
+    .arb_wvalid(arb_wvalid),
+    .arb_wstrb(arb_wstrb),
+    .xbar_wready(xbar_wready),
+    .xbar_bresp(xbar_bresp),
+    .xbar_bvalid(xbar_bvalid),
+    .arb_bready(arb_bready),
+    
+    .io_master_araddr(io_master_araddr),
+    .io_master_arsize(io_master_arsize),
+    .io_master_arvalid(io_master_arvalid),
+    .io_master_arready(io_master_arready),
+    .io_master_rdata(io_master_rdata),
+    .io_master_rresp(io_master_rresp),
+    .io_master_rvalid(io_master_rvalid),
+    .io_master_rready(io_master_rready),
+    
+    .io_master_awaddr(io_master_awaddr),
+    .io_master_awsize(io_master_awsize),
+    .io_master_awvalid(io_master_awvalid),
+    .io_master_awready(io_master_awready),
+    .io_master_wdata(io_master_wdata),
+    .io_master_wvalid(io_master_wvalid),
+    .io_master_wstrb(io_master_wstrb),
+    .io_master_wready(io_master_wready),
+    .io_master_bresp(io_master_bresp),
+    .io_master_bvalid(io_master_bvalid),
+    .io_master_bready(io_master_bready),
 
+    .clint_araddr(clint_araddr),
+    .clint_arsize(),
+    .clint_arvalid(clint_arvalid),
+    .clint_arready(clint_arready),
+    .clint_rdata(clint_rdata),
+    .clint_rresp(clint_rresp),
+    .clint_rvalid(clint_rvalid),
+    .clint_rready(clint_rready),
+        
+    .clint_awaddr(clint_awaddr),
+    .clint_awsize(),
+    .clint_awvalid(clint_awvalid),
+    .clint_awready(clint_awready),
+    .clint_wdata(clint_wdata),
+    .clint_wvalid(clint_wvalid),
+    .clint_wstrb(clint_wstrb),
+    .clint_wready(clint_wready),
+    .clint_bresp(clint_bresp),
+    .clint_bvalid(clint_bvalid),
+    .clint_bready (clint_bready)
+);
+/* verilator lint_on PINCONNECTEMPTY */
+// CLINT
+ysyx_25080204_CLINT CLINT (
+    .clk(clk),
+    .rst(rst),
 
-//外设2：CLINT
-// ysyx_25080204_CLINT CLINT (
-//     .clk(clk),
-//     .rst(rst),
-
-//     .araddr(clint_araddr),      
-//     .arvalid(clint_arvalid),   
-//     .arready(clint_arready),
+    .araddr(clint_araddr),      
+    .arvalid(clint_arvalid),   
+    .arready(clint_arready),
         
-//     .rdata(clint_rdata),
-//     .rresp(clint_rresp),
-//     .rvalid(clint_rvalid),
-//     .rready(clint_rready),    
+    .rdata(clint_rdata),
+    .rresp(clint_rresp),
+    .rvalid(clint_rvalid),
+    .rready(clint_rready),    
         
-//     .awaddr(clint_awaddr),    
-//     .awvalid(clint_awvalid),   
-//     .awready(clint_awready),
+    .awaddr(clint_awaddr),    
+    .awvalid(clint_awvalid),   
+    .awready(clint_awready),
         
-//     .wdata(clint_wdata),     
-//     .wstrb(clint_wstrb),      
-//     .wvalid(clint_wvalid),    
-//     .wready(clint_wready),
+    .wdata(clint_wdata),     
+    .wstrb(clint_wstrb),      
+    .wvalid(clint_wvalid),    
+    .wready(clint_wready),
         
-//     .bresp(clint_bresp),
-//     .bvalid(clint_bvalid),
-//     .bready(clint_bready) 
-// );
+    .bresp(clint_bresp),
+    .bvalid(clint_bvalid),
+    .bready(clint_bready) 
+);
 
 wire r_idle_to_r_wait=DM_r_en&&will_stall;
 wire r_wait_to_r_idle=lsu_rvalid && lsu_rready;
@@ -376,7 +468,7 @@ always @(posedge clk or posedge rst) begin
                     lsu_rready_reg <= 1'b0;
                     r_stall <= 1'b0;
                     r_state <= R_IDLE; 
-// $display("\033[0;34m[CLK %0t]LSU handshake with MEM! READ size=%03b addr=0x%08x data=0x%08x \033[0m", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
+// $display("\033[0;34m[CLK %0t]LSU handshake read with MEM! READ size=%03b addr=0x%08x data=0x%08x \033[0m", $time,lsu_arsize,lsu_araddr_reg,lsu_rdata);
                 end
             end
             default:begin end
@@ -410,10 +502,11 @@ always @(posedge clk or posedge rst) begin
                 end
             end
             W_WRITE: begin
+                if(lsu_awready&&lsu_awvalid)
+                    lsu_awvalid_reg <= 1'b0;
               if(lsu_wready&&lsu_wvalid)begin
-// $display("\033[0;32m[CLK %0t]LSU handshake with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
+// $display("\033[0;32m[CLK %0t]LSU handshake write with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
                 lsu_bready_reg <= 1'b1;
-                lsu_awvalid_reg <= 1'b0;
                 lsu_wvalid_reg <= 1'b0;
                 w_state <= W_BRESP;
               end
@@ -483,7 +576,6 @@ always @(posedge clk or posedge rst) begin
     else will_stall<=load||store;
 end
 // stall信号组合逻辑
-reg check;
 always @(posedge clk or posedge rst) begin
     check<=~stall;
 end

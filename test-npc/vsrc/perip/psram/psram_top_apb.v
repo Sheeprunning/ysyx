@@ -1,3 +1,4 @@
+/* verilator lint_off UNUSEDSIGNAL */
 module psram_top_apb (
   input         clock,
   input         reset,
@@ -47,3 +48,4 @@ module psram_top_apb (
   assign din = qspi_dio;
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */

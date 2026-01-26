@@ -57,7 +57,7 @@ module sdram_axi_core
     ,output          sdram_cas_o
     ,output          sdram_we_o
     ,output [  3:0]  sdram_dqm_o//modify
-    ,output [ 13:0]  sdram_addr_o//modify
+    ,output [ 14:0]  sdram_addr_o//modify
     ,output [  1:0]  sdram_ba_o
     ,output [ 31:0]  sdram_data_output_o//modify
     ,output          sdram_data_out_en_o
@@ -133,7 +133,7 @@ wire [ 31:0]  ram_write_data_w = inport_write_data_i;
 wire [ 31:0]  ram_read_data_w;
 wire          ram_ack_w;
 
-wire          ram_req_w = (ram_wr_w != 4'b0) | ram_rd_w;
+wire          ram_req_w = (ram_wr_w != 4'b0) | ram_rd_w;//有读或者写
 
 assign inport_ack_o       = ram_ack_w;
 assign inport_read_data_o = ram_read_data_w;
@@ -159,6 +159,7 @@ reg                    data_rd_en_q;
 reg [SDRAM_DQM_W-1:0]  dqm_q;
 reg                    cke_q;
 reg [SDRAM_BANK_W-1:0] bank_q;
+reg                    boardcast;//设置了一个广播位，表示对所有sdram颗粒有效 
 
 // Buffer half word during read and write commands
 reg [SDRAM_DATA_W-1:0] data_buffer_q;
@@ -491,6 +492,7 @@ begin
     dqm_q           <= {SDRAM_DQM_W{1'b0}};
     data_rd_en_q    <= 1'b1;
     dqm_buffer_q    <= {SDRAM_DQM_W{1'b0}};
+    boardcast       <= 1'b1;
 
     for (idx=0;idx<SDRAM_BANKS;idx=idx+1)
         active_row_q[idx] <= {SDRAM_ROW_W{1'b0}};
@@ -510,6 +512,7 @@ begin
         addr_q       <= {SDRAM_ROW_W{1'b0}};
         bank_q       <= {SDRAM_BANK_W{1'b0}};
         data_rd_en_q <= 1'b1;
+        boardcast    <= 1'b1;
     end
     //-----------------------------------------
     // STATE_INIT
@@ -528,17 +531,20 @@ begin
             // Precharge all banks
             command_q           <= CMD_PRECHARGE;
             addr_q[ALL_BANKS]   <= 1'b1;
+            boardcast           <= 1'b1;
         end
         // 2 x REFRESH (with at least tREF wait)
         else if (refresh_timer_q == 20 || refresh_timer_q == 30)
         begin
             command_q <= CMD_REFRESH;
+            boardcast <= 1'b1;
         end
         // Load mode register
         else if (refresh_timer_q == 10)
         begin
             command_q <= CMD_LOAD_MODE;
             addr_q    <= {1'b0,MODE_REG};
+            boardcast <= 1'b1;
         end
         // Other cycles during init - just NOP
         else
@@ -546,6 +552,7 @@ begin
             command_q   <= CMD_NOP;
             addr_q      <= {SDRAM_ROW_W{1'b0}};
             bank_q      <= {SDRAM_BANK_W{1'b0}};
+            boardcast   <= 1'b1;
         end
     end
     //-----------------------------------------
@@ -557,6 +564,7 @@ begin
         command_q     <= CMD_ACTIVE;
         addr_q        <= addr_row_w;
         bank_q        <= addr_bank_w;
+        boardcast     <= 1'b1;
         // $display("sdram ADDR:0x%08x",ram_addr_w);
 
         active_row_q[addr_bank_w]  <= addr_row_w;//记录每个bank有效的row
@@ -574,6 +582,7 @@ begin
             command_q           <= CMD_PRECHARGE;
             addr_q[ALL_BANKS]   <= 1'b1;
             row_open_q          <= {SDRAM_BANKS{1'b0}};
+            boardcast           <= 1'b1;
         end
         else
         begin
@@ -583,6 +592,7 @@ begin
             bank_q              <= addr_bank_w;
 
             row_open_q[addr_bank_w] <= 1'b0;
+            boardcast               <= 1'b1;
         end
     end
     //-----------------------------------------
@@ -594,6 +604,7 @@ begin
         command_q   <= CMD_REFRESH;
         addr_q      <= {SDRAM_ROW_W{1'b0}};
         bank_q      <= {SDRAM_BANK_W{1'b0}};
+        boardcast   <= 1'b1;
     end
     //-----------------------------------------
     // STATE_READ
@@ -603,6 +614,7 @@ begin
         command_q   <= CMD_READ;
         addr_q      <= addr_col_w;
         bank_q      <= addr_bank_w;
+        boardcast   <= 1'b0;
 
         // Disable auto precharge (auto close of row)
         addr_q[AUTO_PRECHARGE]  <= 1'b0;
@@ -622,6 +634,7 @@ begin
 // $display("\033[1;33mWRITE data=%08x\033[0m",ram_write_data_w);
         // Disable auto precharge (auto close of row)
         addr_q[AUTO_PRECHARGE]  <= 1'b0;
+        boardcast           <= 1'b0;
 
         // Write mask
         dqm_q           <= ~ram_wr_w/* [1:0] */;
@@ -716,7 +729,7 @@ assign sdram_cas_o  = command_q[1];
 assign sdram_we_o   = command_q[0];
 assign sdram_dqm_o  = dqm_q;
 assign sdram_ba_o   = bank_q;
-assign sdram_addr_o = addr_q;
+assign sdram_addr_o = {boardcast,addr_q};
 
 
 //-----------------------------------------------------------------

@@ -5,19 +5,7 @@
 #include "verilated_vcd_c.h"
 #include "VysyxSoCFull.h"
 #include "VysyxSoCFull___024root.h"
-#include <iostream>
-#include <string>
-#include <iomanip>
-#include <sys/time.h>
-#include <getopt.h>
 #include "svdpi.h"
-#include "init.h"
-#include "sdb.h"
-#include "npc.h"
-#include "log.h"
-#include "timer.h"
-
-// #include <nvboard.h>
 
 // 全局变量声明
 extern VerilatedContext* contextp;
@@ -48,5 +36,6 @@ int isa_reg_str2val(const char *s, bool *success);
 
 
 int sim(int argc, char *argv[]);
+void exec_inst(int n);
 
 #endif 

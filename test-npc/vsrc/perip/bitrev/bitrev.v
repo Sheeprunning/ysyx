@@ -1,3 +1,5 @@
+
+/* verilator lint_off UNUSEDSIGNAL */
 module bitrev (
   input  sck,
   input  ss,
@@ -49,3 +51,4 @@ module bitrev (
   end
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */

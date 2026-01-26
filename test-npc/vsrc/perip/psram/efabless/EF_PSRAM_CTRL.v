@@ -42,6 +42,7 @@
 `default_nettype        none
 `define OFFSET 6
 /* verilator lint_off DECLFILENAME */
+/* verilator lint_off UNUSEDSIGNAL */
 module PSRAM_READER (
     input   wire            clk,
     input   wire            rst_n,
@@ -253,3 +254,4 @@ module PSRAM_WRITER (
 
 endmodule
 /* verilator lint_on DECLFILENAME */
+/* verilator lint_on UNUSEDSIGNAL */

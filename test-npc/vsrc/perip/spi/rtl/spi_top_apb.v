@@ -1,7 +1,7 @@
 // define this macro to enable fast behavior simulation
 // for flash by skipping SPI transfers
 // `define FAST_FLASH
-
+/* verilator lint_off UNUSEDSIGNAL */
 module spi_top_apb #(
   parameter flash_addr_start = 32'h30000000,
   parameter flash_addr_end   = 32'h3fffffff,
@@ -17,7 +17,7 @@ module spi_top_apb #(
   input  [31:0] in_pwdata,
   input  [3:0]  in_pstrb,
   output reg    in_pready,
-  output [31:0] in_prdata,
+  output reg [31:0] in_prdata,
   output        in_pslverr,
 
   output                  spi_sck,
@@ -78,6 +78,7 @@ always @(*)begin
     XIP_WAIT:       next_state=(spi_irq_out)?XIP_RETURN:state;
     XIP_RETURN:     next_state=in_pready_ack?IDLE:state;
     COMMON:         next_state=go_bsy?state:in_pready_ack?IDLE:state;
+    default: next_state=state;
   endcase
 end
 
@@ -102,12 +103,11 @@ always @(*)begin
       spi_miso_t=0;
       in_pready=0;
       in_prdata=0;
-      pre_is_xip=0;
     end
     XIP_TX:begin
     //$display("\033[1;34m [TIME:%0t] [TX] tx=0x%08x\033[0m",$time,32'h03000000+in_paddr[23:0]);
       in_paddr_t=32'h10001004;//tx1
-      in_pwdata_t=32'h03000000+in_paddr[23:0];
+      in_pwdata_t=32'h03000000+{8'b0,in_paddr[23:0]};
       in_pstrb_t=4'b1111;
       in_pwrite_t=1;
       in_psel_t=1;
@@ -182,7 +182,7 @@ always @(*)begin
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
       in_prdata={in_prdata_o[7:0],in_prdata_o[15:8],in_prdata_o[23:16],in_prdata_o[31:24]};
-      pre_is_xip=1;
+      
       //if(in_pready)$display("\033[1;33m [TIME:%0t] return 0x%08x\033[0m",$time,in_prdata);
     end
     COMMON:begin
@@ -195,10 +195,9 @@ always @(*)begin
       spi_miso_t=spi_miso;
       in_pready=in_pready_ack;
       in_prdata=in_prdata_o;
-      pre_is_xip = 0;
     end
     default:begin
-      //$display("\033[1;31m spi_top_apb.v 进入未知状态\033[0m");
+      $display("\033[1;31m spi_top_apb.v 进入未知状态\033[0m");
       in_paddr_t=0;
       in_pwdata_t=0;
       in_pstrb_t=0;
@@ -206,10 +205,23 @@ always @(*)begin
       in_psel_t=0;
       in_penable_t=0;
       spi_miso_t=1;
+      in_prdata=0;
+      in_pready=1;
     end
   endcase
 end
+always @(posedge clock or posedge reset) begin
+  if(reset)pre_is_xip<=0;
+  else begin
+    case (state)
+      IDLE: pre_is_xip<=0;
+      XIP_RETURN:pre_is_xip<=1;
+      COMMON:pre_is_xip<=0;
 
+      default: ;
+    endcase
+  end
+end
 spi_top u0_spi_top (
   .wb_clk_i(clock),
   .wb_rst_i(reset),
@@ -233,3 +245,4 @@ spi_top u0_spi_top (
 `endif // FAST_FLASH
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */

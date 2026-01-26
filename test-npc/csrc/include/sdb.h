@@ -1,18 +1,6 @@
 #ifndef _SDB_H_
 #define _SDB_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <string.h>
-#include "sim.h"
-#include "init.h"
-#include "expr.h"
-#include "sim.h"
-#include "npc.h"
-#include "watchpoint.h"
-
 /* 核心函数 */
 void sdb_set_batch_mode(void);
 void sdb_mainloop(void);

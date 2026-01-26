@@ -232,6 +232,8 @@
 `define UART_DL1 7:0
 `define UART_DL2 15:8
 /* verilator lint_off DEFPARAM */
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
 module uart_regs (clk,
     wb_rst_i, wb_addr_i, wb_dat_i, wb_dat_o, wb_we_i, wb_re_i,
 
@@ -421,7 +423,7 @@ begin
     endcase // case(wb_addr_i)
 end // always @ (dl or dlab or ier or iir or scratch...
 
-
+/* verilator lint_off SYNCASYNCNET */
 // rf_pop signal handling
 always @(posedge clk or posedge wb_rst_i)
 begin
@@ -434,6 +436,7 @@ begin
     if (wb_re_i && wb_addr_i == `UART_REG_RB && !dlab)
         rf_pop <= #1 1; // advance read pointer
 end
+/* verilator lint_on SYNCASYNCNET */
 
 wire     lsr_mask_condition;
 wire     iir_read;
@@ -721,8 +724,12 @@ begin
     if (wb_rst_i)
         dlc <= #1 0;
     else
-        if (start_dlc | ~ (|dlc))
-            dlc <= #1 dl - 1;               // preset counter
+        if (start_dlc | ~ (|dlc))begin
+        if(start_dlc)$display("dl:%16b",dl);
+        
+          dlc <= #1 dl - 1;               // preset counter
+        end
+            
         else
             dlc <= #1 dlc - 1;              // decrement counter
 end
@@ -924,3 +931,5 @@ end
 
 endmodule
 /* verilator lint_on DEFPARAM */
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */

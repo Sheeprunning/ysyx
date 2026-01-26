@@ -1,3 +1,5 @@
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
 module uart_top_apb (
        input   wire        reset
      , input   wire        clock
@@ -89,3 +91,5 @@ module uart_top_apb (
           .int_o       (interrupt)
    );
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */

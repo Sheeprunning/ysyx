@@ -7,7 +7,9 @@ VERILATOR_CFLAGS += -MMD --build -cc  --trace --Wall\
                  -O3 --x-assign fast --x-initial fast --noassert\
 				 --timescale "1ns/1ns" --no-timing
 #将警告视为非致命错误
-VERILATOR_CFLAGS += -Wno-fatal
+#VERILATOR_CFLAGS += -Wno-fatal
+#忽略#延迟时序的警告
+VERILATOR_CFLAGS += -Wno-ASSIGNDLY
 #设置include路径
 VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/uart16550/rtl 
 VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/spi/rtl
@@ -23,8 +25,9 @@ $(BUILD_DIR):
 		mkdir -p $@
 
 # project source
-VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
-CSRCS = $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.cpp")
+VSRCS = $(shell find $(abspath ./vsrc) -maxdepth 1 -name "*.v")
+VSRCS += $(shell find $(abspath ./vsrc/perip) -name "*.v")
+CSRCS = $(shell find $(abspath ./csrc) -name "*.cpp")
 CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)
 IMG ?=  ./default.bin
@@ -38,14 +41,14 @@ SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 ifeq ($(findstring r,$(filter-out --%,$(MAKEFLAGS))),r)
   RUN_NVBOARD = 1
 else
-  RUN_NVBOARD ?= 0
+  RUN_NVBOARD ?= 1
 endif
 
 #run nvboard
 ifeq ($(RUN_NVBOARD), 1)
 # rules for NVBoard
 $(SRC_AUTO_BIND): $(NXDC_FILES) | $(BUILD_DIR)
-	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $< $@
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 sim: $(BIN)
 	@echo "=== doing git_commit ...==="

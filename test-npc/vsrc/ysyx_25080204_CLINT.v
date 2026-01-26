@@ -16,7 +16,7 @@ module ysyx_25080204_CLINT(
     output reg awready,
 
     input [31:0]wdata,
-    input [1:0]wstrb,
+    input [3:0]wstrb,
     input wvalid,
     output reg wready,
 
@@ -46,8 +46,8 @@ end
 
 //读通道
 reg [1:0]c_state;
-wire r_low=(araddr==32'ha0000048);
-wire r_high=(araddr==32'ha000004c);
+wire r_low= (araddr==32'h02000000);
+wire r_high=(araddr==32'h02000004);
 wire [31:0]mtime=r_low?mtime_low:r_high?mtime_high:0;
 always @(posedge clk or posedge rst)begin
   if(rst)begin
@@ -61,6 +61,7 @@ always @(posedge clk or posedge rst)begin
     case(c_state)
         C_READY:begin
             if(arready&&arvalid)begin//读地址握手成功
+            // $display("\033[0;34m[CLK %0t]CLINT handshake read with XBAR! READ addr=0x%08x data=0x%08x \033[0m", $time,araddr,mtime);
                 arready<=1'b0;//取消读就绪
                 rresp<=2'b00;
                 rdata<=mtime;

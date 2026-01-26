@@ -9,7 +9,7 @@ module ysyx_25080204_Arbiter(
 
     output reg   ifu_rvalid,
     output [31:0] ifu_rdata,
-    output reg [1:0] ifu_rresp,
+    output [1:0] ifu_rresp,
     input ifu_rready,
     //LSU读接口
     input [31:0] lsu_araddr,
@@ -19,13 +19,13 @@ module ysyx_25080204_Arbiter(
 
     output reg   lsu_rvalid,
     output [31:0] lsu_rdata,
-    output reg [1:0] lsu_rresp,
+    output [1:0]  lsu_rresp,
     input lsu_rready,
 
     //Xbar读接口
-    output [31:0]arb_araddr,
-    output [2:0] arb_arsize,
-    output arb_arvalid,
+    output reg [31:0]arb_araddr,
+    output reg [2:0] arb_arsize,
+    output reg arb_arvalid,
     input xbar_arready,
 
     input [31:0]xbar_rdata,

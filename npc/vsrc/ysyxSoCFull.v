@@ -2049,7 +2049,7 @@ module APBSDRAM(	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.sca
                 sdram_bundle_ras,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
                 sdram_bundle_cas,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
                 sdram_bundle_we,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
-  output [13:0] sdram_bundle_a,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
+  output [14:0] sdram_bundle_a,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
   output [1:0]  sdram_bundle_ba,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
   output [3:0]  sdram_bundle_dqm,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
   inout  [31:0] sdram_bundle_dq	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/device/SDRAM.scala:89:26
@@ -4244,7 +4244,7 @@ module ysyxSoCASIC(	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:59:
                 sdram_ras,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
                 sdram_cas,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
                 sdram_we,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
-  output [13:0] sdram_a,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
+  output [14:0] sdram_a,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
   output [1:0]  sdram_ba,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
   output [3:0]  sdram_dqm,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
   inout  [31:0] sdram_dq,	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:89:19
@@ -5286,7 +5286,7 @@ module ysyxSoCFull(	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:111
   wire        _asic_sdram_ras;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
   wire        _asic_sdram_cas;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
   wire        _asic_sdram_we;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
-  wire [13:0] _asic_sdram_a;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
+  wire [14:0] _asic_sdram_a;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
   wire [1:0]  _asic_sdram_ba;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
   wire [3:0]  _asic_sdram_dqm;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
   wire [3:0]  _dio_wire;	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:143:23
@@ -5349,13 +5349,8 @@ module ysyxSoCFull(	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:111
     .ce_n (_asic_psram_ce_n),	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:107:24
     .dio  (_dio_wire)
   );	// home/sheeprunning/ysyxworkbench/ysyxSoC/src/SoC.scala:143:23
-wire _asic_sdram_cs_0 = _asic_sdram_a[13]?0:_asic_sdram_cs;
-wire _asic_sdram_cs_1 = _asic_sdram_a[13]?_asic_sdram_cs:0;
-
-wire [31:0]_dq_wire_0;
-wire [31:0]_dq_wire_1;
-
-assign _dq_wire= _asic_sdram_cs_0?_dq_wire_0:_asic_sdram_cs_1?_dq_wire_1:0;
+wire _asic_sdram_cs_0 = _asic_sdram_a[14]?0:_asic_sdram_a[13]?1:_asic_sdram_cs;
+wire _asic_sdram_cs_1 = _asic_sdram_a[14]?0:_asic_sdram_a[13]?_asic_sdram_cs:1;
 
 // 位扩展：替换为2颗16位SDRAM颗粒
 sdram0 sdram0 (    // 第一颗：低16位数据+低2位掩码
@@ -5368,7 +5363,7 @@ sdram0 sdram0 (    // 第一颗：低16位数据+低2位掩码
     .a   (_asic_sdram_a[12:0]),
     .ba  (_asic_sdram_ba),
     .dqm (_asic_sdram_dqm[1:0]),  // 低2位掩码
-    .dq  (_dq_wire_0[15:0])         // 低16位数据
+    .dq  (_dq_wire[15:0])         // 低16位数据
 );
 
 sdram1 sdram1 (    // 第二颗：高16位数据+高2位掩码
@@ -5381,7 +5376,7 @@ sdram1 sdram1 (    // 第二颗：高16位数据+高2位掩码
     .a   (_asic_sdram_a[12:0]),
     .ba  (_asic_sdram_ba),
     .dqm (_asic_sdram_dqm[3:2]),  // 高2位掩码
-    .dq  (_dq_wire_0[31:16])        // 高16位数据
+    .dq  (_dq_wire[31:16])        // 高16位数据
 );
 sdram0 sdram3 (    // 第三颗：低16位数据+低2位掩码
     .clk (_asic_sdram_clk),
@@ -5393,7 +5388,7 @@ sdram0 sdram3 (    // 第三颗：低16位数据+低2位掩码
     .a   (_asic_sdram_a[12:0]),
     .ba  (_asic_sdram_ba),
     .dqm (_asic_sdram_dqm[1:0]),  // 低2位掩码
-    .dq  (_dq_wire_1[15:0])         // 低16位数据
+    .dq  (_dq_wire[15:0])         // 低16位数据
 );
 
 sdram1 sdram4 (    // 第四颗：高16位数据+高2位掩码
@@ -5406,7 +5401,7 @@ sdram1 sdram4 (    // 第四颗：高16位数据+高2位掩码
     .a   (_asic_sdram_a[12:0]),
     .ba  (_asic_sdram_ba),
     .dqm (_asic_sdram_dqm[3:2]),  // 高2位掩码
-    .dq  (_dq_wire_1[31:16])        // 高16位数据
+    .dq  (_dq_wire[31:16])        // 高16位数据
 );
 endmodule
 

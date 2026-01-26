@@ -1,5 +1,5 @@
 #include "nv_test.h"
 int main() {
-    led_test();
+    seg_test();
     return 0;
 }

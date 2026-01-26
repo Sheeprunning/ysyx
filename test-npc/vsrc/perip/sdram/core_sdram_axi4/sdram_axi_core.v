@@ -31,7 +31,8 @@
 //-----------------------------------------------------------------
 //                          Generated File
 //-----------------------------------------------------------------
-
+/* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNUSEDPARAM */
 module sdram_axi_core
 (
     // Inputs
@@ -42,7 +43,7 @@ module sdram_axi_core
     ,input  [  7:0]  inport_len_i
     ,input  [ 31:0]  inport_addr_i
     ,input  [ 31:0]  inport_write_data_i
-    ,input  [ 15:0]  sdram_data_input_i
+    ,input  [ 31:0]  sdram_data_input_i//modify
 
     // Outputs
     ,output          inport_accept_o
@@ -55,10 +56,10 @@ module sdram_axi_core
     ,output          sdram_ras_o
     ,output          sdram_cas_o
     ,output          sdram_we_o
-    ,output [  1:0]  sdram_dqm_o
-    ,output [ 12:0]  sdram_addr_o
+    ,output [  3:0]  sdram_dqm_o//modify
+    ,output [ 14:0]  sdram_addr_o//modify
     ,output [  1:0]  sdram_ba_o
-    ,output [ 15:0]  sdram_data_output_o
+    ,output [ 31:0]  sdram_data_output_o//modify
     ,output          sdram_data_out_en_o
 );
 
@@ -68,7 +69,7 @@ module sdram_axi_core
 // Key Params
 //-----------------------------------------------------------------
 parameter SDRAM_MHZ              = 50;
-parameter SDRAM_ADDR_W           = 24;
+parameter SDRAM_ADDR_W           = 25/* 24 */;
 parameter SDRAM_COL_W            = 9;
 parameter SDRAM_READ_LATENCY     = 2;
 
@@ -76,7 +77,7 @@ parameter SDRAM_READ_LATENCY     = 2;
 // Defines / Local params
 //-----------------------------------------------------------------
 localparam SDRAM_BANK_W          = 2;
-localparam SDRAM_DQM_W           = 2;
+localparam SDRAM_DQM_W           = 4/* 2 */;
 localparam SDRAM_BANKS           = 2 ** SDRAM_BANK_W;
 localparam SDRAM_ROW_W           = SDRAM_ADDR_W - SDRAM_COL_W - SDRAM_BANK_W;
 localparam SDRAM_REFRESH_CNT     = 2 ** SDRAM_ROW_W;
@@ -94,7 +95,7 @@ localparam CMD_REFRESH       = 4'b0001;
 localparam CMD_LOAD_MODE     = 4'b0000;
 
 // Mode: Burst Length = 4 bytes, CAS=2
-localparam MODE_REG          = {3'b000,1'b0,2'b00,3'b010,1'b0,3'b001};
+localparam MODE_REG          = {3'b000,1'b0,2'b00,3'b010,1'b0,3'b000/* 3'b001 */};
 
 // SM states
 localparam STATE_W           = 4;
@@ -112,7 +113,7 @@ localparam STATE_REFRESH     = 4'd9;
 localparam AUTO_PRECHARGE    = 10;
 localparam ALL_BANKS         = 10;
 
-localparam SDRAM_DATA_W      = 16;
+localparam SDRAM_DATA_W      = 32/* 16 */;
 
 localparam CYCLE_TIME_NS     = 1000 / SDRAM_MHZ;
 
@@ -132,7 +133,7 @@ wire [ 31:0]  ram_write_data_w = inport_write_data_i;
 wire [ 31:0]  ram_read_data_w;
 wire          ram_ack_w;
 
-wire          ram_req_w = (ram_wr_w != 4'b0) | ram_rd_w;
+wire          ram_req_w = (ram_wr_w != 4'b0) | ram_rd_w;//有读或者写
 
 assign inport_ack_o       = ram_ack_w;
 assign inport_read_data_o = ram_read_data_w;
@@ -158,6 +159,7 @@ reg                    data_rd_en_q;
 reg [SDRAM_DQM_W-1:0]  dqm_q;
 reg                    cke_q;
 reg [SDRAM_BANK_W-1:0] bank_q;
+reg                    boardcast;//设置了一个广播位，表示对所有sdram颗粒有效 
 
 // Buffer half word during read and write commands
 reg [SDRAM_DATA_W-1:0] data_buffer_q;
@@ -282,14 +284,14 @@ begin
     //-----------------------------------------
     // STATE_WRITE0
     //-----------------------------------------
-    STATE_WRITE0 :
+    /* STATE_WRITE0 :
     begin
         next_state_r = STATE_WRITE1;
-    end
+    end */
     //-----------------------------------------
     // STATE_WRITE1
     //-----------------------------------------
-    STATE_WRITE1 :
+    STATE_WRITE0/* STATE_WRITE1 */ :
     begin
         next_state_r = STATE_IDLE;
 
@@ -483,13 +485,14 @@ always @ (posedge clk_i or posedge rst_i)
 if (rst_i)
 begin
     command_q       <= CMD_NOP;
-    data_q          <= 16'b0;
+    data_q          <= 32'b0;
     addr_q          <= {SDRAM_ROW_W{1'b0}};
     bank_q          <= {SDRAM_BANK_W{1'b0}};
     cke_q           <= 1'b0;
     dqm_q           <= {SDRAM_DQM_W{1'b0}};
     data_rd_en_q    <= 1'b1;
     dqm_buffer_q    <= {SDRAM_DQM_W{1'b0}};
+    boardcast       <= 1'b1;
 
     for (idx=0;idx<SDRAM_BANKS;idx=idx+1)
         active_row_q[idx] <= {SDRAM_ROW_W{1'b0}};
@@ -509,6 +512,7 @@ begin
         addr_q       <= {SDRAM_ROW_W{1'b0}};
         bank_q       <= {SDRAM_BANK_W{1'b0}};
         data_rd_en_q <= 1'b1;
+        boardcast    <= 1'b1;
     end
     //-----------------------------------------
     // STATE_INIT
@@ -519,7 +523,6 @@ begin
         if (refresh_timer_q == 50)
         begin
             // Assert CKE after 100uS
-            $display("[%0t]已经置1-------------------------------",$time);
             cke_q <= 1'b1;
         end
         // PRECHARGE
@@ -528,17 +531,20 @@ begin
             // Precharge all banks
             command_q           <= CMD_PRECHARGE;
             addr_q[ALL_BANKS]   <= 1'b1;
+            boardcast           <= 1'b1;
         end
         // 2 x REFRESH (with at least tREF wait)
         else if (refresh_timer_q == 20 || refresh_timer_q == 30)
         begin
             command_q <= CMD_REFRESH;
+            boardcast <= 1'b1;
         end
         // Load mode register
         else if (refresh_timer_q == 10)
         begin
             command_q <= CMD_LOAD_MODE;
-            addr_q    <= MODE_REG;
+            addr_q    <= {1'b0,MODE_REG};
+            boardcast <= 1'b1;
         end
         // Other cycles during init - just NOP
         else
@@ -546,6 +552,7 @@ begin
             command_q   <= CMD_NOP;
             addr_q      <= {SDRAM_ROW_W{1'b0}};
             bank_q      <= {SDRAM_BANK_W{1'b0}};
+            boardcast   <= 1'b1;
         end
     end
     //-----------------------------------------
@@ -557,6 +564,8 @@ begin
         command_q     <= CMD_ACTIVE;
         addr_q        <= addr_row_w;
         bank_q        <= addr_bank_w;
+        boardcast     <= 1'b1;
+        // $display("sdram ADDR:0x%08x",ram_addr_w);
 
         active_row_q[addr_bank_w]  <= addr_row_w;//记录每个bank有效的row
         row_open_q[addr_bank_w]    <= 1'b1;//设置为该bank为打开
@@ -573,6 +582,7 @@ begin
             command_q           <= CMD_PRECHARGE;
             addr_q[ALL_BANKS]   <= 1'b1;
             row_open_q          <= {SDRAM_BANKS{1'b0}};
+            boardcast           <= 1'b1;
         end
         else
         begin
@@ -582,6 +592,7 @@ begin
             bank_q              <= addr_bank_w;
 
             row_open_q[addr_bank_w] <= 1'b0;
+            boardcast               <= 1'b1;
         end
     end
     //-----------------------------------------
@@ -593,6 +604,7 @@ begin
         command_q   <= CMD_REFRESH;
         addr_q      <= {SDRAM_ROW_W{1'b0}};
         bank_q      <= {SDRAM_BANK_W{1'b0}};
+        boardcast   <= 1'b1;
     end
     //-----------------------------------------
     // STATE_READ
@@ -602,6 +614,8 @@ begin
         command_q   <= CMD_READ;
         addr_q      <= addr_col_w;
         bank_q      <= addr_bank_w;
+        boardcast   <= 1'b0;
+
         // Disable auto precharge (auto close of row)
         addr_q[AUTO_PRECHARGE]  <= 1'b0;
 
@@ -616,21 +630,22 @@ begin
         command_q       <= CMD_WRITE;
         addr_q          <= addr_col_w;
         bank_q          <= addr_bank_w;
-        data_q          <= ram_write_data_w[15:0];
-
+        data_q          <= ram_write_data_w/* [15:0] */;
+// $display("\033[1;33mWRITE data=%08x\033[0m",ram_write_data_w);
         // Disable auto precharge (auto close of row)
         addr_q[AUTO_PRECHARGE]  <= 1'b0;
+        boardcast           <= 1'b0;
 
         // Write mask
-        dqm_q           <= ~ram_wr_w[1:0];
-        dqm_buffer_q    <= ~ram_wr_w[3:2];
-
+        dqm_q           <= ~ram_wr_w/* [1:0] */;
+        /* dqm_buffer_q    <= ~ram_wr_w[3:2]; */
+// $display("\033[1;33mWRITE dqm=%04b\033[0m",~ram_wr_w);
         data_rd_en_q    <= 1'b0;
     end
     //-----------------------------------------
     // STATE_WRITE1
     //-----------------------------------------
-    STATE_WRITE1 :
+    /* STATE_WRITE1 :
     begin
         // Burst continuation
         command_q   <= CMD_NOP;
@@ -642,7 +657,7 @@ begin
 
         // Write mask
         dqm_q       <= dqm_buffer_q;
-    end
+    end */
     endcase
 end
 
@@ -663,16 +678,16 @@ else
 
 // Buffer upper 16-bits of write data so write command can be accepted
 // in WRITE0. Also buffer lower 16-bits of read data.
-always @ (posedge clk_i or posedge rst_i)
+/* always @ (posedge clk_i or posedge rst_i)
 if (rst_i)
     data_buffer_q <= 16'b0;
 else if (state_q == STATE_WRITE0)
     data_buffer_q <= ram_write_data_w[31:16];
 else if (rd_q[SDRAM_READ_LATENCY+1])
-    data_buffer_q <= sample_data_q;
+    data_buffer_q <= sample_data_q; */
 
 // Read data output
-assign ram_read_data_w = {sample_data_q, data_buffer_q};
+assign ram_read_data_w = sample_data_q/* {sample_data_q, data_buffer_q} */;
 
 //-----------------------------------------------------------------
 // ACK
@@ -684,14 +699,16 @@ if (rst_i)
     ack_q   <= 1'b0;
 else
 begin
-    if (state_q == STATE_WRITE1)
+    if (state_q == STATE_WRITE0/*  STATE_WRITE1 */)
         ack_q <= 1'b1;
-    else if (rd_q[SDRAM_READ_LATENCY+1])
+    else if (rd_q[SDRAM_READ_LATENCY/* SDRAM_READ_LATENCY+1 */])
         ack_q <= 1'b1;
     else
         ack_q <= 1'b0;
 end
-
+// always @(posedge clk_i) begin
+//     if(ack_q)$display("[sdram_axi_core.v]get the sdram data %08x",sample_data_q);
+// end
 assign ram_ack_w = ack_q;
 
 // Accept command in READ or WRITE0 states
@@ -712,7 +729,8 @@ assign sdram_cas_o  = command_q[1];
 assign sdram_we_o   = command_q[0];
 assign sdram_dqm_o  = dqm_q;
 assign sdram_ba_o   = bank_q;
-assign sdram_addr_o = addr_q;
+assign sdram_addr_o = {boardcast,addr_q};
+
 
 //-----------------------------------------------------------------
 // Simulation only
@@ -740,3 +758,5 @@ end
 
 
 endmodule
+/* verilator lint_on UNUSEDSIGNAL */
+/* verilator lint_on UNUSEDPARAM */

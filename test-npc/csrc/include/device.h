@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-#include "npc.h"
-#include "timer.h"
-#include "vga.h"
+void init_devices();
+void check_load_range(uint32_t instr);
 #endif
