@@ -118,7 +118,7 @@ always @(*)begin
     end
     XIP_DIVIDER:begin
       in_paddr_t=32'h10001014;
-      in_pwdata_t=32'd10;
+      in_pwdata_t=32'd1;
       in_pstrb_t=4'b1111;
       in_pwrite_t=1;
       in_psel_t=1;

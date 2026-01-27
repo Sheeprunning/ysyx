@@ -17,7 +17,9 @@ void nvboard_bind_all_pins(TOP_NAME* dut);
 using namespace std;
 
 VerilatedContext* contextp = NULL;
-// VerilatedVcdC* tfp = NULL;
+#ifdef WAVE
+VerilatedVcdC* tfp = NULL;
+#endif
 
 TOP_NAME* top;
 CPU_state cpu;
@@ -53,7 +55,6 @@ void print_inst(u_int32_t pc_now,u_int32_t inst){//只有在打开itrace时运�
 void step_and_dump_wave(){
   top->eval();
   contextp->timeInc(10);
-  // tfp->dump(contextp->time());
 } 
 
 void update_cpu(){
@@ -80,6 +81,9 @@ void single_cycle() {
   
   top->clock = 1; 
   step_and_dump_wave();
+  #ifdef WAVE
+  tfp->dump(contextp->time());
+  #endif
   update_cpu();
   nvboard_update();
 }
@@ -92,11 +96,13 @@ void single_cycle() {
 
 void sim_init(){
   contextp = new VerilatedContext;
-  // tfp = new VerilatedVcdC;
   top = new TOP_NAME{contextp};
   contextp->traceEverOn(true);
-  // top->trace(tfp, 99);
-  // tfp->open("wave.vcd");
+  #ifdef WAVE
+  tfp = new VerilatedVcdC;
+  top->trace(tfp, 99);
+  tfp->open("wave.vcd");
+  #endif
   nvboard_bind_all_pins(top);
   nvboard_init();
   reset();
@@ -104,9 +110,11 @@ void sim_init(){
 
 void sim_exit(){
   nvboard_quit();
-  // tfp->close();
+  #ifdef WAVE
+  tfp->close();
+  delete tfp;
+  #endif
   delete top;
-  // delete tfp;
   delete contextp;
   cout<<"仿真结束！\n";
 }
