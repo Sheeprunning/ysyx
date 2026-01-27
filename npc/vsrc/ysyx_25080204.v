@@ -435,8 +435,9 @@ ysyx_25080204_CLINT CLINT (
     .bready(clint_bready) 
 );
 
-wire r_idle_to_r_wait=DM_r_en&&will_stall;
-wire r_wait_to_r_idle=lsu_rvalid && lsu_rready;
+wire lsu_read_begin     =   DM_r_en     &&  will_stall;
+wire lsu_ar_handshake   =   lsu_arready &&  lsu_arvalid;
+wire lsu_r_handshake    =   lsu_rvalid  &&  lsu_rready;
 
 
 // 数据存储器读请求
@@ -451,7 +452,7 @@ always @(posedge clk or posedge rst) begin
     end else begin
         case(r_state)
             R_IDLE: begin
-                if(r_idle_to_r_wait) begin
+                if(lsu_read_begin) begin
                     lsu_arvalid_reg <= 1'b1;
                     lsu_araddr_reg <= w_r_addr;
                     lsu_arsize_reg <= size;
@@ -461,8 +462,9 @@ always @(posedge clk or posedge rst) begin
                 end
             end
             R_WAIT: begin
-            if(lsu_arready&&lsu_arvalid)lsu_arvalid_reg<=1'b0;
-                if(r_wait_to_r_idle) begin
+                if(lsu_ar_handshake)
+                    lsu_arvalid_reg<=1'b0;
+                if(lsu_r_handshake) begin
                     rdata_from_dm_reg <= lsu_rdata;
                     lsu_rresp_reg<=lsu_rresp;
                     lsu_rready_reg <= 1'b0;
@@ -476,6 +478,10 @@ always @(posedge clk or posedge rst) begin
     end 
 end
 
+wire lsu_write_begin    =   DM_w_en     &&  will_stall;//表示lsu开始写数据
+wire lsu_aw_handshake   =   lsu_awready &&  lsu_awvalid;
+wire lsu_w_handshake    =   lsu_wready  &&  lsu_wvalid;
+wire lsu_b_handshake    =   lsu_bvalid  &&  lsu_bready;
 // 数据存储器写请求
 always @(posedge clk or posedge rst) begin
     if(rst) begin
@@ -490,7 +496,7 @@ always @(posedge clk or posedge rst) begin
     end else begin
         case(w_state)
             W_IDLE: begin
-                if(DM_w_en&&will_stall) begin
+                if(lsu_write_begin) begin
                     lsu_awvalid_reg <= 1'b1;
                     lsu_awsize_reg<= size;
                     lsu_awaddr_reg <= w_r_addr;
@@ -502,17 +508,17 @@ always @(posedge clk or posedge rst) begin
                 end
             end
             W_WRITE: begin
-                if(lsu_awready&&lsu_awvalid)
+                if(lsu_aw_handshake)
                     lsu_awvalid_reg <= 1'b0;
-              if(lsu_wready&&lsu_wvalid)begin
-// $display("\033[0;32m[CLK %0t]LSU handshake write with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
-                lsu_bready_reg <= 1'b1;
-                lsu_wvalid_reg <= 1'b0;
-                w_state <= W_BRESP;
-              end
+                if(lsu_w_handshake)begin
+    // $display("\033[0;32m[CLK %0t]LSU handshake write with MEM! addr=0x%08x data=0x%08x strb=%04b size=%03b\033[0m", $time,lsu_awaddr_reg,lsu_wdata_reg,lsu_wstrb_reg,lsu_awsize);
+                    lsu_bready_reg <= 1'b1;
+                    lsu_wvalid_reg <= 1'b0;
+                    w_state <= W_BRESP;
+                end
             end
             W_BRESP: begin
-                if(lsu_bvalid && lsu_bready) begin
+                if(lsu_b_handshake) begin
                     lsu_bresp_reg<=lsu_bresp;
                     lsu_bready_reg <= 1'b0;
                     w_stall <= 1'b0;
@@ -523,7 +529,10 @@ always @(posedge clk or posedge rst) begin
         endcase
     end 
 end
+
 // 指令存储器读请求
+wire inst_ar_handshake  =   inst_arready    &&  inst_arvalid;
+wire inst_r_handshake   =   inst_rvalid     &&  inst_rready;
 always @(posedge clk or posedge rst) begin
     if(rst) begin
         inst_arvalid_reg <= 1'b0;
@@ -553,8 +562,9 @@ always @(posedge clk or posedge rst) begin
             end
             INST_WAIT: begin
             // $display("[CLK %0t]CPU STATE:R_WAIT ", $time);
-                if(inst_arready&&inst_arvalid)inst_arvalid_reg<=1'b0;
-                if(inst_rvalid && inst_rready) begin
+                if(inst_ar_handshake)
+                    inst_arvalid_reg<=1'b0;
+                if(inst_r_handshake) begin
 // $display("\033[1;36m[CLK %0t]IFU handshake with IM! PC:0x%08x GET inst=0x%08x\033[0m", $time,inst_araddr_reg,inst_rdata);
                     inst_reg <= inst_rdata;
                     inst_rresp_reg<=inst_rresp;
@@ -599,6 +609,83 @@ assign io_slave_rdata = 32'b0;
 assign io_slave_rlast = 1'b0;
 assign io_slave_rid = 4'b0;
 
+
+import "DPI-C" function void performance_counter(input int pfm);
+//performance counter
+always @(posedge clk or posedge rst) begin
+    if(!rst) begin
+        if(inst_r_handshake)    performance_counter(32'd0);
+        if(lsu_r_handshake)     performance_counter(32'd1);
+        if(lsu_b_handshake)     performance_counter(32'd2);
+    end
+end
+
+import "DPI-C" function void performance_cycle(input int pfm,input int cycle);
+reg inst_time;//表示进入了取指时间
+reg [31:0]inst_cycle;//记录取指周期
+always @(posedge clk or posedge rst) begin
+    if(rst)begin
+        inst_time   <=  1'b0;
+        inst_cycle  <=  32'b0;
+    end 
+    else begin
+        if(!stall)begin
+            inst_time   <=  1'b1;
+            inst_cycle  <=  32'b1;
+        end
+        else if(inst_r_handshake)begin
+            performance_cycle(32'd0,inst_cycle);
+            inst_time   <=  1'b0;
+            inst_cycle  <=  32'b0;
+        end
+        else if(inst_time)
+            inst_cycle  <=  inst_cycle+1; 
+    end
+end
+
+reg lsu_read_time;//表示进入了取数时间
+reg [31:0]lsu_read_cycle;//记录取数周期
+always @(posedge clk or posedge rst) begin
+    if(rst)begin
+        lsu_read_time   <=  1'b0;
+        lsu_read_cycle  <=  32'b0;
+    end 
+    else begin
+        if(lsu_read_begin)begin
+            lsu_read_time   <=  1'b1;
+            lsu_read_cycle  <=  32'b1;
+        end
+        else if(lsu_r_handshake)begin
+            performance_cycle(32'd1 , lsu_read_cycle);
+            lsu_read_time   <=  1'b0;
+            lsu_read_cycle  <=  32'b0;
+        end
+        else if(lsu_read_time)
+            lsu_read_cycle  <=  lsu_read_cycle+1; 
+    end
+end
+
+reg lsu_write_time;//表示进入了写数时间
+reg [31:0]lsu_write_cycle;//记录写数周期
+always @(posedge clk or posedge rst) begin
+    if(rst)begin
+        lsu_write_time   <=  1'b0;
+        lsu_write_cycle  <=  32'b0;
+    end 
+    else begin
+        if(lsu_write_begin)begin
+            lsu_write_time   <=  1'b1;
+            lsu_write_cycle  <=  32'b1;
+        end
+        else if(lsu_b_handshake)begin
+            performance_cycle(32'd2 , lsu_write_cycle);
+            lsu_write_time   <=  1'b0;
+            lsu_write_cycle  <=  32'b0;
+        end
+        else if(lsu_write_time)
+            lsu_write_cycle  <=  lsu_write_cycle+1; 
+    end
+end
 
 // resp处理
 always @(*) begin

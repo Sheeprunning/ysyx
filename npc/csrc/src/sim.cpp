@@ -9,6 +9,9 @@
 #include <dut.h>
 #include <breakpoint.h>
 #include <nvboard.h>
+#include <string.h>
+#include <vector>
+
 void nvboard_bind_all_pins(TOP_NAME* dut);
 
 using namespace std;
@@ -195,6 +198,25 @@ extern "C" void vga_write(uint32_t addr, uint32_t data) {
   pmem_write(addr,4,data); 
 }
 
+const char *pfm_name[] ={
+  "IFU fetch the instruction",//0
+  "LSU get the data",//1
+  "LSU write the data",//2
+  "EXU finish calculate",//3
+  "type calculate ",//4
+  "type jump-branch",//5
+  "type CSR"//6
+};
+int pfm_counter[7];//记录指令数
+extern "C" void performance_counter(int pfm) { 
+  pfm_counter[pfm]++;
+}
+
+int pfm_cycle[7];//记录周期数
+extern "C" void performance_cycle(int pfm,int cycle) { 
+  pfm_cycle[pfm]+=cycle;
+}
+
 void call_show_reg() {
     // svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
     // svSetScope(scope);
@@ -257,13 +279,25 @@ void trace_and_difftest(u_int32_t pc){
   #endif
 }
 
+static void show_performance(){
+  for(int i=0;i<3;i++){
+    float ave=(float)pfm_cycle[i]/(float)pfm_counter[i];
+    PRINTF_COLOR(COLOR_CYAN,"the num of %28s is %10d ,cycle = %10d average = %.5f\n" , pfm_name[i],pfm_counter[i],pfm_cycle[i],ave);
+  }
+  for(int i=3;i<7;i++){
+    PRINTF_COLOR(COLOR_CYAN,"the num of %28s is %10d \n",pfm_name[i],pfm_counter[i]);
+  }
+}
+
 static void statistic() {
   PRINTF_COLOR(COLOR_CYAN,"host time spent = %ld  us \n", g_timer);
   PRINTF_COLOR(COLOR_CYAN,"total cycle     = %ld \n" , g_cycle);
   PRINTF_COLOR(COLOR_CYAN,"total inst      = %ld \n" , g_inst);
-  PRINTF_COLOR(COLOR_BLUE,"IPC = %ld \n" , g_inst / g_cycle);
+  PRINTF_COLOR(COLOR_BLUE,"CPI = %ld \n" , g_cycle / g_inst);
+  show_performance();
   if (g_timer > 0) PRINTF_COLOR(COLOR_BLUE, "simulation frequency = %ld cycle/s\n", g_cycle * 1000000 / g_timer);
   else PRINTF_COLOR(COLOR_RED,"Finish running in less than 1 us and can not calculate the simulation frequency\n");
+  
 }
 
 void execute(uint32_t n){

@@ -140,6 +140,4 @@ always @(*) begin
     CSR_wen=opcode==(7'b1110011)?1'b1:1'b0;
 end
 
-
-
 endmodule

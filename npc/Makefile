@@ -55,14 +55,14 @@ sim: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation with NVBoard..."
-	@$(BIN) -i $(IMG) -f $(ELF) 
+	@ASAN_OPTIONS=new_delete_type_mismatch=0:detect_leaks=0 $(BIN) -i $(IMG) -f $(ELF) 
 
 run: $(BIN)
 	@echo "=== doing git_commit ...==="
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "=== finish git_commit! ==="
 	@echo "Running simulation with NVBoard..."
-	@$(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) -b
+	@ASAN_OPTIONS=new_delete_type_mismatch=0:detect_leaks=0 $(BIN) -i $(IMG) -d $(DIFF) -f $(ELF) -b
 #don't run nvboard
 else
 $(SRC_AUTO_BIND): | $(BUILD_DIR)

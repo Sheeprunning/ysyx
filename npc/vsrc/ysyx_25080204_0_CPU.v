@@ -193,4 +193,31 @@ always@(posedge clk)begin
       jalr_ftrace(inst,{27'b0,rd},imm_num,pc,result);
     end
 end
+
+//performance counter
+import "DPI-C" function void performance_counter(input int pfm);
+
+always @(posedge clk ) begin
+  if(!stall&&alu_op!=4'b1111)
+    performance_counter(32'd3);
+end
+
+always @(posedge clk) begin
+  if(!stall)begin
+    case(opcode)
+        7'b0110011,7'b0010011,7'b0010111,7'b0110111://R,I,auipc,lui
+            performance_counter(32'd4);
+        // 7'b0000011://load
+        //     performance_counter(32'd4);
+        // 7'b0100011://store
+        //     performance_counter(32'd5);
+        7'b1100111,7'b1100011,7'b1101111://jalr & B-type & jal
+            performance_counter(32'd5);
+        7'b1110011://csr
+            performance_counter(32'd6);
+        default:begin   end
+    endcase
+  end
+end
+
 endmodule
