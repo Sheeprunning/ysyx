@@ -13,6 +13,7 @@ VERILATOR_CFLAGS += -Wno-ASSIGNDLY
 #设置include路径
 VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/uart16550/rtl 
 VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/perip/spi/rtl
+VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/include
 #刷新缓冲区
 VERILATOR_CFLAGS += --autoflush
 BUILD_DIR = ./build

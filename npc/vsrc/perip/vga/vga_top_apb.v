@@ -21,8 +21,6 @@ module vga_top_apb(
   output        vga_valid
 );
 
-  import "DPI-C" function void vga_read(input int addr,output int rdata);
-  import "DPI-C" function void vga_write(input int addr,input int wdata);
   //帧缓冲写
   wire req_accept = (in_psel && in_penable);
   wire is_read  = req_accept && !in_pwrite;

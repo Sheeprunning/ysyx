@@ -3,6 +3,8 @@
 // Refer to the data sheet for the flash instructions at
 // https://www.winbond.com/hq/product/code-storage-flash-memory/serial-nor-flash/?__locale=zh
 /* verilator lint_off UNUSEDSIGNAL */
+
+
 module flash (
   input  sck,//slave clock
   input  ss,//slave select
@@ -81,7 +83,6 @@ module flash (
 
 endmodule
 
-import "DPI-C" function void flash_read(input int addr, output int data);
 /* verilator lint_off DECLFILENAME */
 module flash_cmd(
   input             clock,

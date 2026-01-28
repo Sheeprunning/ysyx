@@ -1,4 +1,5 @@
 `define  OFFSET 6 
+
 /* verilator lint_off WIDTHEXPAND */
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off WIDTHCONCAT */
@@ -28,8 +29,6 @@ module psram(
   localparam CMD=3'd0,ADDR=3'd1,WAIT=3'd2,READ=3'd3,WRITE=3'd4,ERROR=3'd5;
 
   assign dio = dio_en ? dio_out : 4'bz;
-import "DPI-C" function void psram_read(input int addr,output int rdata);
-import "DPI-C" function void psram_write(input int addr,input int wdata);
 //state转移
   always@(*)begin
     case(state)

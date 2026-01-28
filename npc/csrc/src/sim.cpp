@@ -128,8 +128,6 @@ extern "C"
         set_npc_state(NPC_END,top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc,\
           top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[10]);
     }
-    void show_reg(); 
-    int get_reg();
     int pmem_read_v( int raddr){
       if(raddr==RTC_ADDR||raddr==RTC_ADDR+4){
         uint64_t us = get_time();

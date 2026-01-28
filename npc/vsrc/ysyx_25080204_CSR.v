@@ -48,7 +48,7 @@ always @(posedge clk or posedge rst) begin
         mepc<=32'h0;
         mcause<=32'h0;
     end
-    if(stall)begin
+    else if(stall)begin
       //保持
     end
     else if(en_ecall)begin

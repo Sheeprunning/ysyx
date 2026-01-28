@@ -55,6 +55,12 @@ void init_main(int argc, char *argv[]) {
     sim_init();
     printf(ANSI_FMT("✓ 成功\n",COLOR_GREEN));
     
+    #ifdef  WAVE
+    PRINTF_COLOR(COLOR_GREEN, "✓ 波形记录已开启\n");
+    #else
+    PRINTF_COLOR(COLOR_YELLOW, "⚠ 波形记录已关闭\n");
+    #endif
+    
     PRINTF_COLOR(COLOR_BLUE, "调试器初始化中...");
     init_sdb();
     printf(ANSI_FMT("✓ 成功\n",COLOR_GREEN));
@@ -66,7 +72,7 @@ void init_main(int argc, char *argv[]) {
     PRINTF_COLOR(COLOR_BLUE, "差分测试文件初始化中...");
     printf(ANSI_FMT("✓ 成功\n",COLOR_GREEN));
 #else
-    PRINTF_COLOR(COLOR_YELLOW, "⚠ 差分测试已禁用\n");
+    PRINTF_COLOR(COLOR_YELLOW, "⚠ 差分测试已关闭\n");
 #endif
 
     PRINTF_COLOR(COLOR_BLUE, "反汇编工具初始化中...");

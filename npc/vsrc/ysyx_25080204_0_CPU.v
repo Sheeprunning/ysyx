@@ -1,3 +1,4 @@
+
 module ysyx_25080204_0_CPU(
     input clk,
     input rst,
@@ -30,7 +31,7 @@ wire [6:0]opcode;
 wire [31:0]imm_num;
 
 
-wire [31:0]RF_w_data;
+reg [31:0]RF_w_data;
 wire [31:0]src1;
 wire [31:0]src2;
 
@@ -176,15 +177,18 @@ wire [3:0] h_mask=(byte_offset==2'b00)?4'b0011:
             (byte_offset==2'b10)?4'b1100:4'b0000;
 assign mem_mask=(size==3'b00)?b_mask:(size==3'b01)?h_mask:(size==3'b10)?4'b1111:4'b0000;
 
-assign RF_w_data=(RF_data_sel==3'b000)?result:
-                (RF_data_sel==3'b001)?sext_out_data:
-                (RF_data_sel==3'b010)?pc+4:
-                (RF_data_sel==3'b011)?imm_num:
-                (RF_data_sel==3'b100)?csr_rdata:32'hdeaddddd;
+always @(*) begin
+  unique case (RF_data_sel)
+    3'b000: RF_w_data = result;
+    3'b001: RF_w_data = sext_out_data;
+    3'b010: RF_w_data = pc + 4;
+    3'b011: RF_w_data = imm_num;
+    3'b100: RF_w_data = csr_rdata;
+    default: RF_w_data = 32'hdeaddddd;
+  endcase
+end
 
-import "DPI-C" function void jal_ftrace(input int rd,input int pc,input int target);
-import "DPI-C" function void jalr_ftrace(
-    input int inst,input int rd,input int imm,input int pc,input int target);
+// `ifdef sim
 always@(posedge clk)begin
     if(opcode==7'b1101111)begin//jal
       jal_ftrace({27'b0,rd},pc,result);
@@ -195,7 +199,7 @@ always@(posedge clk)begin
 end
 
 //performance counter
-import "DPI-C" function void performance_counter(input int pfm);
+
 
 always @(posedge clk ) begin
   if(!stall&&alu_op!=4'b1111)
@@ -219,5 +223,5 @@ always @(posedge clk) begin
     endcase
   end
 end
-
+// `endif
 endmodule

@@ -1,6 +1,7 @@
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off UNUSEDPARAM */
 /* verilator lint_off WIDTHCONCAT */
+
 module sdram0(
   input        clk,
   input        cke,
@@ -118,8 +119,7 @@ always @(posedge clk) begin
       end 
   end
 
-  import "DPI-C" function void sdram_read(input int addr,output int rdata);
-  import "DPI-C" function void sdram_write(input int addr,input int wdata);
+
 /* verilator lint_off UNUSEDSIGNAL */
   reg [31:0]rdata;
   /* verilator lint_on UNUSEDSIGNAL */

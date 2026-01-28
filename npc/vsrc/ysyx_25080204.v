@@ -1,3 +1,4 @@
+
 module ysyx_25080204(
     input clock,
     input reset,
@@ -610,7 +611,7 @@ assign io_slave_rlast = 1'b0;
 assign io_slave_rid = 4'b0;
 
 
-import "DPI-C" function void performance_counter(input int pfm);
+
 //performance counter
 always @(posedge clk or posedge rst) begin
     if(!rst) begin
@@ -620,7 +621,7 @@ always @(posedge clk or posedge rst) begin
     end
 end
 
-import "DPI-C" function void performance_cycle(input int pfm,input int cycle);
+
 reg inst_time;//表示进入了取指时间
 reg [31:0]inst_cycle;//记录取指周期
 always @(posedge clk or posedge rst) begin
@@ -700,7 +701,6 @@ always @(*) begin
 end
 
 // ebreak处理
-import "DPI-C" function void npc_ebreak_finish();
 always @(*) begin
     if(inst == 32'h100073) begin  // ebreak指令
         npc_ebreak_finish();

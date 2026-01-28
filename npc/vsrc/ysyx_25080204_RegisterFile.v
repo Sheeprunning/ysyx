@@ -25,15 +25,6 @@ module ysyx_25080204_RegisterFile #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
   end
   assign src1=rf[rs1];
   assign src2=rf[rs2];
-
-export "DPI-C" task show_reg;
- 
-
-task show_reg();
-  for (i=0;i<32;i=i+1)begin
-      $display("x[%d]: 0x%08x\n",i,rf[i]);
-  end
-endtask
   
 
 endmodule
