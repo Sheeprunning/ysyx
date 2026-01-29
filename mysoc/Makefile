@@ -1,4 +1,4 @@
-TOPNAME ?= top
+TOPNAME ?= ysyxSoCFull
 NXDC_FILES = constr/top.nxdc
 INC_PATH ?=/vsrc
 
@@ -11,7 +11,9 @@ VERILATOR_CFLAGS += -MMD --build -cc  --trace --Wall\
 #忽略#延迟时序的警告
 VERILATOR_CFLAGS += -Wno-ASSIGNDLY
 #设置include路径
-
+VERILATOR_CFLAGS += -I$(MYSOC_HOME)/vsrc/perip/uart16550/rtl 
+VERILATOR_CFLAGS += -I$(MYSOC_HOME)/vsrc/perip/spi/rtl
+VERILATOR_CFLAGS += -I$(MYSOC_HOME)/vsrc/include
 #刷新缓冲区
 VERILATOR_CFLAGS += --autoflush
 BUILD_DIR = ./build
@@ -40,7 +42,7 @@ SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
 ifeq ($(findstring r,$(filter-out --%,$(MAKEFLAGS))),r)
   RUN_NVBOARD = 1
 else
-  RUN_NVBOARD ?= 0
+  RUN_NVBOARD ?= 1
 endif
 
 #run nvboard

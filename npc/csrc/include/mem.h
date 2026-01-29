@@ -3,9 +3,9 @@
 
 #include <common.h>
 
-#define CONFIG_MSIZE 0xd0000000
-#define CONFIG_PC_RESET_OFFSET 0x30000000
-#define CONFIG_MBASE 0x00000000
+#define CONFIG_MSIZE 0x8000000
+#define CONFIG_PC_RESET_OFFSET 0x00000000
+#define CONFIG_MBASE 0x80000000
 
 extern char* img_file;
 extern uint8_t *pmem;

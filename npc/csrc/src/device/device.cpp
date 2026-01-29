@@ -19,9 +19,9 @@ void init_devices(){
   PRINTF_COLOR(COLOR_CYAN, "add ps2 range [0x10011000, 0x10011007]\n");
 }
 
-void check_load_range(uint32_t instr) {
+void check_load_range(uint32_t instr,uint32_t raddr) {
     if ((instr & 0x7F) != 0x03) return ;//不是load指令
-    uint32_t addr= top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__lsu_araddr_reg;
+    uint32_t addr= raddr;
     for(uint32_t i =0;i<devices.size();i++){
       if(addr>=devices[i][0]&&addr<=devices[i][1]){
         difftest_skip_ref();

@@ -8,11 +8,11 @@
 #include <mem.h>
 #include <dut.h>
 #include <breakpoint.h>
-#include <nvboard.h>
+// #include <nvboard.h>
 #include <string.h>
 #include <vector>
 
-void nvboard_bind_all_pins(TOP_NAME* dut);
+// void nvboard_bind_all_pins(TOP_NAME* dut);
 
 using namespace std;
 
@@ -36,7 +36,7 @@ void print_inst(u_int32_t pc_now,u_int32_t inst){//只有在打开itrace时运�
   char logbuf[128];
   char *p=logbuf;
   #ifdef ITRACE_ONCE
-    if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
+    if(!top->reset){
       p += snprintf(p, sizeof(logbuf), FMT_WORD ":", cpu.pre_pc);
       p += snprintf(p, 120,"%08x ",inst);
       disassemble(p , logbuf+sizeof(logbuf)-p , cpu.pre_pc , (uint8_t*)&inst,4);
@@ -59,33 +59,36 @@ void step_and_dump_wave(){
 
 void update_cpu(){
   for(int i=0;i<32;i++){
-    cpu.gpr[i]=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i];
+    cpu.gpr[i]=top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
   }
   cpu.pre_pc=cpu.pc;
-  cpu.pc=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc;
+  cpu.pc=top->pc;
 }
 
 void single_cycle() {
   #ifdef CONFIG_BREAKPOINT
-  inst_fi=top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg;
+  inst_fi=top->inst;
   #endif
   top->clock = 0; 
   step_and_dump_wave();
-  nvboard_update();
+  //nvboard_update();
   #ifdef CONFIG_ITRACE
   if(top->reset!=1){//所有非阻塞赋值会在第二个eval赋值，这里我们可以当做是下降沿赋值，下降沿赋值后相应的inst也会立马更新
-    print_inst(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc,\
-      top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg);     
+    print_inst(top->pc,\
+      top->inst);     
   } 
   #endif
   
   top->clock = 1; 
+
+  if(!top->reset)top->inst=pmem_read(top->pc,4);
+  
   step_and_dump_wave();
   #ifdef WAVE
   tfp->dump(contextp->time());
   #endif
   update_cpu();
-  nvboard_update();
+  //nvboard_update();
 }
 
  void reset(int n=10) {
@@ -103,13 +106,13 @@ void sim_init(){
   top->trace(tfp, 99);
   tfp->open("wave.vcd");
   #endif
-  nvboard_bind_all_pins(top);
-  nvboard_init();
+  //nvboard_bind_all_pins(top);
+  //nvboard_init();
   reset();
 }
 
 void sim_exit(){
-  nvboard_quit();
+  //nvboard_quit();
   #ifdef WAVE
   tfp->close();
   delete tfp;
@@ -125,11 +128,14 @@ extern "C"
         VL_PRINTF("[DPI-C] EBREAK triggered, stopping simulation.\n");
         Verilated::gotFinish(true);
         cout << "-----Result Check:-----" << endl;
-        set_npc_state(NPC_END,top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__pc,\
-          top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[10]);
+        set_npc_state(NPC_END,top->pc,\
+          top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[10]);
     }
     int pmem_read_v( int raddr){
       if(raddr==RTC_ADDR||raddr==RTC_ADDR+4){
+        #ifdef CONFIG_DIFFTEST
+          check_load_range(top->inst,raddr);
+        #endif
         uint64_t us = get_time();
         if(raddr==RTC_ADDR)
           return (uint32_t)us;
@@ -148,90 +154,13 @@ extern "C"
       }
     }
 }
-uint32_t flash[] = {
-    0x100007b7,
-    0x04100713,
-    0x00e78023,
-    0x00a00713,
-    0x00e78023,
-    0x0000006f
-};
-#define FLASH_BASE 0x30000000
-extern "C" void flash_read(int32_t addr, int32_t *data) { 
-  uint32_t araddr = FLASH_BASE + (addr&0xFFFFFFFC);
-  uint32_t rdata = pmem_read(araddr,4);
-  // printf("\033[1;33mread flash[0x%08x]=0x%08x\033[0m\n",araddr,rdata);
-  *data=rdata; 
- }
-extern "C" void mrom_read(int32_t addr, int32_t *data) { 
-  //printf("read mrom[0x%08x]=0x%08x\n",addr,pmem_read(addr,4));
-  *data=pmem_read(addr&0xFFFFFFFC,4); 
-}
-
-extern "C" void psram_read(int32_t addr, int32_t *data) {
-  uint32_t raddr=addr+0x80000000;
-  uint32_t rdata=pmem_read(raddr,4);
-  // printf("read psram[0x%08x]=0x%08x\n",raddr,rdata);
-  *data=rdata; 
-}
-
-extern "C" void psram_write(uint32_t addr, uint8_t data) { 
-  //printf("write psram[0x%08x]=0x%08x\n",addr,data);
-  pmem_write(addr+0x80000000,1,data); 
-}
-
-extern "C" void sdram_read(uint32_t addr, int32_t *data) {
-  uint32_t raddr=addr+0xa0000000;
-  uint32_t rdata=pmem_read(raddr,4);
-  // printf("read sdram[0x%08x]=0x%08x\n",raddr,rdata);
-  *data=rdata; 
-}
-
-extern "C" void sdram_write(uint32_t addr, uint8_t data) { 
-  // printf("write sdram[0x%08x]=0x%08x\n",addr,data);
-  pmem_write(addr+0xa0000000,1,data); 
-}
-
-extern "C" void vga_read(uint32_t addr, uint32_t *data) {
-  uint32_t raddr=addr+0x21000000;
-  uint32_t rdata=pmem_read(raddr,4);
-  // printf("read vga[0x%08x]=0x%08x\n",raddr,rdata);
-  *data=rdata; 
-}
-
-extern "C" void vga_write(uint32_t addr, uint32_t data) { 
-  // printf("\033[1;32mwrite vga[0x%08x]=0x%08x\033[0m\n",addr,data);
-  pmem_write(addr,4,data); 
-}
-
-const char *pfm_name[] ={
-  "IFU fetch the instruction",//0
-  "LSU get the data",//1
-  "LSU write the data",//2
-  "EXU finish calculate",//3
-  "type calculate ",//4
-  "type jump-branch",//5
-  "type CSR"//6
-};
-int pfm_counter[7];//记录指令数
-extern "C" void performance_counter(int pfm) { 
-  pfm_counter[pfm]++;
-}
-
-int pfm_cycle[7];//记录周期数
-extern "C" void performance_cycle(int pfm,int cycle) { 
-  pfm_cycle[pfm]+=cycle;
-}
 
 void call_show_reg() {
-    // svScope scope = svGetScopeFromName("TOP.top.CPU.RF");
-    // svSetScope(scope);
-    // show_reg(); 
     svScope scope = svGetScopeFromName("TOP.top.CPU.RF"); 
     printf("---------------------------------------------\n");
     printf("| index |  name | NPC-value |\n");
     for (int i = 0; i < 32; i++) {
-      printf("|x[%2d]  |%7s|%12x|\n", i, regs[i], top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i]);
+      printf("|x[%2d]  |%7s|%12x|\n", i, regs[i], top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i]);
     }
   
 }
@@ -241,13 +170,13 @@ int isa_reg_str2val(const char *s, bool *success){
   for(int i=0;i<32;i++){
      if(strcmp(regs[i],s)==0){
       *success=true;
-      return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i];
+      return top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
     }
   }
   for(int i=0;i<32;i++){
      if(strcmp(regs2[i],s)==0){
       *success=true;
-      return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__CPU__DOT__RF__DOT__rf[i];
+      return top->rootp->top__DOT__CPU__DOT__RF__DOT__rf[i];
     }
   }
   printf("输入的寄存器名称错误！\n");
@@ -257,10 +186,9 @@ int isa_reg_str2val(const char *s, bool *success){
 
 void trace_and_difftest(u_int32_t pc){
   g_cycle++;
-    if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
+    if(!top->reset){
       g_inst++;
       #ifdef CONFIG_DIFFTEST
-      check_load_range(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__inst_reg);
       difftest_step(pc, cpu.pc);
       #endif
     }
@@ -285,22 +213,22 @@ void trace_and_difftest(u_int32_t pc){
   #endif
 }
 
-static void show_performance(){
-  for(int i=0;i<3;i++){
-    float ave=(float)pfm_cycle[i]/(float)pfm_counter[i];
-    PRINTF_COLOR(COLOR_CYAN,"the num of %28s is %10d ,cycle = %10d average = %.5f\n" , pfm_name[i],pfm_counter[i],pfm_cycle[i],ave);
-  }
-  for(int i=3;i<7;i++){
-    PRINTF_COLOR(COLOR_CYAN,"the num of %28s is %10d \n",pfm_name[i],pfm_counter[i]);
-  }
-}
+// static void show_performance(){
+//   for(int i=0;i<3;i++){
+//     float ave=(float)pfm_cycle[i]/(float)pfm_counter[i];
+//     PRINTF_COLOR(COLOR_CYAN,"the num of %28s is %10d ,cycle = %10d average = %.5f\n" , pfm_name[i],pfm_counter[i],pfm_cycle[i],ave);
+//   }
+//   for(int i=3;i<7;i++){
+//     PRINTF_COLOR(COLOR_CYAN,"the num of %28s is %10d \n",pfm_name[i],pfm_counter[i]);
+//   }
+// }
 
 static void statistic() {
   PRINTF_COLOR(COLOR_CYAN,"host time spent = %ld  us \n", g_timer);
   PRINTF_COLOR(COLOR_CYAN,"total cycle     = %ld \n" , g_cycle);
   PRINTF_COLOR(COLOR_CYAN,"total inst      = %ld \n" , g_inst);
   PRINTF_COLOR(COLOR_BLUE,"CPI = %ld \n" , g_cycle / g_inst);
-  show_performance();
+  // show_performance();
   if (g_timer > 0) PRINTF_COLOR(COLOR_BLUE, "simulation frequency = %ld cycle/s\n", g_cycle * 1000000 / g_timer);
   else PRINTF_COLOR(COLOR_RED,"Finish running in less than 1 us and can not calculate the simulation frequency\n");
   
@@ -354,7 +282,7 @@ void exec_inst(int n){
   while (n!=0)
     {
       execute(1);
-      if(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__check){
+      if(!top->reset){
         print_inst(cpu.pre_pc,inst_fi); 
           n--;
       }

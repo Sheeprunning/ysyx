@@ -30,9 +30,9 @@ image: image-dep
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
-	$(MAKE) -C $(NPC_HOME) IMG=$(IMAGE).bin ELF=$(IMAGE).elf run
+	$(MAKE) -C $(MYSOC_HOME) IMG=$(IMAGE).bin ELF=$(IMAGE).elf run
 
 sim: insert-arg
-	$(MAKE) -C $(NPC_HOME) IMG=$(IMAGE).bin ELF=$(IMAGE).elf sim
+	$(MAKE) -C $(MYSOC_HOME) IMG=$(IMAGE).bin ELF=$(IMAGE).elf sim
 
 .PHONY: insert-arg

@@ -11,7 +11,7 @@ module ysyx_25080204_ControlUnit(
     output reg DM_w_en,
     output reg sext_en,
     output reg CSR_wen,
-    output reg [2:0]size
+    output reg [1:0]mask
 );
 
 localparam ALU_ADD = 4'b0000, ALU_SUB = 4'b0001, 
@@ -20,10 +20,10 @@ localparam ALU_ADD = 4'b0000, ALU_SUB = 4'b0001,
         ALU_SRL = 4'b0110, ALU_SRA = 4'b1000,
         ALU_SLT = 4'b1001, ALU_SLTU = 4'b1010,
         ALU_NULL = 4'b1111,
-        SIZE_B = 3'b00,
-        SIZE_H = 3'b01,
-        SIZE_W = 3'b10,
-        SIZE_NULL = 3'b111;
+        MASK_B = 2'b00,
+        MASK_H = 2'b01,
+        MASK_W = 2'b10,
+        MASK_NULL = 2'b11;
 
 always @(*) begin
     case(opcode)
@@ -87,13 +87,13 @@ always @(*) begin
     endcase
 end
 
-//size
+//mask
 always @(*) begin
     case(func3[1:0])
-        2'b00:size=SIZE_B;
-        2'b01:size=SIZE_H;
-        2'b10:size=SIZE_W;
-        default:size=SIZE_NULL;
+        2'b00:mask=MASK_B;
+        2'b01:mask=MASK_H;
+        2'b10:mask=MASK_W;
+        default:mask=MASK_NULL;
     endcase
 end
 
@@ -139,5 +139,7 @@ end
 always @(*) begin
     CSR_wen=opcode==(7'b1110011)?1'b1:1'b0;
 end
+
+
 
 endmodule

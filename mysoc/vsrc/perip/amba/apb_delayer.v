@@ -1,4 +1,5 @@
 /* verilator lint_off UNUSEDSIGNAL */
+`define delay 
 module apb_delayer(
   input         clock,
   input         reset,
@@ -24,17 +25,26 @@ module apb_delayer(
   input  [31:0] out_prdata,
   input         out_pslverr
 );
+`ifdef delay
   // parameter r = 5.22;//表示主设备1个周期，从设备5.22个周期，为了计算方便,我们可以理解为主设备运行1周期，我们就要多等4.22个周期
   // parameter s = 32;//（r-1）*s=135.04;
   parameter t = 32'd135;
-  wire apb_begin = in_psel && !in_penable;
-  wire apb_finish = in_psel && in_penable && out_pready;
-  wire wait_finish = (wait_cnt==1)&&wait_time;
+  wire  apb_begin = in_psel && !in_penable;
+  wire  apb_finish_t = in_psel && in_penable && out_pready;//存储当前周期的apb ready
+  reg   apb_finish_r;//存储上个周期的apb ready
+  wire  apb_finish = !apb_finish_r&&apb_finish_t;//上升沿
+  wire  wait_finish = (wait_cnt==1)&&wait_time;
+  
   reg apb_time,wait_time;//表示正在apb时间
   reg [31:0]counter;
   reg [26:0]wait_cnt;
   reg out_pready_t,out_pslverr_t;
   reg [31:0] out_prdata_t;
+
+  always @(posedge clock) begin
+    apb_finish_r<=apb_finish_t;
+  end
+
 
   //在从设备准备好数据之后先保存，等到延迟时间到了再发送相应数据
   always @(posedge clock or posedge reset)begin
@@ -101,5 +111,17 @@ module apb_delayer(
   assign in_prdata   = out_prdata_t;
   assign in_pslverr  = out_pslverr_t;
 
+`else
+  assign out_paddr   = in_paddr;
+  assign out_psel    = in_psel;
+  assign out_penable = in_penable;
+  assign out_pprot   = in_pprot;
+  assign out_pwrite  = in_pwrite;
+  assign out_pwdata  = in_pwdata;
+  assign out_pstrb   = in_pstrb;
+  assign in_pready   = out_pready;
+  assign in_prdata   = out_prdata;
+  assign in_pslverr  = out_pslverr;
+`endif 
 endmodule
 /* verilator lint_on UNUSEDSIGNAL */

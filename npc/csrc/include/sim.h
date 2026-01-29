@@ -3,8 +3,8 @@
 
 #include "verilated.h"
 #include "verilated_vcd_c.h"
-#include "VysyxSoCFull.h"
-#include "VysyxSoCFull___024root.h"
+#include "Vtop.h"
+#include "Vtop___024root.h"
 #include "svdpi.h"
 
 // 全局变量声明
