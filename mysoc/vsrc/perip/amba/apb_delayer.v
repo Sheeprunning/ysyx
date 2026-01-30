@@ -1,5 +1,5 @@
 /* verilator lint_off UNUSEDSIGNAL */
-`define delay 
+// `define delay 
 module apb_delayer(
   input         clock,
   input         reset,
