@@ -26,9 +26,9 @@ module apb_delayer(
   input         out_pslverr
 );
 `ifdef delay
-  // parameter r = 5.22;//表示主设备1个周期，从设备5.22个周期，为了计算方便,我们可以理解为主设备运行1周期，我们就要多等4.22个周期
-  // parameter s = 32;//（r-1）*s=135.04;
-  parameter t = 32'd135;
+  // parameter r = 4.09;//表示主设备1个周期，从设备5.22个周期，为了计算方便,我们可以理解为主设备运行1周期，我们就要多等4.22个周期
+  // parameter s = 32;//（r-1）*s=98.88;
+  parameter t = 32'd99;
   wire  apb_begin = in_psel && !in_penable;
   wire  apb_finish_t = in_psel && in_penable && out_pready;//存储当前周期的apb ready
   reg   apb_finish_r;//存储上个周期的apb ready

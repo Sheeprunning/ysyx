@@ -1,4 +1,4 @@
-TOPNAME ?= top
+TOPNAME ?= ysyx_25080204
 NXDC_FILES = constr/top.nxdc
 INC_PATH ?=/vsrc
 
@@ -24,8 +24,8 @@ $(BUILD_DIR):
 		mkdir -p $@
 
 # project source
-VSRCS = $(shell find $(abspath ./vsrc) -maxdepth 1 -name "*.v")
-VSRCS += $(shell find $(abspath ./vsrc/perip) -name "*.v")
+VSRCS = $(shell find $(abspath ./vsrc/core_cpu) -maxdepth 1 -name "*.v")
+
 CSRCS = $(shell find $(abspath ./csrc) -name "*.cpp")
 CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)

@@ -28,6 +28,7 @@ $(BUILD_DIR):
 # project source
 VSRCS = $(shell find $(abspath ./vsrc) -maxdepth 1 -name "*.v")
 VSRCS += $(shell find $(abspath ./vsrc/perip) -name "*.v")
+VSRCS += $(shell find $(abspath ./vsrc/core_cpu) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.cpp")
 CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)
@@ -106,6 +107,13 @@ $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
   --Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 	
+
+perf:
+	rm -rf $(YOSYS_HOME)/example/*.v
+	cp -r  ./vsrc/core_cpu/* $(YOSYS_HOME)/example
+	make -C $(YOSYS_HOME)  CLK_PORT_NAME=clock sta
+	mv $(YOSYS_HOME)/result/ysyx_25080204-1500MHz ./vsrc/evaluation
+
 all: default
 
 
