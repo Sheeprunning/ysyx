@@ -24,6 +24,7 @@
 #include <mtrace.h>
 #include <dtrace.h>
 #include <etrace.h>
+#include <sitrace.h>
 #include <memory/paddr.h>
 
 static int is_batch_mode = false;
@@ -226,6 +227,7 @@ void init_sdb() {
   init_mtrace("/home/sheeprunning/ysyx-workbench/nemu/build/mtrace-log.txt");
   init_dtrace("/home/sheeprunning/ysyx-workbench/nemu/build/dtrace-log.txt");
   init_etrace("/home/sheeprunning/ysyx-workbench/nemu/build/etrace-log.txt");
+  init_sitrace("/home/sheeprunning/ysyx-workbench/nemu/build/cachesim.bin");
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 }

@@ -50,8 +50,15 @@ void init_mem() {
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
 }
-
+int delay = 8;
 word_t paddr_read(paddr_t addr, int len) {
+  if(addr == 0x10000005){//模拟读9次lsu就返回成功
+    if(!delay) {
+      delay=8;
+      return 1<<5;;
+    }
+    else delay--;
+  }
   if (likely(in_pmem(addr))) {
     word_t data;
     data=pmem_read(addr, len);

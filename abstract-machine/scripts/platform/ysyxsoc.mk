@@ -35,4 +35,7 @@ run: insert-arg
 sim: insert-arg
 	$(MAKE) -C $(MYSOC_HOME) IMG=$(IMAGE).bin ELF=$(IMAGE).elf sim
 
+cache: insert-arg
+	$(MAKE) -C $(MYSOC_HOME) IMG=$(IMAGE).bin ELF=$(IMAGE).elf cache
+
 .PHONY: insert-arg

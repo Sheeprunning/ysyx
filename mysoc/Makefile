@@ -19,6 +19,7 @@ VERILATOR_CFLAGS += --autoflush
 BUILD_DIR = ./build
 OBJ_DIR = $(BUILD_DIR)/obj_dir
 BIN = $(BUILD_DIR)/$(TOPNAME)
+CACHE_SIM = $(BUILD_DIR)/cachesim
 
 default: $(BIN)
 
@@ -32,6 +33,7 @@ VSRCS += $(shell find $(abspath ./vsrc/core_cpu) -name "*.v")
 CSRCS = $(shell find $(abspath ./csrc) -name "*.cpp")
 CSRCS += $(shell find $(abspath ./csrc) -maxdepth 1 -name "*.c")
 CSRCS += $(SRC_AUTO_BIND)
+CACHE_SRC = ./tools/cachesim.cpp
 IMG ?=  ./default.bin
 DIFF ?= $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 ELF ?= ./default.elf
@@ -107,12 +109,19 @@ $(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
 	$(addprefix -CFLAGS , $(CXXFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
   --Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
 	
+NEMUFLAGS = -b
+
+
+cache:
+	@$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMG)
+	g++ -o $(CACHE_SIM) $(CACHE_SRC)
+	$(CACHE_SIM) -s 4 -g 1 -n 16 -i $(NEMU_HOME)/build/cachesim.bin
 
 perf:
 	rm -rf $(YOSYS_HOME)/example/*.v
 	cp -r  ./vsrc/core_cpu/* $(YOSYS_HOME)/example
 	make -C $(YOSYS_HOME)  CLK_PORT_NAME=clock sta
-	mv $(YOSYS_HOME)/result/ysyx_25080204-1500MHz ./vsrc/evaluation
+	mv $(YOSYS_HOME)/result/ysyx_25080204-500MHz ./vsrc/evaluation
 
 all: default
 

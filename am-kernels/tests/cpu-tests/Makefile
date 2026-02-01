@@ -31,6 +31,10 @@ sim: all
 	@cat $(RESULT)
 	@grep -q "FAIL" $(RESULT); FAIL=$$?; rm $(RESULT); test $$FAIL -ne 0
 
+cache: all
+	@cat $(RESULT)
+	@grep -q "FAIL" $(RESULT); FAIL=$$?; rm $(RESULT); test $$FAIL -ne 0
+
 gdb: all
 
 clean:

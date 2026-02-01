@@ -19,6 +19,7 @@
 #include <locale.h>
 #include "../monitor/sdb/sdb.h"
 #include <iringbuf.h>
+#include <sitrace.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -92,6 +93,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 static void execute(uint64_t n) {
   Decode s;
   for (;n > 0; n --) {
+    sitrace_add(cpu.pc);
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
